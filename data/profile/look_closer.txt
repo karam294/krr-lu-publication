@@ -1,0 +1,30 @@
+﻿type
+article                3873
+conference-paper        482
+preprint                210
+book-chapter            206
+review                  156
+other                   104
+peer-review              60
+erratum                  32
+conference-abstract      30
+book                     11
+paratext                 11
+dissertation             10
+dataset                   8
+editorial                 8
+report                    3
+book-review               2
+letter                    2
+data-paper                1
+software-paper            1
+retraction                1
+Name: count, dtype: int64
+          work_id  ...                                              title
+1077  W4206272747  ...  Social Anxiety and Its Correlates Among Lebane...
+1784  W4205255002  ...  Social Anxiety and Its Correlates Among Lebane...
+5087  W7118513034  ...                 Hommage α Nicole LΘger (1933-2024)
+5189  W7214706685  ...  Hommage α Nicole LΘger (1933-2024): Tribute to...
+
+[4 rows x 4 columns]
+papers with 100 authors listed: 19

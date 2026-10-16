@@ -1,0 +1,56 @@
+﻿
+== affiliations: 51,737 rows
+   work_id              empty       0   distinct   5,211
+   author_order         empty       0   distinct     100
+   institution_id       empty       0   distinct   3,656
+
+== authors: 14,090 rows
+   author_id            empty       0   distinct  14,090
+   name                 empty       0   distinct  13,955
+   orcid                empty   5,009   distinct   9,061
+
+== authorships: 33,084 rows
+   work_id              empty       0   distinct   5,211
+   author_order         empty       0   distinct     100
+   author_position      empty       0   distinct       3
+   author_id            empty   2,101   distinct  14,090
+   author_name          empty       0   distinct  15,173
+   orcid                empty   9,681   distinct   9,184
+   is_corresponding     empty       0   distinct       2
+
+== citations: 175,896 rows
+   citing_work_id       empty       0   distinct   4,160
+   cited_work_id        empty       0   distinct 152,510
+
+== institutions: 3,656 rows
+   institution_id       empty       0   distinct   3,656
+   name                 empty       0   distinct   3,610
+   country_code         empty      98   distinct     145
+   type                 empty       0   distinct       9
+
+== sources: 2,216 rows
+   source_id            empty       0   distinct   2,216
+   name                 empty       0   distinct   2,215
+   issn_l               empty     118   distinct   2,098
+   type                 empty       0   distinct       5
+   publisher            empty     438   distinct     343
+
+== topics: 1,610 rows
+   topic_id             empty       0   distinct   1,610
+   name                 empty       0   distinct   1,610
+   subfield             empty       0   distinct     216
+   field                empty       0   distinct      26
+   domain               empty       0   distinct       4
+
+== works: 5,211 rows
+   work_id              empty       0   distinct   5,211
+   doi                  empty     154   distinct   5,055
+   title                empty       0   distinct   5,138
+   publication_year     empty       0   distinct       4
+   publication_date     empty       0   distinct   1,308
+   type                 empty       0   distinct      20
+   language             empty     229   distinct      14
+   source_id            empty     214   distinct   2,216
+   topic_id             empty      12   distinct   1,610
+   is_oa                empty       0   distinct       2
+   is_retracted         empty       0   distinct       2
