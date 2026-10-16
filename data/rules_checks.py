@@ -22,4 +22,4 @@ lu_set = set(affiliations.loc[affiliations["institution_id"] == "I160368002", "w
 missing = works[~works["work_id"].isin(lu_set)].copy()
 authors_per_paper = authorships.groupby("work_id").size()
 missing["n_authors"] = missing["work_id"].map(authors_per_paper)
-print(missing[["work_id", "type", "n_authors", "title"]])
+print(missing[["work_id", "type", "n_authors", "title"]].to_string())

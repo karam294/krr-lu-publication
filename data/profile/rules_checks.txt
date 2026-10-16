@@ -2,12 +2,10 @@
    no first author: 0 | more than one: 0
    'first' author not at order 1: 0
 B. papers with an LU-affiliated author: 5205 of 5211
-         work_id  ...                                              title
-52   W4284692190  ...  Consensus and Diversity in the Management of V...
-115  W4382465100  ...  Does Varicocele Repair Improve Conventional Se...
-217  W4394762783  ...  Global Practice Patterns and Variations in the...
-324  W4367016987  ...  Controversy and Consensus on the Management of...
-700  W4394763175  ...  Global Practice Patterns in the Evaluation of ...
-839  W4412869153  ...  A multinational cross-sectional study on the p...
-
-[6 rows x 4 columns]
+         work_id     type  n_authors                                                                                                                                                                                 title
+52   W4284692190  article        100                  Consensus and Diversity in the Management of Varicocele for Male Infertility: Results of a Global Practice Survey and Comparison with Guidelines and Recommendations
+115  W4382465100  article        100                                                                              Does Varicocele Repair Improve Conventional Semen Parameters? A Meta-Analytic Study of Before-After Data
+217  W4394762783  article        100  Global Practice Patterns and Variations in the Medical and Surgical Management of Non-Obstructive Azoospermia: Results of a World-Wide Survey, Guidelines and Expert Recommendations
+324  W4367016987  article        100                  Controversy and Consensus on the Management of Elevated Sperm DNA Fragmentation in Male Infertility: A Global Survey, Current Guidelines, and Expert Recommendations
+700  W4394763175  article        100                                                  Global Practice Patterns in the Evaluation of Non-Obstructive Azoospermia: Results of a World-Wide Survey and Expert Recommendations
+839  W4412869153  article        100                                                                              A multinational cross-sectional study on the prevalence and predictors of long COVID across 33 countries

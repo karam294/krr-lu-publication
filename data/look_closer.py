@@ -14,4 +14,4 @@ print(shared[["work_id", "doi", "type", "title"]])
 
 # Finding 1: how many papers hit the 100-author limit?
 authors_per_paper = authorships.groupby("work_id").size()
-print("papers with 100 authors listed:", (authors_per_paper == 100).sum())
+print(shared[["work_id", "doi", "type", "title"]].to_string())
