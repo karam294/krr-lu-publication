@@ -12,3 +12,4 @@ __pycache__/
 .claude/
 
 data/raw/
+data/tables/
