@@ -10,3 +10,5 @@ __pycache__/
 
 # Instructor-only authoring tooling
 .claude/
+
+data/raw/
