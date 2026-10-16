@@ -3,7 +3,6 @@ import requests
 from dotenv import load_dotenv
 import json #save the file as json 
 from pathlib import Path #new to bnuild teh folder path 
-import requests
 
 
 load_dotenv()
@@ -33,7 +32,7 @@ while cursor:     # repeat as long as OpenAlex gives us a next page
     cursor = data["meta"]["next_cursor"]     # None after the last page, which ends the loop
     print(f"{len(works)} of {data['meta']['count']} downloaded")
 
-out = Path("data/raw/openalex_works.json")
+out = Path(__file__).resolve().parent / "raw" / "openalex_works.json"
 out.parent.mkdir(parents=True, exist_ok=True)          # create data/raw/ if it doesn't exist yet
 with open(out, "w", encoding="utf-8") as f:
     json.dump(works, f, ensure_ascii=False)            # write the whole list to the file
