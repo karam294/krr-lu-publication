@@ -1,0 +1,42 @@
+## shapes.ttl · YOUR TEAM: replace these with the shapes for your own
+## constraint inventory (Session 4). Every Violation stops the pipeline: the
+## endpoint is loaded only with data that passes (pipeline/run.py).
+##
+## The example: the core order shape of the course's Session 4 lab.
+
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ul:   <https://ul.edu.lb/kr/scm#> .
+@prefix uls:  <https://ul.edu.lb/kr/shapes#> .
+
+uls:OrderShape a sh:NodeShape ;
+    rdfs:label "Every order" ;
+    sh:targetClass ul:Order ;
+    sh:property [
+        sh:path ul:orderId ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:string ; sh:pattern "^[0-9]+\\.[0-9]$" ;
+        sh:name "order id" ; sh:message "An order has exactly one id, digits, a dot, one digit."
+    ] ;
+    sh:property [
+        sh:path ul:orderDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:name "order date"
+    ] ;
+    sh:property [
+        sh:path ul:carriedBy ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ul:Carrier ;
+        sh:name "carrier" ; sh:message "An order has exactly one carrier, and it is a Carrier."
+    ] ;
+    sh:property [
+        sh:path ul:fromPlant ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ul:Plant ;
+        sh:name "plant"
+    ] ;
+    sh:property [
+        sh:path ul:serviceLevel ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "CRF" "DTD" "DTP" ) ;
+        sh:name "service level" ; sh:message "Service level is one of CRF, DTD, DTP."
+    ] ;
+    sh:property [
+        sh:path ul:weight ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:decimal ; sh:minExclusive 0 ;
+        sh:name "weight" ; sh:message "An order has one weight, above 0 kg."
+    ] .

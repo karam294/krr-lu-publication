@@ -1,0 +1,67 @@
+# The test set: 12 questions the graph can answer and 3 it cannot.
+# The same layout as the TEXT2SPARQL questions files (dataset, questions,
+# question.en), so text2sparql-client can read it too; "gold" (the right
+# query) and "refuse" are this course's own fields, which it ignores.
+
+dataset:
+  id: https://ul.edu.lb/kr/brunel/
+  prefix: "PREFIX ul: <https://ul.edu.lb/kr/scm#>"
+
+questions:
+  - id: 1
+    question: {en: "How many orders are there, late orders included?"}
+    gold: |
+      SELECT (COUNT(DISTINCT ?o) AS ?n) WHERE { { ?o a ul:Order } UNION { ?o a ul:LateOrder } }
+  - id: 2
+    question: {en: "How many late orders are there?"}
+    gold: |
+      SELECT (COUNT(?o) AS ?n) WHERE { ?o a ul:LateOrder }
+  - id: 3
+    question: {en: "Which carriers carry orders?"}
+    gold: |
+      SELECT DISTINCT ?c WHERE { ?o ul:carriedBy ?c }
+  - id: 4
+    question: {en: "How many orders did carrier V44_3 carry?"}
+    gold: |
+      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:carriedBy <https://ul.edu.lb/kr/id/carrier/brunel/V44_3> }
+  - id: 5
+    question: {en: "How many products does plant PLANT03 make?"}
+    gold: |
+      SELECT (COUNT(?p) AS ?n) WHERE { <https://ul.edu.lb/kr/id/plant/brunel/PLANT03> ul:makes ?p }
+  - id: 6
+    question: {en: "Which plants ship through port PORT04?"}
+    gold: |
+      SELECT ?plant WHERE { ?plant ul:servesPort <https://ul.edu.lb/kr/id/port/brunel/PORT04> }
+  - id: 7
+    question: {en: "How many orders did customer V555_15 place?"}
+    gold: |
+      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:orderedBy <https://ul.edu.lb/kr/id/customer/brunel/V555_15> }
+  - id: 8
+    question: {en: "Which customers have at least one late order?"}
+    gold: |
+      SELECT DISTINCT ?c WHERE { ?o a ul:LateOrder ; ul:orderedBy ?c }
+  - id: 9
+    question: {en: "Which service levels do orders use?"}
+    gold: |
+      SELECT DISTINCT ?s WHERE { ?o ul:serviceLevel ?s }
+  - id: 10
+    question: {en: "How many orders leave from port PORT09?"}
+    gold: |
+      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:shipsFrom <https://ul.edu.lb/kr/id/port/brunel/PORT09> }
+  - id: 11
+    question: {en: "Which plant makes the most products?"}
+    gold: |
+      SELECT ?plant WHERE { ?plant ul:makes ?p } GROUP BY ?plant ORDER BY DESC(COUNT(?p)) LIMIT 1
+  - id: 12
+    question: {en: "How many rate bands does carrier V444_0 have?"}
+    gold: |
+      SELECT (COUNT(?b) AS ?n) WHERE { ?b ul:bandCarrier <https://ul.edu.lb/kr/id/carrier/brunel/V444_0> }
+  - id: 13
+    question: {en: "Which customers are located in Beirut?"}
+    refuse: "the graph has no locations for customers"
+  - id: 14
+    question: {en: "What is the email address of customer V555_15?"}
+    refuse: "the graph has no contact details"
+  - id: 15
+    question: {en: "Which orders were cancelled?"}
+    refuse: "the graph has no order status"

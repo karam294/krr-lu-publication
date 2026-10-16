@@ -1,0 +1,53 @@
+# Example queries for the access layer, in the SHACL vocabulary that
+# sparql-llm and the SIB endpoints use: one sh:SPARQLExecutable per example,
+# the question in rdfs:comment, the query in sh:select.
+# None of these is a question of the test set (questions.yaml).
+
+@prefix ex: <https://ul.edu.lb/kr/brunel/examples/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:1 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Which orders did carrier V44_3 carry, with their service level?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+SELECT ?order ?service WHERE {
+  ?order ul:carriedBy <https://ul.edu.lb/kr/id/carrier/brunel/V44_3> ;
+         ul:serviceLevel ?service .
+}""" .
+
+ex:2 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "How many orders and how many late orders does each carrier have?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+SELECT ?carrier (COUNT(?order) AS ?orders) (SUM(IF(?late > 0, 1, 0)) AS ?lateOrders) WHERE {
+  ?order ul:carriedBy ?carrier ; ul:lateDays ?late .
+} GROUP BY ?carrier""" .
+
+ex:3 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Which products does plant PLANT08 make?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+SELECT ?product WHERE {
+  <https://ul.edu.lb/kr/id/plant/brunel/PLANT08> ul:makes ?product .
+}""" .
+
+ex:4 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "How many orders are there in total, late ones included?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(DISTINCT ?order) AS ?orders) WHERE {
+  ?order a/rdfs:subClassOf* ul:Order .
+}""" .
+
+ex:5 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Which ports does plant PLANT03 ship through?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+SELECT ?port WHERE {
+  <https://ul.edu.lb/kr/id/plant/brunel/PLANT03> ul:servesPort ?port .
+}""" .
+
+ex:6 a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "How many orders did customer V555_15 place with service level DTP?" ;
+    sh:select """PREFIX ul: <https://ul.edu.lb/kr/scm#>
+SELECT (COUNT(?order) AS ?orders) WHERE {
+  ?order ul:orderedBy <https://ul.edu.lb/kr/id/customer/brunel/V555_15> ;
+         ul:serviceLevel "DTP" .
+}""" .

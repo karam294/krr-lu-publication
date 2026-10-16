@@ -1,0 +1,144 @@
+## mapping.ttl · YOUR TEAM: replace this with the mapping from your own
+## relational source to your own ontology (Session 5).
+##
+## The example: the Brunel tables mapped to the course vocabulary, in R2RML
+## (W3C Recommendation, 2012), copied from the course's Session 5 lab. One
+## triples map per table or view; IRIs from one template per kind of thing.
+## pipeline/run.py runs it with Morph-KGC.
+@prefix rr:  <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ul:  <https://ul.edu.lb/kr/scm#> .
+
+########################################################################
+## Orders: one row of the orders table, one order
+########################################################################
+
+<#Orders>
+    rr:logicalTable [ rr:tableName "orders" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/order/brunel/{order_id}" ] ;
+
+    # A plain value: copy the column.
+    rr:predicateObjectMap [ rr:predicate ul:orderId ;
+        rr:objectMap [ rr:column "order_id" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:serviceLevel ;
+        rr:objectMap [ rr:column "service_level" ] ] ;
+
+    # A value with a datatype: copy the column and say what kind of value it is.
+    rr:predicateObjectMap [ rr:predicate ul:weight ;
+        rr:objectMap [ rr:column "weight" ; rr:datatype xsd:decimal ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:unitQuantity ;
+        rr:objectMap [ rr:column "unit_quantity" ; rr:datatype xsd:integer ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:lateDays ;
+        rr:objectMap [ rr:column "ship_late_day_count" ; rr:datatype xsd:integer ] ] ;
+
+    # A foreign key: the column holds another thing's key, so build that
+    # thing's IRI with the same template its own map uses. No join needed.
+    rr:predicateObjectMap [ rr:predicate ul:carriedBy ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/carrier/brunel/{carrier}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:fromPlant ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/plant/brunel/{plant_code}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:shipsFrom ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{origin_port}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:shipsTo ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{destination_port}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:orderedBy ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/customer/brunel/{customer}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:ofProduct ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/product/brunel/{product_id}" ] ] .
+
+## The order date: the column holds "2013-05-26 00:00:00"; an xsd:date is the
+## first 10 characters. A logical view (an SQL query) prepares the value.
+<#OrderDates>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT order_id, substr(order_date, 1, 10) AS order_day FROM orders""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/order/brunel/{order_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate ul:orderDate ;
+        rr:objectMap [ rr:column "order_day" ; rr:datatype xsd:date ] ] .
+
+## The class depends on a column value: an order with late days is typed
+## ul:LateOrder only, as in Session 2. Two small maps, one per class.
+<#OnTimeOrders>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT order_id FROM orders WHERE ship_late_day_count = 0""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/order/brunel/{order_id}" ;
+                    rr:class ul:Order ] .
+
+<#LateOrders>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT order_id FROM orders WHERE ship_late_day_count > 0""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/order/brunel/{order_id}" ;
+                    rr:class ul:LateOrder ] .
+
+########################################################################
+## Carriers and customers: things that exist only as codes in other tables
+########################################################################
+
+## Every carrier code found in either table, typed once. Session 2 typed only
+## the carriers of orders (3); this view finds all 10.
+<#Carriers>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT carrier FROM orders
+        UNION
+        SELECT carrier FROM freight_rates""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/carrier/brunel/{carrier}" ;
+                    rr:class ul:Carrier ] .
+
+<#Customers>
+    rr:logicalTable [ rr:sqlQuery """SELECT DISTINCT customer FROM orders""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/customer/brunel/{customer}" ;
+                    rr:class ul:Customer ] .
+
+########################################################################
+## Plants, ports and products
+########################################################################
+
+<#PlantPorts>
+    rr:logicalTable [ rr:tableName "plant_ports" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/plant/brunel/{plant_code}" ;
+                    rr:class ul:Plant ] ;
+    rr:predicateObjectMap [ rr:predicate ul:servesPort ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{port}" ] ] .
+
+<#Ports>
+    rr:logicalTable [ rr:tableName "plant_ports" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{port}" ;
+                    rr:class ul:Port ] .
+
+<#ProductsPerPlant>
+    rr:logicalTable [ rr:tableName "products_per_plant" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/plant/brunel/{plant_code}" ] ;
+    rr:predicateObjectMap [ rr:predicate ul:makes ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/product/brunel/{product_id}" ] ] .
+
+<#Products>
+    rr:logicalTable [ rr:tableName "products_per_plant" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/product/brunel/{product_id}" ;
+                    rr:class ul:Product ] .
+
+########################################################################
+## Freight rate bands: a row with no key of its own
+########################################################################
+
+## FreightRates has no key: 1,540 rows, only 1,258 different on (carrier,
+## ports, service, minimum weight), and 5 rows exactly equal to another row.
+## So a band is a blank node, one per row, told apart by the row number
+## (rate_id, added by load_database.py). It is never given a permanent IRI.
+<#RateBands>
+    rr:logicalTable [ rr:tableName "freight_rates" ] ;
+    rr:subjectMap [ rr:template "rate-band-{rate_id}" ; rr:termType rr:BlankNode ;
+                    rr:class ul:RateBand ] ;
+    rr:predicateObjectMap [ rr:predicate ul:bandCarrier ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/carrier/brunel/{carrier}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:bandFrom ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{orig_port_cd}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:bandTo ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/port/brunel/{dest_port_cd}" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:bandService ;
+        rr:objectMap [ rr:column "svc_cd" ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:minWeight ;
+        rr:objectMap [ rr:column "minm_wgh_qty" ; rr:datatype xsd:decimal ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:maxWeight ;
+        rr:objectMap [ rr:column "max_wgh_qty" ; rr:datatype xsd:decimal ] ] ;
+    rr:predicateObjectMap [ rr:predicate ul:rate ;
+        rr:objectMap [ rr:column "rate" ; rr:datatype xsd:decimal ] ] .

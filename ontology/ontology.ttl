@@ -1,0 +1,86 @@
+## ontology.ttl · YOUR TEAM: replace this with your own ontology (Session 3):
+## a real published vocabulary reused, competency questions as annotations,
+## a declared OWL profile, a version IRI, and a clean reasoner run.
+##
+## The example: the course's Brunel vocabulary (classes, properties, labels,
+## domains and ranges, and one rule: a late order is an order). The pipeline
+## validates the data together with this file, so the subclass reaches the
+## shapes (Session 5 found what happens without it).
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ul: <https://ul.edu.lb/kr/scm#> .
+
+<https://ul.edu.lb/kr/scm> a owl:Ontology ;
+    owl:versionIRI <https://ul.edu.lb/kr/scm/1.0.0> ;
+    dcterms:title "Brunel supply chain vocabulary (example)"@en ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    skos:note "Competency question: how many orders did each carrier carry, and how many were late?"@en .
+
+ul:Carrier a rdfs:Class ;
+    rdfs:label "Carrier"@en .
+
+ul:Customer a rdfs:Class ;
+    rdfs:label "Customer"@en .
+
+ul:LateOrder a rdfs:Class ;
+    rdfs:label "Late order"@en ;
+    rdfs:subClassOf ul:Order .
+
+ul:Order a rdfs:Class ;
+    rdfs:label "Order"@en .
+
+ul:Plant a rdfs:Class ;
+    rdfs:label "Plant"@en .
+
+ul:Port a rdfs:Class ;
+    rdfs:label "Port"@en .
+
+ul:Product a rdfs:Class ;
+    rdfs:label "Product"@en .
+
+ul:RateBand a rdfs:Class ;
+    rdfs:label "Freight rate band"@en .
+
+ul:carriedBy a rdf:Property ;
+    rdfs:label "carried by"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Carrier .
+
+ul:fromPlant a rdf:Property ;
+    rdfs:label "made at plant"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Plant .
+
+ul:makes a rdf:Property ;
+    rdfs:label "makes product"@en ;
+    rdfs:domain ul:Plant ;
+    rdfs:range ul:Product .
+
+ul:ofProduct a rdf:Property ;
+    rdfs:label "of product"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Product .
+
+ul:orderedBy a rdf:Property ;
+    rdfs:label "ordered by"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Customer .
+
+ul:servesPort a rdf:Property ;
+    rdfs:label "ships through port"@en ;
+    rdfs:domain ul:Plant ;
+    rdfs:range ul:Port .
+
+ul:shipsFrom a rdf:Property ;
+    rdfs:label "leaves from port"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Port .
+
+ul:shipsTo a rdf:Property ;
+    rdfs:label "arrives at port"@en ;
+    rdfs:domain ul:Order ;
+    rdfs:range ul:Port .
