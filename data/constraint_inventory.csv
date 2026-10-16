@@ -1,0 +1,11 @@
+rule,evidence_in_data,source_column_or_table
+"Each paper has exactly one author labelled first, and it is the author at order 1","0 exceptions in 5,211 papers (rules_checks.py, rule A)","authorships.author_position, authorships.author_order"
+"Every LU paper lists at least one author affiliated with LU","6 of 5,211 do not; all 6 list exactly 100 authors, the OpenAlex cap, so the LU author was cut off (rules_checks.py, rule B)","affiliations.institution_id; authorships"
+"A DOI identifies exactly one paper","5,057 DOIs, 5,055 distinct: 2 DOIs each shared by two OpenAlex records of the same paper (profile_tables.py, look_closer.py)","works.doi"
+"Every authorship has an OpenAlex author ID","2,101 of 33,084 have none, 6.4% (profile_tables.py)","authorships.author_id"
+"An ORCID identifies exactly one author record","9,081 records with an ORCID, 9,061 distinct, so 20 extra records share one (profile_tables.py)","authors.orcid"
+"OpenAlex lists at most 100 authors per paper","19 papers at exactly 100; 6 of them lose their LU author (look_closer.py, rules_checks.py)","authorships.author_order"
+"Every paper has a topic","12 of 5,211 do not (profile_tables.py)","works.topic_id"
+"Every paper has a journal or venue","214 of 5,211 do not (profile_tables.py)","works.source_id"
+"Every paper has a DOI","154 of 5,211 do not, 3.0% (profile_tables.py)","works.doi"
+"Every paper's reference list is recorded","1,051 of 5,211 have none, 20% (profile_tables.py)","citations.citing_work_id; works.work_id"
