@@ -45,3 +45,13 @@ OpenAlex data is CC0, so it may be shared.
 **Evidence.** Same row counts as Session 1 in all 8 tables (works 5,211 ... citations
 175,896); 0 institutions with country code 'NA', so the 98 empty country codes are
 truly empty (data/profile/build_database.txt).
+
+## D5. Keep the name as listed on every authorship; a person only from an OpenAlex ID (2026-10-17)
+**Decision.** Every authorship carries pub:nameAsListed, the name printed on the paper.
+A person (pub:Author) exists only for an OpenAlex author ID.
+**Alternative.** Make a person from the name when the ID is missing, or drop those names.
+**Why.** Names repeat and change (D3), so a person named by name would merge different
+people. Dropping would lose the only trace of 2,101 authorships (6.4%). Who they are
+is a matching question for Session 5.
+**Evidence.** 33,084 authorships, all with a name; 2,101 without an author ID
+(data/profile/profile_tables.txt).

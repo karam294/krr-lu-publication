@@ -32,6 +32,7 @@ work:W3023054831 a pub:Article ;
 authorship:W3023054831-1 a pub:Authorship ;
     pub:authorOrder 1 ;
     pub:authorPosition "first" ;
+    pub:nameAsListed "Rim Fayad" ;
     pub:isCorresponding false ;
     pub:author author:A5107947422 ;
     pub:affiliation inst:I1294671590 , inst:I4210105918 , inst:I4392021175 , inst:I88814501 .
@@ -39,6 +40,7 @@ authorship:W3023054831-1 a pub:Authorship ;
 authorship:W3023054831-2 a pub:Authorship ;
     pub:authorOrder 2 ;
     pub:authorPosition "middle" ;
+    pub:nameAsListed "Nicolas Forcadel" ;
     pub:isCorresponding true ;
     pub:author author:A5071780978 ;
     pub:affiliation inst:I1294671590 , inst:I4210105918 , inst:I4392021175 , inst:I88814501 .
@@ -46,6 +48,7 @@ authorship:W3023054831-2 a pub:Authorship ;
 authorship:W3023054831-3 a pub:Authorship ;
     pub:authorOrder 3 ;
     pub:authorPosition "last" ;
+    pub:nameAsListed "Hassan Ibrahim" ;
     pub:isCorresponding false ;
     pub:author author:A5101525602 ;
     pub:affiliation inst:I160368002 .

@@ -1,7 +1,9 @@
 ## mapping.ttl: our tables (data/lu.sql) to triples, in R2RML (W3C, 2012).
 ## pipeline/run.py runs it with Morph-KGC. One triples map per table or view;
 ## every IRI comes from the D3 scheme: https://ul.edu.lb/kr/id/{kind}/openalex/{key}.
-## A NULL cell gives no triple (open world: not stated, not "none").
+## An empty cell gives no triple (open world: not stated, not "none"). A view
+## (rr:sqlQuery) is used only on columns that are never empty: Morph-KGC writes
+## an empty cell of a view as the text "None".
 @prefix rr:  <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -48,10 +50,10 @@
         rr:objectMap [ rr:column "is_retracted" ; rr:datatype xsd:boolean ] ] .
 
 ## The class: one per OpenAlex type, the 20 types of D2. A type not in this list
-## gets no class, and the Session 4 shapes will report it.
+## gets no class (the outer WHERE drops it), and the Session 4 shapes will report it.
 <#WorkTypes>
     rr:logicalTable [ rr:sqlQuery """
-        SELECT work_id, CASE type
+        SELECT work_id, class FROM (SELECT work_id, CASE type
             WHEN 'article'             THEN 'Article'
             WHEN 'conference-paper'    THEN 'ConferencePaper'
             WHEN 'preprint'            THEN 'Preprint'
@@ -73,7 +75,66 @@
             WHEN 'software-paper'      THEN 'SoftwarePaper'
             WHEN 'retraction'          THEN 'Retraction'
         END AS class
-        FROM works""" ] ;
+        FROM works) WHERE class IS NOT NULL""" ] ;
     rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{work_id}" ] ;
     rr:predicateObjectMap [ rr:predicate rdf:type ;
         rr:objectMap [ rr:template "https://ul.edu.lb/kr/pub#{class}" ] ] .
+
+########################################################################
+## Authorships: one row of authorships, one author on one paper. It has no ID
+## of its own, so its key is paper + byline position (D3).
+########################################################################
+
+<#Authorships>
+    rr:logicalTable [ rr:tableName "authorships" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{work_id}-{author_order}" ;
+                    rr:class pub:Authorship ] ;
+    rr:predicateObjectMap [ rr:predicate pub:authorOrder ;
+        rr:objectMap [ rr:column "author_order" ; rr:datatype xsd:integer ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:authorPosition ;
+        rr:objectMap [ rr:column "author_position" ] ] ;
+    # The name as printed on this paper: every authorship has one, also the
+    # 2,101 with no OpenAlex author ID (D5).
+    rr:predicateObjectMap [ rr:predicate pub:nameAsListed ;
+        rr:objectMap [ rr:column "author_name" ] ] ;
+    # The person: only when OpenAlex gives an author ID (an empty cell, no triple).
+    rr:predicateObjectMap [ rr:predicate pub:author ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{author_id}" ] ] .
+
+## True/false, lowered as for papers. Only columns that are never empty go in a
+## view: Morph-KGC turns an empty cell of a view into the text "None".
+<#AuthorshipFlags>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT work_id, author_order, lower(is_corresponding) AS is_corresponding
+        FROM authorships""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{work_id}-{author_order}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:isCorresponding ;
+        rr:objectMap [ rr:column "is_corresponding" ; rr:datatype xsd:boolean ] ] .
+
+## The paper points to each of its authorships.
+<#PaperAuthorships>
+    rr:logicalTable [ rr:tableName "authorships" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{work_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:hasAuthorship ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{work_id}-{author_order}" ] ] .
+
+## Affiliations: one row, one institution of one authorship. The institution
+## belongs to the author on this paper, not to the author forever.
+<#Affiliations>
+    rr:logicalTable [ rr:tableName "affiliations" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{work_id}-{author_order}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:affiliation ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/institution/openalex/{institution_id}" ] ] .
+
+########################################################################
+## Authors: one row of authors, one person (only those with an OpenAlex ID)
+########################################################################
+
+<#Authors>
+    rr:logicalTable [ rr:tableName "authors" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{author_id}" ;
+                    rr:class pub:Author ] ;
+    rr:predicateObjectMap [ rr:predicate pub:name ;
+        rr:objectMap [ rr:column "name" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:orcid ;
+        rr:objectMap [ rr:column "orcid" ] ] .
