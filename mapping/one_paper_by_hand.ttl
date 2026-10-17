@@ -1,0 +1,88 @@
+# One real LU paper, written by hand as triples (Session 2, step 2b).
+# Values copied from data/show_paper.py; names follow D3 (report/decisions.md).
+# The mapping (step 4) must produce these same triples for this paper.
+
+@prefix pub:        <https://ul.edu.lb/kr/pub#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix work:       <https://ul.edu.lb/kr/id/work/openalex/> .
+@prefix authorship: <https://ul.edu.lb/kr/id/authorship/openalex/> .
+@prefix author:     <https://ul.edu.lb/kr/id/author/openalex/> .
+@prefix inst:       <https://ul.edu.lb/kr/id/institution/openalex/> .
+@prefix venue:      <https://ul.edu.lb/kr/id/venue/openalex/> .
+@prefix topic:      <https://ul.edu.lb/kr/id/topic/openalex/> .
+
+# ---- the paper: one row of works.csv ----
+work:W3023054831 a pub:Article ;
+    pub:title "Stochastic Homogenization of Hamilton–Jacobi Equations on a Junction" ;
+    pub:doi "10.1007/s00205-021-01737-1" ;
+    pub:publicationYear 2022 ;
+    pub:publicationDate "2022-01-22"^^xsd:date ;
+    pub:language "en" ;
+    pub:isOpenAccess true ;
+    pub:isRetracted false ;
+    pub:publishedIn venue:S136982523 ;
+    pub:hasTopic topic:T12100 ;
+    pub:hasAuthorship authorship:W3023054831-1 ,
+                      authorship:W3023054831-2 ,
+                      authorship:W3023054831-3 ;
+    # 3 of its 32 references (citations.csv), enough to see the idea
+    pub:cites work:W1126041682 , work:W1164997633 , work:W1530546387 .
+
+# ---- the three authorships: rows of authorships.csv + affiliations.csv ----
+authorship:W3023054831-1 a pub:Authorship ;
+    pub:authorOrder 1 ;
+    pub:authorPosition "first" ;
+    pub:isCorresponding false ;
+    pub:author author:A5107947422 ;
+    pub:affiliation inst:I1294671590 , inst:I4210105918 , inst:I4392021175 , inst:I88814501 .
+
+authorship:W3023054831-2 a pub:Authorship ;
+    pub:authorOrder 2 ;
+    pub:authorPosition "middle" ;
+    pub:isCorresponding true ;
+    pub:author author:A5071780978 ;
+    pub:affiliation inst:I1294671590 , inst:I4210105918 , inst:I4392021175 , inst:I88814501 .
+
+authorship:W3023054831-3 a pub:Authorship ;
+    pub:authorOrder 3 ;
+    pub:authorPosition "last" ;
+    pub:isCorresponding false ;
+    pub:author author:A5101525602 ;
+    pub:affiliation inst:I160368002 .
+
+# ---- the three authors: rows of authors.csv (no ORCID line where there is none) ----
+author:A5107947422 a pub:Author ;
+    pub:name "Rim Fayad" .
+
+author:A5071780978 a pub:Author ;
+    pub:name "Nicolas Forcadel" ;
+    pub:orcid "0000-0003-4141-8385" .
+
+author:A5101525602 a pub:Author ;
+    pub:name "Hassan Ibrahim" ;
+    pub:orcid "0000-0002-1502-9987" .
+
+# ---- the five institutions: rows of institutions.csv ----
+inst:I160368002 a pub:Institution ;
+    pub:name "Lebanese University" ; pub:countryCode "LB" ; pub:institutionType "education" .
+inst:I1294671590 a pub:Institution ;
+    pub:name "Centre National de la Recherche Scientifique" ; pub:countryCode "FR" ; pub:institutionType "government" .
+inst:I88814501 a pub:Institution ;
+    pub:name "Institut National des Sciences Appliquées Rouen Normandie" ; pub:countryCode "FR" ; pub:institutionType "education" .
+inst:I4210105918 a pub:Institution ;
+    pub:name "Normandie Université" ; pub:countryCode "FR" ; pub:institutionType "education" .
+inst:I4392021175 a pub:Institution ;
+    pub:name "Laboratoire de Mathématiques de l'INSA de Rouen" ; pub:countryCode "FR" ; pub:institutionType "facility" .
+
+# ---- the venue and the topic: one row each of sources.csv and topics.csv ----
+venue:S136982523 a pub:Venue ;
+    pub:name "Archive for Rational Mechanics and Analysis" ;
+    pub:issnL "0003-9527" ;
+    pub:venueType "journal" ;
+    pub:publisher "Springer Science+Business Media" .
+
+topic:T12100 a pub:Topic ;
+    pub:name "Advanced Mathematical Modeling in Engineering" ;
+    pub:subfield "Computational Theory and Mathematics" ;
+    pub:field "Computer Science" ;
+    pub:domain "Physical Sciences" .
