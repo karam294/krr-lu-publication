@@ -33,3 +33,15 @@ of its own, so its key is paper + byline position, the grain of authorships.csv.
 **Evidence.** 154 papers without a DOI; 5,057 DOIs but only 5,055 distinct.
 9,081 author records with an ORCID, 9,061 distinct. 14,090 authors, 13,955 distinct names
 (data/profile/profile_tables.txt, data/constraint_inventory.csv).
+## D4. Ship the data as a frozen SQL copy in the repo (2026-10-17)
+**Decision.** Commit data/lu.sql: the 8 tables as SQL (21.7 MB), built by
+data/build_database.py from the OpenAlex download of 2026-10-16.
+The pipeline will load it from step 4 on.
+**Alternative.** Download from OpenAlex when the pipeline runs, or commit only a sample.
+**Why.** The instructor grades a fresh clone with one command: it has no OpenAlex key,
+and a new download would differ from ours (OpenAlex changes daily), so our numbers
+would drift. A sample would grade a different dataset than the report describes.
+OpenAlex data is CC0, so it may be shared.
+**Evidence.** Same row counts as Session 1 in all 8 tables (works 5,211 ... citations
+175,896); 0 institutions with country code 'NA', so the 98 empty country codes are
+truly empty (data/profile/build_database.txt).

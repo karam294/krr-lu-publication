@@ -1,0 +1,10 @@
+﻿works: 5,211 rows
+authorships: 33,084 rows
+affiliations: 51,737 rows
+authors: 14,090 rows
+institutions: 3,656 rows
+sources: 2,216 rows
+topics: 1,610 rows
+citations: 175,896 rows
+institutions with country code 'NA' (Namibia): 0
+written: data/lu.sql, 21.7 MB
