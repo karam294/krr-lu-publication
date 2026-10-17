@@ -10,8 +10,8 @@ print(works["type"].value_counts())
 
 # Finding 5: which papers share a DOI?
 shared = works[works["doi"].notna() & works["doi"].duplicated(keep=False)]
-print(shared[["work_id", "doi", "type", "title"]])
+print(shared[["work_id", "doi", "type", "title"]].to_string())
 
 # Finding 1: how many papers hit the 100-author limit?
 authors_per_paper = authorships.groupby("work_id").size()
-print(shared[["work_id", "doi", "type", "title"]].to_string())
+print("papers with 100 authors listed:", (authors_per_paper == 100).sum())

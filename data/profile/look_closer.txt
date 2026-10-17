@@ -20,15 +20,9 @@ data-paper                1
 software-paper            1
 retraction                1
 Name: count, dtype: int64
-          work_id  ...                                              title
-1077  W4206272747  ...  Social Anxiety and Its Correlates Among Lebane...
-1784  W4205255002  ...  Social Anxiety and Its Correlates Among Lebane...
-5087  W7118513034  ...                 Hommage à Nicole Léger (1933-2024)
-5189  W7214706685  ...  Hommage à Nicole Léger (1933-2024): Tribute to...
-
-[4 rows x 4 columns]
           work_id                          doi     type                                                                                                                                           title
 1077  W4206272747         10.4088/pcc.20m02902  article                                                                                         Social Anxiety and Its Correlates Among Lebanese Adults
 1784  W4205255002         10.4088/pcc.20m02902  article  Social Anxiety and Its Correlates Among Lebanese Adults: Role of Self-Esteem, Depression, Alcohol Use Disorder, Alexithymia, and Work Fatigue.
 5087  W7118513034  10.48327/mtsi.v5i4.2025.728  article                                                                                                              Hommage à Nicole Léger (1933-2024)
 5189  W7214706685  10.48327/mtsi.v5i4.2025.728  article                                                                         Hommage à Nicole Léger (1933-2024): Tribute to Nicole Léger (1933-2024)
+papers with 100 authors listed: 19
