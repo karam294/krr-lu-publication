@@ -6,8 +6,8 @@
 Run from the repository root. In the stack, docker compose runs it once, as
 the "pipeline" service, before the access layer starts.
 
-  1 source     DB_URL if set (your database), otherwise the example:
-               data/example.sql loaded into build/example.sqlite
+  1 source     DB_URL if set (your database), otherwise our data:
+               data/lu.sql loaded into build/lu.sqlite
   2 map        mapping/mapping.ttl with Morph-KGC -> build/graph.nt
   3 validate   build/graph.nt + ontology/ontology.ttl against shapes/shapes.ttl;
                any Violation stops here (exit 1), so bad data never reaches
@@ -43,12 +43,12 @@ def source():
     if url:
         step(1, f"source: {url.split('@')[-1]}")  # never print a password
         return url
-    db = BUILD / "example.sqlite"
+    db = BUILD / "lu.sqlite"
     db.unlink(missing_ok=True)
     con = sqlite3.connect(db)
-    con.executescript((ROOT / "data" / "example.sql").read_text())
+    con.executescript((ROOT / "data" / "lu.sql").read_text(encoding="utf-8"))
     con.close()
-    step(1, "source: the example, data/example.sql")
+    step(1, "source: our data, data/lu.sql")
     return f"sqlite:///{db}"
 
 
