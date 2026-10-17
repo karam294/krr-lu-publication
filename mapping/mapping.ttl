@@ -183,4 +183,17 @@
     rr:predicateObjectMap [ rr:predicate pub:field ;
         rr:objectMap [ rr:column "field" ] ] ;
     rr:predicateObjectMap [ rr:predicate pub:domain ;
-        rr:objectMap [ rr:column "domain" ] ] .        
+        rr:objectMap [ rr:column "domain" ] ] .    
+
+        
+########################################################################
+## Citations: one row of citations, one paper citing another. The cited paper
+## gets the same IRI template as our papers, so a citation to one of our
+## 5,211 lands on its node; any other cited paper is a node we know only by name.
+########################################################################
+
+<#Citations>
+    rr:logicalTable [ rr:tableName "citations" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{citing_work_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:cites ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{cited_work_id}" ] ] .            
