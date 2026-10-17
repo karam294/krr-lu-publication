@@ -138,3 +138,49 @@
         rr:objectMap [ rr:column "name" ] ] ;
     rr:predicateObjectMap [ rr:predicate pub:orcid ;
         rr:objectMap [ rr:column "orcid" ] ] .
+
+########################################################################
+## Institutions, venues and topics: one row each, one thing each
+########################################################################
+
+<#Institutions>
+    rr:logicalTable [ rr:tableName "institutions" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/institution/openalex/{institution_id}" ;
+                    rr:class pub:Institution ] ;
+    rr:predicateObjectMap [ rr:predicate pub:name ;
+        rr:objectMap [ rr:column "name" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:countryCode ;
+        rr:objectMap [ rr:column "country_code" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:institutionType ;
+        rr:objectMap [ rr:column "type" ] ] .
+
+## A venue is where a paper appeared: a journal, a conference, a repository.
+## OpenAlex calls it a "source"; D3 calls the kind "venue", so that "source"
+## keeps one meaning in this project: the system the data came from.
+<#Venues>
+    rr:logicalTable [ rr:tableName "sources" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/venue/openalex/{source_id}" ;
+                    rr:class pub:Venue ] ;
+    rr:predicateObjectMap [ rr:predicate pub:name ;
+        rr:objectMap [ rr:column "name" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:issnL ;
+        rr:objectMap [ rr:column "issn_l" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:venueType ;
+        rr:objectMap [ rr:column "type" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:publisher ;
+        rr:objectMap [ rr:column "publisher" ] ] .
+
+## A topic, with the three levels above it as text for now (subfield, field,
+## domain). Whether they become things of their own is a Session 3 question.
+<#Topics>
+    rr:logicalTable [ rr:tableName "topics" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/topic/openalex/{topic_id}" ;
+                    rr:class pub:Topic ] ;
+    rr:predicateObjectMap [ rr:predicate pub:name ;
+        rr:objectMap [ rr:column "name" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:subfield ;
+        rr:objectMap [ rr:column "subfield" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:field ;
+        rr:objectMap [ rr:column "field" ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:domain ;
+        rr:objectMap [ rr:column "domain" ] ] .        
