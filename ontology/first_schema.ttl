@@ -1,0 +1,11 @@
+# First schema (Session 2, step 2d): RDFS words for our own vocabulary.
+# Session 3 grows this into ontology/ontology.ttl and links it to FaBiO and CiTO.
+@prefix pub:  <https://ul.edu.lb/kr/pub#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+pub:Work a rdfs:Class ;
+    rdfs:label "Work"@en .
+
+pub:Article a rdfs:Class ;
+    rdfs:label "Article"@en ;
+    rdfs:subClassOf pub:Work .
