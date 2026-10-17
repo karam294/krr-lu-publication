@@ -1,10 +1,8 @@
 # The SHACL gate in continuous integration (Session 4): on every push and pull
 # request, map the source and validate it. Any Violation fails the run (red),
 # and a red pull request is not merged. The same steps as the stack's pipeline,
-# without loading an endpoint.
-#
-# YOUR TEAM: if CI cannot reach your database, commit a small sample of it as
-# data/example.sql (as the example does) so CI can still map and validate.
+# without loading an endpoint. Then check the mapping against the paper we wrote
+# by hand (Session 2): any difference also fails the run.
 
 name: SHACL gate
 
@@ -30,3 +28,5 @@ jobs:
           pip install --no-deps morph-kgc==2.10.0
       - name: Map and validate (fails on any Violation)
         run: python pipeline/run.py --no-load
+      - name: Check the mapping against the paper written by hand
+        run: python mapping/check_one_paper.py
