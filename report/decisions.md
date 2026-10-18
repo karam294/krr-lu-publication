@@ -55,3 +55,20 @@ people. Dropping would lose the only trace of 2,101 authorships (6.4%). Who they
 is a matching question for Session 5.
 **Evidence.** 33,084 authorships, all with a name; 2,101 without an author ID
 (data/profile/profile_tables.txt).
+
+
+## D7. Reuse SPAR (FaBiO, CiTO, PRO), FOAF and Dublin Core by alignment (2026-10-18)
+**Decision.** The data keeps its pub: words. ontology.ttl places each pub: class or
+property under a published one (rdfs:subClassOf, rdfs:subPropertyOf) where meaning,
+domain and range agree, and links it with skos:closeMatch where they do not. FaBiO
+(with FRBR) and FOAF are imported from local copies so the reasoner checks them.
+**Alternative.** Use FaBiO and CiTO terms directly in the data; or SemOpenAlex.
+**Why.** FaBiO, CiTO and PRO are the published vocabularies for works, citations and
+authorship roles. Using their terms in the data would rewrite the mapping and its test
+for no gain in meaning. FaBiO places datasets, reports, reviews and errata at the FRBR
+Work level, while an OpenAlex work is an Expression, and FRBR makes the two disjoint:
+subClassOf there would make our classes unsatisfiable. Three ranges disagree with our
+data (fabio:hasPublicationYear is xsd:gYear, dcterms:language is not text, foaf:name is
+not for topics). We found no licence for SemOpenAlex's ontology.
+**Evidence.** ontology/LICENCES.md; definitions read in FaBiO 2.3.1, FRBR 1.1.0,
+CiTO 2.9.0, PRO 1.6.1.
