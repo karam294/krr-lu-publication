@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Where the reasoner finds each imported ontology on disk, instead of the web
+     (the same mechanism as the Session 3 lab). Protégé and ROBOT read this file
+     automatically because it sits next to ontology.ttl. -->
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri name="http://purl.org/spar/fabio" uri="imports/fabio.ttl"/>
+    <uri name="http://purl.org/spar/frbr" uri="imports/frbr.ttl"/>
+    <uri name="http://purl.org/spar/foaf" uri="imports/foaf.ttl"/>
+</catalog>

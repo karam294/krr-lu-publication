@@ -1,0 +1,15 @@
+Reasoner run 2026-10-18, ROBOT version 1.9.10
+Input: ontology/ontology.ttl (versionIRI <https://ul.edu.lb/kr/pub/1.0.0>), imports from ontology/imports/
+
+== ELK
+ELK: consistent, no unsatisfiable classes
+
+== HermiT
+HermiT: consistent, no unsatisfiable classes
+
+== OWL 2 DL profile of our own file (the imports left out)
+OWL 2 DL Profile Report: [Ontology and imports closure in profile]
+
+== OWL 2 DL profile with the imports
+OWL 2 DL Profile Report: Ontology and imports closure NOT in profile. The following violations are present:
+976 violations: 4 on Dublin Core terms our file uses and FaBiO declares another way, the rest inside FaBiO (build/profile-all.txt)
