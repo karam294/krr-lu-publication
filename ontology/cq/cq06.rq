@@ -1,0 +1,10 @@
+# CQ6. Which LU papers cite other LU papers? (the LU papers cited most by other LU papers)
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?cited ?title (COUNT(?citing) AS ?citedByLU)
+WHERE {
+  ?citing pub:cites ?cited .
+  ?cited pub:title ?title .
+}
+GROUP BY ?cited ?title
+ORDER BY DESC(?citedByLU)
+LIMIT 10

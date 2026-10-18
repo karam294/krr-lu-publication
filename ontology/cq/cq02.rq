@@ -1,0 +1,17 @@
+# CQ2. Which LU researchers publish the most, and how often are they first, last or corresponding author?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?name (COUNT(DISTINCT ?paper) AS ?papers)
+       (SUM(IF(?position = "first", 1, 0)) AS ?first)
+       (SUM(IF(?position = "last", 1, 0)) AS ?last)
+       (SUM(IF(?corresponding, 1, 0)) AS ?corresponding)
+WHERE {
+  ?paper pub:hasAuthorship ?a .
+  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;
+     pub:author ?person ;
+     pub:authorPosition ?position ;
+     pub:isCorresponding ?corresponding .
+  ?person pub:name ?name .
+}
+GROUP BY ?person ?name
+ORDER BY DESC(?papers)
+LIMIT 10

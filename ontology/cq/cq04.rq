@@ -1,0 +1,9 @@
+# CQ4. Where does LU publish (journals, conferences, repositories), and with which publishers?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?kind (COUNT(DISTINCT ?venue) AS ?venues) (COUNT(DISTINCT ?paper) AS ?papers)
+WHERE {
+  ?paper pub:publishedIn ?venue .
+  ?venue pub:venueType ?kind .
+}
+GROUP BY ?kind
+ORDER BY DESC(?papers)

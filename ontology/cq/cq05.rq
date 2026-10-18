@@ -1,0 +1,10 @@
+# CQ5. In which research fields and domains does LU publish, and how does that change by year?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?domain ?year (COUNT(?paper) AS ?papers)
+WHERE {
+  ?paper pub:hasTopic ?topic ;
+         pub:publicationYear ?year .
+  ?topic pub:domain ?domain .
+}
+GROUP BY ?domain ?year
+ORDER BY ?domain ?year

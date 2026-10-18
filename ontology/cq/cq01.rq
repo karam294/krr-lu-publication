@@ -1,0 +1,11 @@
+# CQ1. How many papers did LU publish each year from 2022 to 2025, of each type, and how many are open access?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?year (COUNT(?paper) AS ?papers) (SUM(IF(?oa, 1, 0)) AS ?openAccess)
+       (SUM(IF(?type = pub:Article, 1, 0)) AS ?articles)
+WHERE {
+  ?paper pub:publicationYear ?year ;
+         pub:isOpenAccess ?oa ;
+         a ?type .
+}
+GROUP BY ?year
+ORDER BY ?year

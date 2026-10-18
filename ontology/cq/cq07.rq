@@ -1,0 +1,8 @@
+# CQ7. In which languages does LU publish?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?language (COUNT(?paper) AS ?papers)
+WHERE {
+  ?paper pub:language ?language .
+}
+GROUP BY ?language
+ORDER BY DESC(?papers)

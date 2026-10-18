@@ -1,0 +1,13 @@
+# CQ3. With which countries and institutions does LU co-author most, and what kind of institutions are they?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?institution ?country ?kind (COUNT(DISTINCT ?paper) AS ?papers)
+WHERE {
+  ?paper pub:hasAuthorship/pub:affiliation ?inst .
+  FILTER (?inst != <https://ul.edu.lb/kr/id/institution/openalex/I160368002>)
+  ?inst pub:name ?institution ;
+        pub:institutionType ?kind .
+  OPTIONAL { ?inst pub:countryCode ?country }
+}
+GROUP BY ?inst ?institution ?country ?kind
+ORDER BY DESC(?papers)
+LIMIT 10

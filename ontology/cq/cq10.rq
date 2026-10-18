@@ -1,0 +1,9 @@
+    # CQ10. For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue?
+# Today: the OpenAlex side only, how many papers can be compared at all (Crossref comes in Session 5).
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT (COUNT(?paper) AS ?papers) (COUNT(?doi) AS ?withDoi) (COUNT(?issn) AS ?withVenueIssn)
+WHERE {
+  ?paper pub:publicationYear ?year .
+  OPTIONAL { ?paper pub:doi ?doi }
+  OPTIONAL { ?paper pub:publishedIn/pub:issnL ?issn }
+}

@@ -1,0 +1,142 @@
+Competency questions on build/graph.nt (578,982 triples), run 2026-10-18
+
+== cq01.rq  CQ1. How many papers did LU publish each year from 2022 to 2025, of each type, and how many are open access?
+   year  papers  openAccess  articles
+   2022  1272    898         981     
+   2023  1220    910         921     
+   2024  1288    951         986     
+   2025  1431    1102        985     
+   (4 rows)
+
+== cq01_types.rq  CQ1, by type. How many LU papers are there of each type (2022 to 2025)?
+   type                papers
+   Article             3873  
+   ConferencePaper     482   
+   Preprint            210   
+   BookChapter         206   
+   Review              156   
+   OtherWork           104   
+   PeerReview          60    
+   Erratum             32    
+   ConferenceAbstract  30    
+   Paratext            11    
+   Book                11    
+   Dissertation        10    
+   Editorial           8     
+   Dataset             8     
+   Report              3     
+   Letter              2     
+   BookReview          2     
+   DataPaper           1     
+   Retraction          1     
+   SoftwarePaper       1     
+   (20 rows)
+
+== cq02.rq  CQ2. Which LU researchers publish the most, and how often are they first, last or corresponding author?
+   name               papers  first  last  corresponding
+   Pascale Salameh    283     2      109   5            
+   Maha Hoteit        91      41     24    47           
+   Dany Azar          74      26     27    16           
+   Tayssir Hamieh     73      25     6     40           
+   Ziad Fajloun       58      15     7     22           
+   Habib Badawi       55      48     3     41           
+   Joumana Toufaily   55      0      22    4            
+   Georges Aoun       53      27     19    20           
+   Georges Hatem      53      14     24    31           
+   Sami Abou Fayssal  51      2      8     7            
+   (10 rows)
+
+== cq03.rq  CQ3. With which countries and institutions does LU co-author most, and what kind of institutions are they?
+   institution                                                   country  kind        papers
+   Centre National de la Recherche Scientifique                  FR       government  659   
+   Lebanese American University                                  LB       education   495   
+   Institut National de Santé Publique, d'Épidémiologie Cliniqu  LB       nonprofit   390   
+   American University of Beirut                                 LB       education   381   
+   Inserm                                                        FR       government  311   
+   Lebanese International University                             LB       education   303   
+   University of Nicosia                                         CY       education   286   
+   Saint Joseph University                                       LB       education   275   
+   Beirut Arab University                                        LB       education   256   
+   University of Balamand                                        LB       education   249   
+   (10 rows)
+
+== cq04.rq  CQ4. Where does LU publish (journals, conferences, repositories), and with which publishers?
+   kind            venues  papers
+   journal         2028    4085  
+   repository      23      434   
+   conference      103     212   
+   book series     50      141   
+   ebook platform  12      125   
+   (5 rows)
+
+== cq05.rq  CQ5. In which research fields and domains does LU publish, and how does that change by year?
+   domain             year  papers
+   Health Sciences    2022  436   
+   Health Sciences    2023  418   
+   Health Sciences    2024  467   
+   Health Sciences    2025  543   
+   Life Sciences      2022  201   
+   Life Sciences      2023  219   
+   Life Sciences      2024  199   
+   Life Sciences      2025  275   
+   Physical Sciences  2022  464   
+   Physical Sciences  2023  385   
+   Physical Sciences  2024  395   
+   Physical Sciences  2025  376   
+   Social Sciences    2022  166   
+   Social Sciences    2023  194   
+   Social Sciences    2024  225   
+   Social Sciences    2025  236   
+   (16 rows)
+
+== cq06.rq  CQ6. Which LU papers cite other LU papers? (the LU papers cited most by other LU papers)
+   cited        title                                                         citedByLU
+   W4307672522  HEALTH CARE SYSTEM IN LEBANON: A REVIEW ADDRESSING HEALTH IN  22       
+   W4391994687  New Progress on London Dispersive Energy, Polar Surface Inte  18       
+   W4391386167  London Dispersive and Lewis Acid-Base Surface Energy of 2D S  17       
+   W4220845299  Angiotensin II Type I Receptor (AT1R): The Gate towards COVI  16       
+   W4382355976  New Physicochemical Methodology for the Determination of the  16       
+   W4283378514  Catch-22: War, Refugees, COVID-19, and the Scourge of Antimi  16       
+   W4225264817  The Pathophysiology of Long COVID throughout the Renin-Angio  15       
+   W4210324511  Sustainable Use of Sewage Sludge as a Casing Material for Bu  14       
+   W4388853786  Some Irregularities in the Evaluation of Surface Parameters   14       
+   W4224281147  Kinetic Studies on Delignification and Heavy Metals Uptake b  13       
+   (10 rows)
+
+== cq07.rq  CQ7. In which languages does LU publish?
+   language  papers
+   en        4748  
+   fr        114   
+   ar        88    
+   lv        9     
+   de        5     
+   es        4     
+   ng        3     
+   id        3     
+   tr        2     
+   pt        2     
+   ca        1     
+   hu        1     
+   it        1     
+   sq        1     
+   (14 rows)
+
+== cq08.rq  CQ8. Which LU papers have been retracted?
+   paper        year  title                                                       
+   W4308586991  2022  [Retracted] Effects of nutrients on matrix metalloproteinase
+   W4297996152  2022  RETRACTED ARTICLE: Combination Therapy of Mesenchymal Stem C
+   W4400363515  2024  The effect of resection of gliomas of the primary motor and 
+   W4404387095  2024  RETRACTED: Analysis of the street network of cities of Krasn
+   W4415060141  2025  Retraction Note: Combination Therapy of Mesenchymal Stem Cel
+   W7160835596  2025  RETRACTED: Fragmented resilience and the challenge of sustai
+   (6 rows)
+
+== cq09.rq  CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
+   authorshipsWithoutPerson  orcidsOnSeveralRecords  recordsSharingAnOrcid
+   2101                      20                      40                   
+   (1 rows)
+
+== cq10.rq  CQ10. For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue?
+   papers  withDoi  withVenueIssn
+   5211    5057     4341         
+   (1 rows)

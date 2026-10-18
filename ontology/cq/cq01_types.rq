@@ -1,0 +1,9 @@
+# CQ1, by type. How many LU papers are there of each type (2022 to 2025)?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?type (COUNT(?paper) AS ?papers)
+WHERE {
+  ?paper pub:publicationYear ?year ;
+         a ?type .
+}
+GROUP BY ?type
+ORDER BY DESC(?papers)

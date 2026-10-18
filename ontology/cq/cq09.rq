@@ -1,0 +1,11 @@
+# CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?authorshipsWithoutPerson ?orcidsOnSeveralRecords ?recordsSharingAnOrcid
+WHERE {
+  { SELECT (COUNT(?a) AS ?authorshipsWithoutPerson)
+    WHERE { ?a a pub:Authorship . FILTER NOT EXISTS { ?a pub:author ?person } } }
+  { SELECT (COUNT(?orcid) AS ?orcidsOnSeveralRecords) (SUM(?n) AS ?recordsSharingAnOrcid)
+    WHERE { { SELECT ?orcid (COUNT(?person) AS ?n)
+              WHERE { ?person pub:orcid ?orcid }
+              GROUP BY ?orcid HAVING (COUNT(?person) > 1) } } }
+}

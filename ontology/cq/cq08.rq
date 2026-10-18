@@ -1,0 +1,9 @@
+# CQ8. Which LU papers have been retracted?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?paper ?year ?title
+WHERE {
+  ?paper pub:isRetracted true ;
+         pub:publicationYear ?year ;
+         pub:title ?title .
+}
+ORDER BY ?year
