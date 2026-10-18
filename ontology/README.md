@@ -1,19 +1,12 @@
 # ontology/
 
-YOUR TEAM: your Session 3 work, on your own domain.
+| File | What it is |
+|---|---|
+| ontology.ttl | Our ontology, version 1.0.0, OWL 2 DL: every pub: term with its meaning, its competency question and its place in FaBiO, FOAF, PRO, CiTO, Dublin Core (D7) |
+| imports/ | Unchanged local copies of FaBiO 2.3.1, FRBR 1.1.0 and FOAF, CC BY (LICENCES.md) |
+| catalog-v001.xml | Tells Protégé and ROBOT to load the imports from imports/ |
+| competency_questions.md | The ten questions the graph must answer |
+| cq/, run_cqs.py, cq_answers.txt | The questions as SPARQL, the runner, and their answers on the full graph |
+| LICENCES.md | The licence of everything reused |
 
-- `ontology.ttl`: replace the example with your ontology. Reuse a real
-  published vocabulary for your domain (the topic menu names one per area),
-  extend it only where it has a gap, and align outward with
-  `skos:exactMatch`, `skos:closeMatch` or `rdfs:subClassOf`.
-- Competency questions: write them first, as annotations on the ontology
-  or in `competency_questions.md`. Every class and property you add must
-  answer one of them; the questions are also the first test of your SPARQL.
-- Declare the OWL profile (EL, QL, RL or DL) and keep to it. Run a reasoner
-  (ELK or HermiT, as in the Session 3 lab) until there is no red class, and
-  save the run's output in `ontology/reasoner-run.txt` with the date.
-- Give the ontology a version IRI and bump it when you change it.
-- The pipeline validates your data together with this file, so a subclass
-  declared here reaches the shapes.
-
-In Session 8 an ontology the team cannot defend loses its ontology points.
+Bump the version IRI (1.0.0, 1.0.1, ...) on every change to ontology.ttl.

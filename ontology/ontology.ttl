@@ -1,86 +1,438 @@
-## ontology.ttl · YOUR TEAM: replace this with your own ontology (Session 3):
-## a real published vocabulary reused, competency questions as annotations,
-## a declared OWL profile, a version IRI, and a clean reasoner run.
+## ontology.ttl: what the words of our graph mean (Session 3).
 ##
-## The example: the course's Brunel vocabulary (classes, properties, labels,
-## domains and ranges, and one rule: a late order is an order). The pipeline
-## validates the data together with this file, so the subclass reaches the
-## shapes (Session 5 found what happens without it).
+## The data (mapping/mapping.ttl) uses our own pub: words. This file says what
+## each one means, which competency question it answers (pub:answersCQ, see
+## competency_questions.md), and where it sits in the published vocabularies we
+## reuse (D7): under a FaBiO, FOAF, PRO, CiTO or Dublin Core term with
+## rdfs:subClassOf / rdfs:subPropertyOf where meaning, domain and range agree;
+## linked with skos:closeMatch where they do not.
+##
+## FaBiO (with FRBR) and FOAF are imported from local copies (imports/, found
+## through catalog-v001.xml), so the reasoner checks our terms against them.
+## CiTO and PRO are referenced, not imported: we read their definitions
+## (cito:cites has no domain or range; PRO's ranges agree with our classes).
+##
+## Profile: OWL 2 DL. This file passes ROBOT's OWL 2 DL check on its own; it
+## would be OWL 2 EL but for its xsd:boolean and xsd:date ranges. With the
+## imports it is not strictly OWL 2 DL, because FaBiO itself declares some Dublin
+## Core terms both as annotation and as data or object properties. ELK (fast,
+## the EL part only) and HermiT (complete) both reason over it (Session 3, 3.5).
 
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix ul: <https://ul.edu.lb/kr/scm#> .
+@prefix fabio:   <http://purl.org/spar/fabio/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix cito:    <http://purl.org/spar/cito/> .
+@prefix pro:     <http://purl.org/spar/pro/> .
+@prefix pub:     <https://ul.edu.lb/kr/pub#> .
 
-<https://ul.edu.lb/kr/scm> a owl:Ontology ;
-    owl:versionIRI <https://ul.edu.lb/kr/scm/1.0.0> ;
-    dcterms:title "Brunel supply chain vocabulary (example)"@en ;
+<https://ul.edu.lb/kr/pub> a owl:Ontology ;
+    owl:versionIRI <https://ul.edu.lb/kr/pub/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    owl:imports <http://purl.org/spar/fabio> , <http://purl.org/spar/foaf> ;
+    rdfs:label "Lebanese University publications ontology"@en ;
+    dcterms:description "The meaning of the words used in the knowledge graph of Lebanese University's publications, 2022-2025 (OpenAlex)."@en ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    skos:note "Competency question: how many orders did each carrier carry, and how many were late?"@en .
+    pub:profile "OWL 2 DL" .
 
-ul:Carrier a rdfs:Class ;
-    rdfs:label "Carrier"@en .
+########################################################################
+## Annotation properties: notes for people, no logical consequence
+########################################################################
 
-ul:Customer a rdfs:Class ;
-    rdfs:label "Customer"@en .
+pub:answersCQ a owl:AnnotationProperty ;
+    rdfs:label "answers competency question"@en ;
+    rdfs:comment "The competency question (ontology/competency_questions.md) this term exists to answer. A term with none is deleted (Session 3, slide 40)."@en .
 
-ul:LateOrder a rdfs:Class ;
-    rdfs:label "Late order"@en ;
-    rdfs:subClassOf ul:Order .
+pub:profile a owl:AnnotationProperty ;
+    rdfs:label "OWL profile"@en ;
+    rdfs:comment "The OWL profile this ontology was written for, declared rather than discovered."@en .
 
-ul:Order a rdfs:Class ;
-    rdfs:label "Order"@en .
+skos:closeMatch a owl:AnnotationProperty .
+skos:definition a owl:AnnotationProperty .
+dcterms:description a owl:AnnotationProperty .
+dcterms:license a owl:AnnotationProperty .
 
-ul:Plant a rdfs:Class ;
-    rdfs:label "Plant"@en .
+########################################################################
+## External terms we point to: declared here so the file stands on its own
+########################################################################
 
-ul:Port a rdfs:Class ;
-    rdfs:label "Port"@en .
+cito:cites a owl:ObjectProperty .
+dcterms:title a owl:DatatypeProperty .
+pro:RoleInTime a owl:Class .
+pro:isDocumentContextFor a owl:ObjectProperty .
+pro:isHeldBy a owl:ObjectProperty .
+pro:relatesToOrganization a owl:ObjectProperty .
+fabio:Expression a owl:Class .
+fabio:Article a owl:Class .
+fabio:ReviewArticle a owl:Class .
+fabio:ConferencePaper a owl:Class .
+fabio:Preprint a owl:Class .
+fabio:BookChapter a owl:Class .
+fabio:Book a owl:Class .
+fabio:Thesis a owl:Class .
+fabio:Editorial a owl:Class .
+fabio:Letter a owl:Class .
+fabio:Abstract a owl:Class .
+fabio:RetractionNotice a owl:Class .
+fabio:SubjectTerm a owl:Class .
+fabio:hasSubjectTerm a owl:ObjectProperty .
+foaf:Person a owl:Class .
+foaf:Organization a owl:Class .
 
-ul:Product a rdfs:Class ;
-    rdfs:label "Product"@en .
+## xsd:date is not in OWL 2's list of datatypes, so it is declared here.
+xsd:date a rdfs:Datatype .
 
-ul:RateBand a rdfs:Class ;
-    rdfs:label "Freight rate band"@en .
+########################################################################
+## Papers: an OpenAlex work is one published version of a work, which FRBR
+## (under FaBiO) calls an Expression
+########################################################################
 
-ul:carriedBy a rdf:Property ;
-    rdfs:label "carried by"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Carrier .
+pub:Work a owl:Class ;
+    rdfs:subClassOf fabio:Expression ;
+    rdfs:label "Work"@en ;
+    skos:definition "A paper, book, dataset or other output recorded in OpenAlex: one published version (an FRBR Expression)."@en ;
+    pub:answersCQ "CQ1" .
 
-ul:fromPlant a rdf:Property ;
-    rdfs:label "made at plant"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Plant .
+## The 20 OpenAlex types (D2). Each is a pub:Work. Where FaBiO has the same
+## kind at the Expression level it is a subclass of it too; where FaBiO puts it
+## at the Work level (dataset, report, review, erratum), FRBR makes Work and
+## Expression disjoint, so a subclass there would make ours unsatisfiable: it is
+## a skos:closeMatch instead.
 
-ul:makes a rdf:Property ;
-    rdfs:label "makes product"@en ;
-    rdfs:domain ul:Plant ;
-    rdfs:range ul:Product .
+pub:Article a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Article ;
+    rdfs:label "Article"@en ;
+    skos:definition "OpenAlex type article: a research article, in a journal or elsewhere."@en ;
+    pub:answersCQ "CQ1" .
 
-ul:ofProduct a rdf:Property ;
-    rdfs:label "of product"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Product .
+pub:Review a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:ReviewArticle ;
+    rdfs:label "Review"@en ;
+    skos:definition "OpenAlex type review: an article that reviews other work."@en ;
+    pub:answersCQ "CQ1" .
 
-ul:orderedBy a rdf:Property ;
-    rdfs:label "ordered by"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Customer .
+pub:ConferencePaper a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:ConferencePaper ;
+    rdfs:label "Conference paper"@en ;
+    pub:answersCQ "CQ1" .
 
-ul:servesPort a rdf:Property ;
-    rdfs:label "ships through port"@en ;
-    rdfs:domain ul:Plant ;
-    rdfs:range ul:Port .
+pub:Preprint a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Preprint ;
+    rdfs:label "Preprint"@en ;
+    pub:answersCQ "CQ1" .
 
-ul:shipsFrom a rdf:Property ;
-    rdfs:label "leaves from port"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Port .
+pub:BookChapter a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:BookChapter ;
+    rdfs:label "Book chapter"@en ;
+    pub:answersCQ "CQ1" .
 
-ul:shipsTo a rdf:Property ;
-    rdfs:label "arrives at port"@en ;
-    rdfs:domain ul:Order ;
-    rdfs:range ul:Port .
+pub:Book a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Book ;
+    rdfs:label "Book"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Dissertation a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Thesis ;
+    rdfs:label "Dissertation"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Editorial a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Editorial ;
+    rdfs:label "Editorial"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Letter a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Letter ;
+    rdfs:label "Letter"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:ConferenceAbstract a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:Abstract ;
+    rdfs:label "Conference abstract"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Retraction a owl:Class ;
+    rdfs:subClassOf pub:Work , fabio:RetractionNotice ;
+    rdfs:label "Retraction notice"@en ;
+    skos:definition "OpenAlex type retraction: the notice that withdraws another paper, not the withdrawn paper itself."@en ;
+    pub:answersCQ "CQ1" , "CQ8" .
+
+pub:Dataset a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    skos:closeMatch fabio:Dataset ;
+    rdfs:label "Dataset"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Report a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    skos:closeMatch fabio:Report ;
+    rdfs:label "Report"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:BookReview a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    skos:closeMatch fabio:BookReview ;
+    rdfs:label "Book review"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Erratum a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    skos:closeMatch fabio:Erratum ;
+    rdfs:label "Erratum"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:PeerReview a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    skos:closeMatch fabio:Review ;
+    rdfs:label "Peer review"@en ;
+    skos:definition "OpenAlex type peer-review: a published referee report on another paper."@en ;
+    pub:answersCQ "CQ1" .
+
+## No FaBiO class for these: our own, under pub:Work only.
+
+pub:DataPaper a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    rdfs:label "Data paper"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:SoftwarePaper a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    rdfs:label "Software paper"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:Paratext a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    rdfs:label "Paratext"@en ;
+    skos:definition "OpenAlex type paratext: material around the content, such as a cover, an index or front matter."@en ;
+    pub:answersCQ "CQ1" .
+
+pub:OtherWork a owl:Class ;
+    rdfs:subClassOf pub:Work ;
+    rdfs:label "Other work"@en ;
+    skos:definition "OpenAlex type other: a work OpenAlex does not classify further."@en ;
+    pub:answersCQ "CQ1" .
+
+########################################################################
+## People and organisations
+########################################################################
+
+pub:Authorship a owl:Class ;
+    rdfs:subClassOf pro:RoleInTime ;
+    rdfs:label "Authorship"@en ;
+    skos:definition "One author on one paper, at one position in its byline, with the affiliations they gave on that paper (D3, D5). PRO calls this a role in time."@en ;
+    pub:answersCQ "CQ2" , "CQ3" , "CQ9" .
+
+pub:Author a owl:Class ;
+    rdfs:subClassOf foaf:Person ;
+    rdfs:label "Author"@en ;
+    skos:definition "A person with an OpenAlex author ID (D5)."@en ;
+    pub:answersCQ "CQ2" .
+
+pub:Institution a owl:Class ;
+    rdfs:subClassOf foaf:Organization ;
+    rdfs:label "Institution"@en ;
+    pub:answersCQ "CQ3" .
+
+pub:Venue a owl:Class ;
+    rdfs:label "Venue"@en ;
+    skos:definition "Where a work appeared: a journal, conference, repository, book series or ebook platform (an OpenAlex source). FaBiO splits these by kind; OpenAlex gives one source with a type, so this is our own class and pub:venueType says the kind."@en ;
+    pub:answersCQ "CQ4" .
+
+pub:Topic a owl:Class ;
+    rdfs:subClassOf fabio:SubjectTerm ;
+    rdfs:label "Topic"@en ;
+    skos:definition "An OpenAlex topic, with its subfield, field and domain."@en ;
+    pub:answersCQ "CQ5" .
+
+########################################################################
+## Links between things (object properties)
+########################################################################
+
+pub:hasAuthorship a owl:ObjectProperty ;
+    rdfs:subPropertyOf pro:isDocumentContextFor ;
+    rdfs:domain pub:Work ;
+    rdfs:range pub:Authorship ;
+    rdfs:label "has authorship"@en ;
+    pub:answersCQ "CQ2" , "CQ3" .
+
+pub:author a owl:ObjectProperty ;
+    rdfs:subPropertyOf pro:isHeldBy ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range pub:Author ;
+    rdfs:label "author"@en ;
+    skos:definition "The person who holds this authorship, when OpenAlex identifies them."@en ;
+    pub:answersCQ "CQ2" , "CQ9" .
+
+pub:affiliation a owl:ObjectProperty ;
+    rdfs:subPropertyOf pro:relatesToOrganization ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range pub:Institution ;
+    rdfs:label "affiliation"@en ;
+    skos:definition "An institution the author gave on this paper."@en ;
+    pub:answersCQ "CQ2" , "CQ3" .
+
+pub:publishedIn a owl:ObjectProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range pub:Venue ;
+    rdfs:label "published in"@en ;
+    pub:answersCQ "CQ4" .
+
+pub:hasTopic a owl:ObjectProperty ;
+    rdfs:subPropertyOf fabio:hasSubjectTerm ;
+    rdfs:domain pub:Work ;
+    rdfs:range pub:Topic ;
+    rdfs:label "has topic"@en ;
+    skos:definition "The work's primary topic in OpenAlex."@en ;
+    pub:answersCQ "CQ5" .
+
+pub:cites a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:domain pub:Work ;
+    rdfs:range pub:Work ;
+    rdfs:label "cites"@en ;
+    skos:definition "The work lists the other work in its references. The range makes every cited work a pub:Work, also the ones outside our 5,211."@en ;
+    pub:answersCQ "CQ6" .
+
+########################################################################
+## Values (datatype properties)
+########################################################################
+
+pub:title a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:title ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:string ;
+    rdfs:label "title"@en ;
+    pub:answersCQ "CQ10" .
+
+pub:doi a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:string ;
+    rdfs:label "DOI"@en ;
+    skos:definition "The DOI as text, without https://doi.org/ (a name, not a number)."@en ;
+    pub:answersCQ "CQ10" .
+
+pub:language a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:string ;
+    skos:closeMatch dcterms:language ;
+    rdfs:label "language"@en ;
+    skos:definition "The language OpenAlex detects for the work, as a two-letter code. Not a subproperty of dcterms:language, whose value is a thing (a LinguisticSystem), not text."@en ;
+    pub:answersCQ "CQ7" .
+
+pub:publicationYear a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:integer ;
+    skos:closeMatch fabio:hasPublicationYear ;
+    rdfs:label "publication year"@en ;
+    skos:definition "Not a subproperty of fabio:hasPublicationYear, whose range is xsd:gYear; ours is an integer."@en ;
+    pub:answersCQ "CQ1" , "CQ5" .
+
+pub:publicationDate a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:date ;
+    rdfs:label "publication date"@en ;
+    pub:answersCQ "CQ10" .
+
+pub:isOpenAccess a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is open access"@en ;
+    pub:answersCQ "CQ1" .
+
+pub:isRetracted a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is retracted"@en ;
+    pub:answersCQ "CQ8" .
+
+pub:authorOrder a owl:DatatypeProperty ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range xsd:integer ;
+    rdfs:label "author order"@en ;
+    skos:definition "The position in the byline, from 1."@en ;
+    pub:answersCQ "CQ2" .
+
+pub:authorPosition a owl:DatatypeProperty ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range xsd:string ;
+    rdfs:label "author position"@en ;
+    skos:definition "first, middle or last, as OpenAlex labels it."@en ;
+    pub:answersCQ "CQ2" .
+
+pub:isCorresponding a owl:DatatypeProperty ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is corresponding author"@en ;
+    pub:answersCQ "CQ2" .
+
+pub:nameAsListed a owl:DatatypeProperty ;
+    rdfs:domain pub:Authorship ;
+    rdfs:range xsd:string ;
+    rdfs:label "name as listed"@en ;
+    skos:definition "The author's name as printed on this paper; present also when OpenAlex does not identify the person (D5)."@en ;
+    pub:answersCQ "CQ9" .
+
+pub:name a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    skos:closeMatch foaf:name ;
+    rdfs:label "name"@en ;
+    skos:definition "The name of an author, institution, venue or topic. Not a subproperty of foaf:name, which is only for agents, projects and documents: a topic is none of these."@en ;
+    pub:answersCQ "CQ2" , "CQ3" , "CQ4" .
+
+pub:orcid a owl:DatatypeProperty ;
+    rdfs:domain pub:Author ;
+    rdfs:range xsd:string ;
+    rdfs:label "ORCID"@en ;
+    pub:answersCQ "CQ9" .
+
+pub:countryCode a owl:DatatypeProperty ;
+    rdfs:domain pub:Institution ;
+    rdfs:range xsd:string ;
+    rdfs:label "country code"@en ;
+    pub:answersCQ "CQ3" .
+
+pub:institutionType a owl:DatatypeProperty ;
+    rdfs:domain pub:Institution ;
+    rdfs:range xsd:string ;
+    rdfs:label "institution type"@en ;
+    pub:answersCQ "CQ3" .
+
+pub:venueType a owl:DatatypeProperty ;
+    rdfs:domain pub:Venue ;
+    rdfs:range xsd:string ;
+    rdfs:label "venue type"@en ;
+    pub:answersCQ "CQ4" .
+
+pub:issnL a owl:DatatypeProperty ;
+    rdfs:domain pub:Venue ;
+    rdfs:range xsd:string ;
+    rdfs:label "linking ISSN"@en ;
+    pub:answersCQ "CQ10" .
+
+pub:publisher a owl:DatatypeProperty ;
+    rdfs:domain pub:Venue ;
+    rdfs:range xsd:string ;
+    rdfs:label "publisher"@en ;
+    pub:answersCQ "CQ4" .
+
+pub:subfield a owl:DatatypeProperty ;
+    rdfs:domain pub:Topic ;
+    rdfs:range xsd:string ;
+    rdfs:label "subfield"@en ;
+    pub:answersCQ "CQ5" .
+
+pub:field a owl:DatatypeProperty ;
+    rdfs:domain pub:Topic ;
+    rdfs:range xsd:string ;
+    rdfs:label "field"@en ;
+    pub:answersCQ "CQ5" .
+
+pub:domain a owl:DatatypeProperty ;
+    rdfs:domain pub:Topic ;
+    rdfs:range xsd:string ;
+    rdfs:label "domain"@en ;
+    pub:answersCQ "CQ5" .

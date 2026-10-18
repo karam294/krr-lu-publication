@@ -56,6 +56,17 @@ is a matching question for Session 5.
 **Evidence.** 33,084 authorships, all with a name; 2,101 without an author ID
 (data/profile/profile_tables.txt).
 
+## D6. Use the RDF stack, not a property graph (2026-10-18)
+**Decision.** RDF: IRIs, RDFS and OWL, SHACL, SPARQL in Fuseki, as the template.
+**Alternative.** A property graph (Neo4j, queried with Cypher).
+**Why.** Crossref must merge with OpenAlex in Session 5 without renaming anything:
+global IRIs (D3) do that. "An article is a work" is stated once in the graph, not
+listed in every query. We reuse published vocabularies (FaBiO, CiTO) and check data
+with SHACL: both are standards a property graph lacks. Neo4j has simpler queries and
+suits one team with one source; we have two sources and a schema to reason over.
+**Evidence.** Session 2, step 2d: the paper is found as a Work only through
+rdfs:subClassOf (ontology/first_schema.ttl, now part of ontology/ontology.ttl).
+
 
 ## D7. Reuse SPAR (FaBiO, CiTO, PRO), FOAF and Dublin Core by alignment (2026-10-18)
 **Decision.** The data keeps its pub: words. ontology.ttl places each pub: class or
