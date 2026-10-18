@@ -83,3 +83,20 @@ data (fabio:hasPublicationYear is xsd:gYear, dcterms:language is not text, foaf:
 not for topics). We found no licence for SemOpenAlex's ontology.
 **Evidence.** ontology/LICENCES.md; definitions read in FaBiO 2.3.1, FRBR 1.1.0,
 CiTO 2.9.0, PRO 1.6.1.
+
+## D8. Declare OWL 2 DL; check with ELK and HermiT through ROBOT (2026-10-18)
+**Decision.** ontology.ttl is written for OWL 2 DL and checked by two reasoners, ELK
+(fast) and HermiT (complete), through ROBOT 1.9.10 in a Docker service run on demand:
+docker compose --profile tools run --rm reasoner. The run is saved in
+ontology/reasoner-run.txt.
+**Alternative.** OWL 2 EL only (drop the boolean and date ranges), or checking by hand
+in Protégé.
+**Why.** Our file is OWL 2 DL; it would be EL but for its xsd:boolean and xsd:date
+ranges, which say what the values are and are worth keeping. HermiT reads every
+axiom, while ELK alone misses axioms outside EL (Session 3, slide 39). A scripted run
+can be repeated by anyone from a clean checkout; a Protégé session cannot.
+**Evidence.** ontology/reasoner-run.txt: both reasoners consistent, no unsatisfiable
+class; our file passes the OWL 2 DL check; the 976 violations with the imports come
+from FaBiO's own Dublin Core declarations. With pub:Dataset rdfs:subClassOf
+fabio:Dataset both reasoners found pub:Dataset unsatisfiable (step 3.5), which is why
+D7 links it with skos:closeMatch instead.   

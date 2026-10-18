@@ -21,7 +21,7 @@ services:
 
   # Session 3: the reasoners ELK and HermiT, through ROBOT. Not part of the
   # stack: `docker compose up` never starts it. Run it by hand:
-  #   docker compose run --rm reasoner
+  #   docker compose --profile tools run --rm reasoner
   reasoner:
     build: ./reasoner
     profiles: ["tools"]
