@@ -1,0 +1,9 @@
+DOIs asked: 5,055
+  found in Crossref: 4,886
+  not in Crossref:   169
+cr_authors: 35,468 rows, 8,647 with an ORCID, 13,714 with an affiliation
+cr_references: 149,936 rows (references with a DOI), from 3,714 records
+  pointing to one of our own DOIs: 1,797
+cr_updates: 63 rows; by type: correction 35, new_version 10, erratum 10, retraction 3, new_edition 3, removal 1, corrigendum 1
+Crossref types: journal-article 4,054, proceedings-article 300, book-chapter 278, posted-content 181, peer-review 60, book 5, other 4, dissertation 2, monograph 1, journal-issue 1
+written: data/crossref.sql, 22.1 MB
