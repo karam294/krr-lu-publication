@@ -12,14 +12,16 @@ Asked by LU's research office (R), a researcher or dean (D), or this project (P)
 | CQ3 | R | With which countries and institutions does LU co-author most, and what kind of institutions are they? | Institution; affiliation, countryCode, institutionType, name |
 | CQ4 | R | Where does LU publish (journals, conferences, repositories), and with which publishers? | Venue; publishedIn, venueType, publisher, name |
 | CQ5 | R | In which research fields and domains does LU publish, and how does that change by year? | Topic; hasTopic, subfield, field, domain, publicationYear |
-| CQ6 | D | Which LU papers cite other LU papers? | cites |
+| CQ6 | D | Which LU papers cite other LU papers? | cites; across the sources, owl:sameAs (graph/links) |
 | CQ7 | R | In which languages does LU publish? | language |
 | CQ8 | R | Which LU papers have been retracted? | isRetracted; updates and Retraction (Crossref's notices) |
-| CQ9 | P | Which authorships name a person OpenAlex could not identify, and which author records share an ORCID? | nameAsListed, author, orcid |
+| CQ9 | P | Which authorships name a person OpenAlex could not identify, and which author records share an ORCID? | nameAsListed, author, orcid; owl:sameAs (graph/links, graph/matches) |
 | CQ10 | P | For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue? | doi, title, publicationYear, publicationDate, issnL, venueName, issn |
 
-CQ1 to CQ8 can be answered on the graph today. CQ9 and CQ10 are answered fully
-in Session 5, when the second source and entity resolution arrive.
+CQ1 to CQ8 were answered on the OpenAlex graph in Session 3. Since Session 5,
+with Crossref and the links: CQ10 compares the two sources, CQ9 follows the
+links step by step, and CQ6 and CQ8 have a second query for both sources
+(ontology/cq/*_sources.rq). owl:sameAs is OWL's own word, not one of ours.
 
 ## Every term of the graph has a question
 

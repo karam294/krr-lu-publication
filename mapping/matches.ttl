@@ -1,0 +1,24 @@
+## matches.ttl: the matcher's links (mapping/er/authorship_links.csv) to triples, in R2RML.
+## pipeline/run.py loads the CSV as the table er_matches, runs this mapping with
+## Morph-KGC into build/matches.nt, checks it against shapes/matches-shapes.ttl
+## and loads it into the named graph https://ul.edu.lb/kr/graph/matches.
+##
+## These links are guessed, not read from a key: Fellegi and Sunter's matcher
+## (mapping/er/match_authorships.py) found that an OpenAlex authorship and a
+## Crossref author of the same paper are the same person on that paper, with a
+## score of 4 or more (D13). Measured on the authors whose true match is known by
+## ORCID: precision 0.9997, recall 0.9995 (mapping/er/match_authorships.txt). So
+## they live in a graph of their own: a query that must not guess leaves
+## graph/matches out (D15). The score stays in the CSV, the graph's evidence.
+##
+## The CSV writes an authorship as {paper}-{position}: W2949920576-1 and
+## 10.1007/s11009-025-10172-8-1, the keys of the two source mappings, so the
+## templates give the same IRIs as theirs.
+@prefix rr:  <http://www.w3.org/ns/r2rml#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<#AuthorshipMatches>
+    rr:logicalTable [ rr:tableName "er_matches" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{openalex_authorship}" ] ;
+    rr:predicateObjectMap [ rr:predicate owl:sameAs ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/crossref/{crossref_authorship}" ] ] .

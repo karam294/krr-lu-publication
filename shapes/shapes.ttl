@@ -6,6 +6,14 @@
 ##
 ##   first draft (0.1.0)   3,636 Violations
 ##   after triage (1.0.0)      0 Violations, 2,585 Warnings, 1,070 Info
+##   1.0.1 (Session 5)         the same rules and counts; the TRIAGE comments
+##                             say what the second source and the links showed
+##
+## Why the Warnings that waited for Session 5 are still Warnings: this file
+## checks graph/openalex alone, and that graph is unchanged (we do not edit our
+## copy of OpenAlex, D4). What Session 5 resolves is in graph/links and
+## graph/matches, checked by their own shapes (D15): a query that follows the
+## links sees one paper where this file sees two records.
 ##
 ## pipeline/run.py checks build/graph.nt + ontology/ontology.ttl against this
 ## file (the ontology brings rdfs:subClassOf, so sh:targetClass pub:Work also
@@ -24,7 +32,7 @@
 ## the standard way, so any SHACL engine accepts it).
 <https://ul.edu.lb/kr/shapes> a owl:Ontology ;
     rdfs:label "Shapes for the LU publications graph" ;
-    owl:versionInfo "1.0.0, after triage" ;
+    owl:versionInfo "1.0.1, after triage, with the Session 5 evidence" ;
     sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] .
 
 ########################################################################
@@ -91,7 +99,7 @@ pubsh:PaperShape a sh:NodeShape ;
         sh:path pub:publishedIn ; sh:minCount 1 ;
         sh:severity sh:Warning ;
         sh:message "OpenAlex gives no venue for this paper." ;
-        rdfs:comment "TRIAGE: the data is incomplete at the source. 214 of 5,211 papers have no venue: 84 conference papers, all 60 peer reviews, 28 preprints, 16 other, 15 articles, 11 more. We cannot invent a venue. A Warning; Session 5 checks the ones with a DOI against Crossref, which records the journal or proceedings."
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 214 of 5,211 papers have no venue: 84 conference papers, all 60 peer reviews, 28 preprints, 16 other, 15 articles, 11 more. We cannot invent a venue. A Warning; Session 5 checks the ones with a DOI against Crossref, which records the journal or proceedings. Session 5: of the 212 with a Crossref record, Crossref names a venue for 105 (ontology/cq/cq10_venues.rq); it is in graph/crossref (pub:venueName), not added to this graph."
     ] ;
 
     sh:property [
@@ -115,7 +123,7 @@ pubsh:PaperShape a sh:NodeShape ;
         sh:path pub:hasAuthorship ; sh:maxCount 99 ;
         sh:severity sh:Info ;
         sh:message "This paper lists exactly 100 authors, the OpenAlex cap: its byline is probably cut, so an LU author or the last author may be missing." ;
-        rdfs:comment "TRIAGE: new after the first run, to make the cap visible. 19 papers are at exactly 100; 17 of them have no author labelled last, and 6 have no LU author: the byline was cut. Info: nothing is wrong with the data we have, but it is not the whole byline."
+        rdfs:comment "TRIAGE: new after the first run, to make the cap visible. 19 papers are at exactly 100; 17 of them have no author labelled last, and 6 have no LU author: the byline was cut. Info: nothing is wrong with the data we have, but it is not the whole byline. Session 5: for 16 of the 19, Crossref lists more than 100 authors, up to 1,512 (shapes/crossref-shapes.ttl): their whole byline is in graph/crossref."
     ] ;
 
     # Inventory: "Each paper has exactly one author labelled first, and it is the author at order 1".
@@ -152,7 +160,7 @@ pubsh:PaperShape a sh:NodeShape ;
         sh:path pub:cites ; sh:minCount 1 ;
         sh:severity sh:Info ;
         sh:message "OpenAlex records no reference for this paper." ;
-        rdfs:comment "TRIAGE: the rule is wrong for some types, and the source is incomplete for the rest. 1,051 of 5,211 papers have no reference: 537 articles, 148 conference papers, 95 preprints, 92 other, 49 peer reviews, 24 errata, 106 more. An erratum or a peer review often cites nothing; an article does. Info: a coverage figure, not an error. Session 5 fills references from Crossref where the publisher deposited them."
+        rdfs:comment "TRIAGE: the rule is wrong for some types, and the source is incomplete for the rest. 1,051 of 5,211 papers have no reference: 537 articles, 148 conference papers, 95 preprints, 92 other, 49 peer reviews, 24 errata, 106 more. An erratum or a peer review often cites nothing; an article does. Info: a coverage figure, not an error. Session 5 fills references from Crossref where the publisher deposited them. Session 5: Crossref has references for only 20 of the 1,051 (ontology/cq/cq06_sources.rq): the gap is mostly the publishers', not OpenAlex's."
     ] .
 
 ## Inventory: "Every LU paper lists at least one author affiliated with LU".
@@ -172,7 +180,7 @@ pubsh:LUAuthorShape a sh:NodeShape ;
         sh:hasValue <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;
         sh:severity sh:Warning ;
         sh:message "No author listed on this paper is affiliated with LU: the LU author is past the 100 cap." ;
-        rdfs:comment "TRIAGE: keeps the 6 papers of the first draft visible (W4284692190, W4367016987, W4382465100, W4394762783, W4394763175, W4412869153). Fixed when a second source gives the whole byline."
+        rdfs:comment "TRIAGE: keeps the 6 papers of the first draft visible (W4284692190, W4367016987, W4382465100, W4394762783, W4394763175, W4412869153). Fixed when a second source gives the whole byline. Session 5: Crossref lists more than 100 authors for 16 papers (shapes/crossref-shapes.ttl), but it gives affiliations only as text, which we do not map, so the LU author still cannot be checked in the graph."
     ] .
 
 ## New (Session 3, CQ8): a retraction notice announces a retraction; it is not
@@ -184,7 +192,7 @@ pubsh:RetractionNoticeShape a sh:NodeShape ;
         sh:path pub:isRetracted ; sh:hasValue false ;
         sh:severity sh:Warning ;
         sh:message "A retraction notice is not itself retracted: isRetracted should be false." ;
-        rdfs:comment "TRIAGE: the data is wrong, at the source. W4415060141 is the Retraction Note of W4297996152; OpenAlex flags the note as retracted too. The rule is right. We do not edit our copy of OpenAlex (D4), so a Warning until OpenAlex corrects it; CQ8 counts 5 retracted papers, not 6."
+        rdfs:comment "TRIAGE: the data is wrong, at the source. W4415060141 is the Retraction Note of W4297996152; OpenAlex flags the note as retracted too. The rule is right. We do not edit our copy of OpenAlex (D4), so a Warning until OpenAlex corrects it; CQ8 counts 5 retracted papers, not 6. Session 5 (ontology/cq/cq08_sources.rq): Crossref agrees that W4415060141 is a notice, and says W4308586991, an article to OpenAlex, is a retraction notice too."
     ] .
 
 ## New: a paper does not cite itself. Core SHACL cannot compare a value with
@@ -199,7 +207,7 @@ pubsh:NoSelfCitationShape a sh:NodeShape ;
             SELECT $this WHERE { $this pub:cites $this }"""
     ] ;
     sh:severity sh:Warning ;
-    rdfs:comment "TRIAGE: the data is wrong, at the source. 75 papers cite themselves (75 of the 2,116 citations between our own papers): 66 articles, 7 preprints, 1 review, 1 peer review. A paper cannot cite itself; most likely OpenAlex merged a preprint and its article into one work, so citing the preprint became citing itself. A Warning until Session 5 checks them against Crossref's reference lists; until then CQ6 (most cited within LU) counts them."
+    rdfs:comment "TRIAGE: the data is wrong, at the source. 75 papers cite themselves (75 of the 2,116 citations between our own papers): 66 articles, 7 preprints, 1 review, 1 peer review. A paper cannot cite itself; most likely OpenAlex merged a preprint and its article into one work, so citing the preprint became citing itself. A Warning until Session 5 checks them against Crossref's reference lists; until then CQ6 (most cited within LU) counts them. Session 5 (ontology/cq/cq06_sources.rq): for 43 of the 75 the Crossref record has references, and only 4 of those list the paper itself. So Crossref does not confirm most of them: the explanation above (a preprint merged into its article) stands. Still a Warning on graph/openalex, and CQ6 still counts them."
     .
 
 ## New: the authorship labelled last has the highest order on its paper. It
@@ -228,7 +236,7 @@ pubsh:DoiShape a sh:NodeShape ;
         sh:path [ sh:inversePath pub:doi ] ; sh:maxCount 1 ;
         sh:severity sh:Warning ;
         sh:message "Two papers have this DOI: two records of the same paper." ;
-        rdfs:comment "TRIAGE: the data is wrong, at the source: 2 DOIs, each on two OpenAlex records of the same article (10.4088/pcc.20m02902: W4206272747 and W4205255002; 10.48327/mtsi.v5i4.2025.728: W7118513034 and W7214706685). The rule is right. Session 5 (entity resolution) links each pair as one paper; a Warning until then. Expect 2: a third is a new duplicate."
+        rdfs:comment "TRIAGE: the data is wrong, at the source: 2 DOIs, each on two OpenAlex records of the same article (10.4088/pcc.20m02902: W4206272747 and W4205255002; 10.48327/mtsi.v5i4.2025.728: W7118513034 and W7214706685). The rule is right. Session 5 (entity resolution) links each pair as one paper; a Warning until then. Expect 2: a third is a new duplicate. Session 5: both pairs are linked, owl:sameAs in graph/links (mapping/er/link_by_key.txt). Still 2 Warnings here: this graph has the two records."
     ] .
 
 ########################################################################
@@ -269,7 +277,7 @@ pubsh:AuthorshipShape a sh:NodeShape ;
         sh:path pub:author ; sh:minCount 1 ;
         sh:severity sh:Warning ;
         sh:message "OpenAlex did not identify the person behind this authorship: we only have the name as listed." ;
-        rdfs:comment "TRIAGE: the data is incomplete at the source. 2,101 of 33,084 authorships (6.4%, on 1,217 papers) have no OpenAlex author ID. D5 already keeps the printed name for them. Session 5 (entity resolution) links them: 311 carry an ORCID in the source table, 158 of which match an author we have. A Warning until then."
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 2,101 of 33,084 authorships (6.4%, on 1,217 papers) have no OpenAlex author ID. D5 already keeps the printed name for them. Session 5 (entity resolution) links them: 311 carry an ORCID in the source table, 158 of which match an author we have. A Warning until then. Session 5 (ontology/cq/cq09.rq): graph/links gives the 311 a person by ORCID (D12); 1,790 are left, of which the matcher links 1,449 to a Crossref author (graph/matches), and Crossref names only 1 of those by an ORCID. So Crossref rarely knows the people OpenAlex does not: most of the 1,790 keep only their name as listed (D5). Still 2,101 Warnings on this graph alone."
     ] ;
     sh:property [
         sh:path pub:affiliation ; sh:class pub:Institution ;
@@ -301,7 +309,7 @@ pubsh:OrcidShape a sh:NodeShape ;
         sh:path [ sh:inversePath pub:orcid ] ; sh:maxCount 1 ;
         sh:severity sh:Warning ;
         sh:message "Two author records share this ORCID: one person split in two." ;
-        rdfs:comment "TRIAGE: the data is wrong, at the source. 20 ORCIDs are each on two OpenAlex author records (40 records), the same person written two ways: \"Hala Khalifeh\" and \"Hala K. Khalife\", \"ANDREA GIAMMANCO\" and \"Andrea Giammanco\". The rule is right. Session 5 (entity resolution) links each pair; a Warning until then. Expect 20."
+        rdfs:comment "TRIAGE: the data is wrong, at the source. 20 ORCIDs are each on two OpenAlex author records (40 records), the same person written two ways: \"Hala Khalifeh\" and \"Hala K. Khalife\", \"ANDREA GIAMMANCO\" and \"Andrea Giammanco\". The rule is right. Session 5 (entity resolution) links each pair; a Warning until then. Expect 20. Session 5: all 20 pairs are linked as one person, owl:sameAs in graph/links (ontology/cq/cq09.rq). Still 20 Warnings here: this graph has the two records."
     ] .
 
 pubsh:InstitutionShape a sh:NodeShape ;

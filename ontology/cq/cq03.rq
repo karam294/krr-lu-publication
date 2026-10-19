@@ -10,5 +10,5 @@ WHERE {
   OPTIONAL { ?inst pub:countryCode ?country }
 }
 GROUP BY ?inst ?institution ?country ?kind
-ORDER BY DESC(?papers)
+ORDER BY DESC(?papers) ?institution
 LIMIT 10

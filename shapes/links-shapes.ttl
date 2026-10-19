@@ -1,0 +1,66 @@
+## links-shapes.ttl: the rules the links by key must obey, in SHACL (Session 5).
+##
+## pipeline/run.py checks build/links.nt against this file, with the ontology and
+## the triples of the two source graphs these rules look at (their rdf:type and
+## pub:author triples): a link is only right if both ends exist, in a source
+## graph, as things of the same kind (D15). Same policy as shapes.ttl (D9).
+##
+## Every rule held on the first run (0 results), so every rule is a Violation:
+## a link by key that breaks one is a new error of link_by_key.py, not of a source.
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pub:   <https://ul.edu.lb/kr/pub#> .
+@prefix pubsh: <https://ul.edu.lb/kr/shapes#> .
+
+<https://ul.edu.lb/kr/shapes/links> a owl:Ontology ;
+    rdfs:label "Shapes for the links by key" ;
+    owl:versionInfo "1.0.0" .
+
+## A link joins a paper to a paper, or a person to a person, and both exist: they
+## have a class in a source graph (sh:class looks at their rdf:type, and through
+## the ontology's rdfs:subClassOf an OpenAlex pub:Article is a pub:Work).
+pubsh:SameAsShape a sh:NodeShape ;
+    rdfs:label "Every record linked by key" ;
+    sh:targetSubjectsOf owl:sameAs ;
+    sh:or (
+        [ sh:class pub:Work ; sh:property [ sh:path owl:sameAs ; sh:class pub:Work ] ]
+        [ sh:class pub:Author ; sh:property [ sh:path owl:sameAs ; sh:class pub:Author ] ]
+    ) ;
+    sh:message "A link joins a paper to a paper, or a person to a person, and both are in a source graph." ;
+    sh:property [
+        sh:path owl:sameAs ;
+        sh:qualifiedValueShape [ sh:pattern "^https://ul\\.edu\\.lb/kr/id/(work/crossref|author/orcid)/" ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "An OpenAlex record is the same as at most one Crossref record or person: one DOI, one ORCID."
+    ] .
+
+## Links are written in one direction (D15), so a query knows which way to follow them.
+pubsh:SameAsDirectionShape a sh:NodeShape ;
+    rdfs:label "Every link's start" ;
+    sh:targetSubjectsOf owl:sameAs ;
+    sh:pattern "^https://ul\\.edu\\.lb/kr/id/(work|author)/openalex/" ;
+    sh:message "A link by key starts from an OpenAlex paper or author record, and points to Crossref or to the other OpenAlex record." .
+
+## A link by ORCID gives a person to an authorship that has none (D12): never a
+## second one. The OpenAlex authorships' own pub:author triples are in the data.
+pubsh:AuthorLinkShape a sh:NodeShape ;
+    rdfs:label "Every authorship with a person" ;
+    sh:targetSubjectsOf pub:author ;
+    sh:property [
+        sh:path pub:author ; sh:maxCount 1 ; sh:class pub:Author ;
+        sh:message "An authorship has at most one person: a link by ORCID must not give a second one."
+    ] .
+
+## The people known only by an ORCID, stated in this graph (D12).
+pubsh:OrcidPersonShape a sh:NodeShape ;
+    rdfs:label "Every person a link names by ORCID" ;
+    sh:targetSubjectsOf pub:orcid ;
+    sh:class pub:Author ;
+    sh:pattern "^https://ul\\.edu\\.lb/kr/id/author/orcid/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+    sh:property [
+        sh:path pub:orcid ; sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "A person known by an ORCID has exactly one, written 0000-0000-0000-000X, and is named .../author/orcid/{it}."
+    ] .

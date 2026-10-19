@@ -1,20 +1,23 @@
 # mapping/
 
-From the source tables to RDF, in R2RML (W3C, 2012), one mapping per source,
-one named graph per source (D10, D14).
+From the source tables to RDF, in R2RML (W3C, 2012): one mapping and one named
+graph per source (D10, D14), and per kind of link between them (D15).
 
 | File | What it is |
 |---|---|
 | `mapping.ttl` | OpenAlex: the 8 tables of data/lu.sql to triples (Session 2) -> graph/openalex |
 | `crossref.ttl` | Crossref: the 4 tables of data/crossref.sql to triples (Session 5) -> graph/crossref |
+| `links.ttl` | the links by key of er/links_by_key.csv (same DOI, same ORCID) -> graph/links |
+| `matches.ttl` | the matcher's links of er/authorship_links.csv -> graph/matches |
 | `one_paper_by_hand.ttl` | one paper (W3023054831) written by hand, before the mapping |
 | `check_one_paper.py` | the test: every hand-written triple must come out of the mapping (CI runs it) |
 | `er/` | entity resolution: which records of the two sources are the same thing (its own README) |
 
 `pipeline/run.py` runs each mapping with Morph-KGC into its own file
-(build/graph.nt, build/crossref.nt), checks each against its own shapes, and
-loads each into its own named graph. The sizes are in the first line of
-`ontology/cq_answers.txt`.
+(build/graph.nt, crossref.nt, links.nt, matches.nt), checks each against its
+own shapes, and loads each into its own named graph. The link mappings read
+the two CSV files of er/, which the pipeline loads as the tables er_links and
+er_matches. The sizes are at the top of `ontology/cq_answers.txt`.
 
 ## One IRI scheme for both sources (D3)
 
@@ -29,7 +32,8 @@ loads each into its own named graph. The sizes are in the first line of
 
 So the OpenAlex paper and the Crossref record of the same DOI are two nodes,
 each in its own graph. They become one paper only through a link, made after
-checking (D3): `er/` makes the links, and the next step loads them.
+checking (D3): `er/` makes the links, `links.ttl` and `matches.ttl` turn them
+into `owl:sameAs` (and `pub:author`) in graph/links and graph/matches (D15).
 
 ## What each source says
 

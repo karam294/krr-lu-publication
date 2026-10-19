@@ -1,0 +1,51 @@
+# CQ6, both sources. Which citations between LU papers does each source record, and does Crossref confirm the self-citations?
+# A citation between two LU papers in OpenAlex (graph/openalex), and the one
+# between their Crossref records (graph/crossref), joined by the links by key
+# (graph/links: same DOI). A self-citation is a paper citing itself (shapes.ttl,
+# 75 Warnings): Crossref confirms it when the record lists its own DOI. Last, the
+# papers with no reference in OpenAlex (shapes.ttl, an Info): does Crossref have
+# their reference lists? (The 5,211 OpenAlex papers are the subjects of
+# pub:isOpenAccess, a value only OpenAlex gives.)
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?citations ?count
+FROM NAMED <https://ul.edu.lb/kr/graph/openalex>
+FROM NAMED <https://ul.edu.lb/kr/graph/crossref>
+FROM NAMED <https://ul.edu.lb/kr/graph/links>
+WHERE {
+  {
+    SELECT ("1 between LU papers, in OpenAlex" AS ?citations) (COUNT(*) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:cites ?q . ?q pub:publicationYear ?y } }
+  } UNION {
+    SELECT ("2 between LU papers, in Crossref" AS ?citations) (COUNT(*) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?r pub:cites ?s . ?s pub:doi ?d } }
+  } UNION {
+    SELECT ("3 in both" AS ?citations) (COUNT(*) AS ?count) WHERE {
+      SELECT DISTINCT ?p ?q WHERE {
+        GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:cites ?q . ?q pub:publicationYear ?y }
+        GRAPH <https://ul.edu.lb/kr/graph/links> { ?p owl:sameAs ?r . ?q owl:sameAs ?s }
+        GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?r pub:cites ?s } } }
+  } UNION {
+    SELECT ("4 self-citations, in OpenAlex" AS ?citations) (COUNT(*) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:cites ?p } }
+  } UNION {
+    SELECT ("5 ... of which the Crossref record has references" AS ?citations) (COUNT(DISTINCT ?p) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:cites ?p }
+      GRAPH <https://ul.edu.lb/kr/graph/links> { ?p owl:sameAs ?r FILTER STRSTARTS(STR(?r), "https://ul.edu.lb/kr/id/work/crossref/") }
+      GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?r pub:cites ?any } }
+  } UNION {
+    SELECT ("6 ... of which Crossref also has the self-citation" AS ?citations) (COUNT(DISTINCT ?p) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:cites ?p }
+      GRAPH <https://ul.edu.lb/kr/graph/links> { ?p owl:sameAs ?r }
+      GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?r pub:cites ?r } }
+  } UNION {
+    SELECT ("7 LU papers with no reference in OpenAlex" AS ?citations) (COUNT(?p) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:isOpenAccess ?oa FILTER NOT EXISTS { ?p pub:cites ?any } } }
+  } UNION {
+    SELECT ("8 ... of which the Crossref record has references" AS ?citations) (COUNT(DISTINCT ?p) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?p pub:isOpenAccess ?oa FILTER NOT EXISTS { ?p pub:cites ?any } }
+      GRAPH <https://ul.edu.lb/kr/graph/links> { ?p owl:sameAs ?r }
+      GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?r pub:cites ?ref } }
+  }
+}
+ORDER BY ?citations

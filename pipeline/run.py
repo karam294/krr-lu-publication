@@ -6,31 +6,37 @@
 Run from the repository root. In the stack, docker compose runs it once, as
 the "pipeline" service, before the access layer starts.
 
-Two sources, one named graph each (D10, D14), each with its own mapping, its
-own shapes and its own file (SOURCES below).
+Four named graphs (GRAPHS below), each with its own mapping, its own shapes and
+its own file: one per source (D10, D14), and one per kind of link between them
+(D15): the links by key, and the matcher's links.
 
   1 source       DB_URL if set (your database, with the tables of both
-                 sources), otherwise our data: data/lu.sql and
-                 data/crossref.sql loaded into build/sources.sqlite
-  2 map          each source's mapping with Morph-KGC:
+                 sources and of mapping/er), otherwise our data: data/lu.sql,
+                 data/crossref.sql and the two CSV files of mapping/er loaded
+                 into build/sources.sqlite
+  2 map          each mapping with Morph-KGC:
                  mapping/mapping.ttl  -> build/graph.nt     (OpenAlex)
                  mapping/crossref.ttl -> build/crossref.nt  (Crossref)
+                 mapping/links.ttl    -> build/links.nt     (links by key)
+                 mapping/matches.ttl  -> build/matches.nt   (the matcher's links)
   3 validate     each graph + ontology/ontology.ttl against its own shapes
-                 (shapes/validate.py): shapes/shapes.ttl for OpenAlex,
-                 shapes/crossref-shapes.ttl for Crossref. Any Violation, or a
-                 shape that checks nothing, in either graph stops here (exit 1),
-                 so bad data never reaches the endpoint; both reports go to
-                 build/shacl-report.txt
+                 (shapes/validate.py). A link is checked with the triples of the
+                 graphs it joins (CONTEXT below). Any Violation, or a shape that
+                 checks nothing, in any graph stops here (exit 1), so bad data
+                 never reaches the endpoint; the reports go to
+                 build/shacl-report.txt (all) and build/shacl-report-{graph}.txt
   4 provenance   what this run used and made, in PROV-O -> build/provenance.ttl
                  (pipeline/provenance.py)
   5 describe     VoID of the OpenAlex graph -> build/void.ttl (the access layer
                  reads it)
-  6 load         empty the endpoint, then one named graph each:
-                 graph/openalex, graph/crossref, graph/ontology, graph/provenance.
-                 Fuseki's default graph is their union (fuseki/config.ttl).
+  6 load         empty the endpoint, then one named graph each: graph/openalex,
+                 graph/crossref, graph/links, graph/matches, graph/ontology,
+                 graph/provenance. Fuseki's default graph is their union
+                 (fuseki/config.ttl).
 """
 
 import argparse
+import csv
 import os
 import sqlite3
 import sys
@@ -47,10 +53,34 @@ BUILD = ROOT / "build"
 FUSEKI = os.environ.get("FUSEKI_URL", "http://127.0.0.1:3030")
 DATASET = os.environ.get("FUSEKI_DATASET", "kr")
 
-# One named graph per source: its name, its mapping, its shapes, its file in build/.
-SOURCES = (
+# One named graph per source, and one per kind of link: its name, its mapping,
+# its shapes, its file in build/.
+GRAPHS = (
     ("openalex", "mapping/mapping.ttl", "shapes/shapes.ttl", "graph.nt"),
     ("crossref", "mapping/crossref.ttl", "shapes/crossref-shapes.ttl", "crossref.nt"),
+    ("links", "mapping/links.ttl", "shapes/links-shapes.ttl", "links.nt"),
+    ("matches", "mapping/matches.ttl", "shapes/matches-shapes.ttl", "matches.nt"),
+)
+SOURCE_FILES = ("graph.nt", "crossref.nt")
+
+# A link is right only if it fits the graphs it joins, so its shapes see some
+# triples of those graphs too: the predicates named here, taken from both source
+# graphs, and whole link graphs. Only these: the whole sources would take minutes.
+TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+PUB = "https://ul.edu.lb/kr/pub#"
+CONTEXT = {
+    "links": {"predicates": (TYPE, PUB + "author"), "graphs": ()},
+    "matches": {"predicates": (TYPE, PUB + "hasAuthorship", PUB + "author", PUB + "orcid", PUB + "isOpenAccess"),
+                "graphs": ("links.nt",)},
+}
+
+# The links of mapping/er, as tables for the link mappings (mapping/links.ttl,
+# mapping/matches.ttl). links_by_key.csv's columns left and right are SQL words,
+# so they become left_node and right_node.
+ER_TABLES = (
+    ("er_links", "mapping/er/links_by_key.csv", ["kind", "left_node", "right_node", "rule", "evidence"]),
+    ("er_matches", "mapping/er/authorship_links.csv",
+     ["openalex_authorship", "crossref_authorship", "score", "name", "initial", "position"]),
 )
 
 
@@ -68,8 +98,14 @@ def source():
     con = sqlite3.connect(db)
     for sql in ("lu.sql", "crossref.sql"):
         con.executescript((ROOT / "data" / sql).read_text(encoding="utf-8"))
+    for table, path, columns in ER_TABLES:
+        with open(ROOT / path, encoding="utf-8", newline="") as f:
+            rows = list(csv.reader(f))[1:]          # the first row is the header
+        con.execute(f"CREATE TABLE {table} ({', '.join(c + ' TEXT' for c in columns)})")
+        con.executemany(f"INSERT INTO {table} VALUES ({', '.join('?' * len(columns))})", rows)
+    con.commit()
     con.close()
-    step(1, "source: our data, data/lu.sql and data/crossref.sql")
+    step(1, "source: our data, data/lu.sql, data/crossref.sql and the links of mapping/er")
     return f"sqlite:///{db}"
 
 
@@ -84,24 +120,44 @@ def materialize(db_url, name, mapping, filename):
     return out, len(graph)
 
 
+def context(name):
+    """The triples of other graphs that the shapes of graph/{name} look at, as N-Triples."""
+    spec = CONTEXT.get(name)
+    if spec is None:
+        return ""
+    wanted = {f"<{p}>" for p in spec["predicates"]}
+    lines = []
+    for filename in SOURCE_FILES:
+        with open(BUILD / filename, encoding="utf-8") as f:
+            lines += [line for line in f if line.split(" ", 2)[1] in wanted]
+    for filename in spec["graphs"]:
+        lines += (BUILD / filename).read_text(encoding="utf-8").splitlines(keepends=True)
+    return "".join(lines)
+
+
 def gate(name, graph_path, shapes_file):
     """Validate one graph against its shapes; return the counts per severity,
     the shapes that checked nothing, and the report lines."""
     sys.path.insert(0, str(ROOT / "shapes"))
     from validate import check
     data = Graph().parse(graph_path, format="nt").parse(ROOT / "ontology" / "ontology.ttl")
+    size = len(data)
+    data.parse(data=context(name), format="nt")
+    extra = f", with {len(data) - size:,} triples of the graphs it links" if len(data) > size else ""
     shapes = Graph().parse(ROOT / shapes_file)
     counts, empty, lines = check(data, shapes)
-    step(3, f"validate: graph/{name} against {shapes_file}: {counts['Violation']:,} Violation, "
+    step(3, f"validate: graph/{name} against {shapes_file}{extra}: {counts['Violation']:,} Violation, "
             f"{counts['Warning']:,} Warning, {counts['Info']:,} Info")
     print("\n".join(lines), flush=True)
-    head = f"== graph/{name} ({len(data):,} triples with the ontology) against {shapes_file}"
+    head = f"== graph/{name} ({size:,} triples with the ontology{extra}) against {shapes_file}"
     return counts, empty, [head] + lines + [""]
 
 
 def stop_if_failed(results):
     report = [line for _, _, lines in results.values() for line in lines]
     (BUILD / "shacl-report.txt").write_text("\n".join(report) + "\n", encoding="utf-8")
+    for name, (_, _, lines) in results.items():          # and one file per graph
+        (BUILD / f"shacl-report-{name}.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     failed = []
     for name, (counts, empty, _) in results.items():
         if counts["Violation"]:
@@ -163,9 +219,9 @@ def main():
     started = now()
     db_url = source()
     files, sizes = {}, {}
-    for name, mapping, _, filename in SOURCES:
+    for name, mapping, _, filename in GRAPHS:
         files[name], sizes[name] = materialize(db_url, name, mapping, filename)
-    results = {name: gate(name, files[name], shapes) for name, _, shapes, _ in SOURCES}
+    results = {name: gate(name, files[name], shapes) for name, _, shapes, _ in GRAPHS}
     stop_if_failed(results)
     record_provenance(sizes, results, started)
     describe(files["openalex"])

@@ -7,4 +7,4 @@ WHERE {
   ?venue pub:venueType ?kind .
 }
 GROUP BY ?kind
-ORDER BY DESC(?papers)
+ORDER BY DESC(?papers) ?kind

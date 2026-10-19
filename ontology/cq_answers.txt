@@ -1,4 +1,8 @@
-Competency questions on graph/openalex 578,982 triples (build/graph.nt) and graph/crossref 341,926 triples (build/crossref.nt), run 2026-10-19
+Competency questions, run 2026-10-19, on
+  graph/openalex 578,982 triples (build/graph.nt)
+  graph/crossref 341,926 triples (build/crossref.nt)
+  graph/links 9,293 triples (build/links.nt)
+  graph/matches 30,848 triples (build/matches.nt)
 
 == cq01.rq  CQ1. How many papers did LU publish each year from 2022 to 2025, of each type, and how many are open access?
    year  papers  openAccess  articles
@@ -95,13 +99,25 @@ Competency questions on graph/openalex 578,982 triples (build/graph.nt) and grap
    W4391994687  New Progress on London Dispersive Energy, Polar Surface Inte  18       
    W4391386167  London Dispersive and Lewis Acid-Base Surface Energy of 2D S  17       
    W4220845299  Angiotensin II Type I Receptor (AT1R): The Gate towards COVI  16       
-   W4382355976  New Physicochemical Methodology for the Determination of the  16       
    W4283378514  Catch-22: War, Refugees, COVID-19, and the Scourge of Antimi  16       
+   W4382355976  New Physicochemical Methodology for the Determination of the  16       
    W4225264817  The Pathophysiology of Long COVID throughout the Renin-Angio  15       
    W4210324511  Sustainable Use of Sewage Sludge as a Casing Material for Bu  14       
    W4388853786  Some Irregularities in the Evaluation of Surface Parameters   14       
    W4224281147  Kinetic Studies on Delignification and Heavy Metals Uptake b  13       
    (10 rows)
+
+== cq06_sources.rq  CQ6, both sources. Which citations between LU papers does each source record, and does Crossref confirm the self-citations?
+   citations                                           count
+   1 between LU papers, in OpenAlex                    2116 
+   2 between LU papers, in Crossref                    1786 
+   3 in both                                           1762 
+   4 self-citations, in OpenAlex                       75   
+   5 ... of which the Crossref record has references   43   
+   6 ... of which Crossref also has the self-citation  4    
+   7 LU papers with no reference in OpenAlex           1051 
+   8 ... of which the Crossref record has references   20   
+   (8 rows)
 
 == cq07.rq  CQ7. In which languages does LU publish?
    language  papers
@@ -111,10 +127,10 @@ Competency questions on graph/openalex 578,982 triples (build/graph.nt) and grap
    lv        9     
    de        5     
    es        4     
-   ng        3     
    id        3     
-   tr        2     
+   ng        3     
    pt        2     
+   tr        2     
    ca        1     
    hu        1     
    it        1     
@@ -142,9 +158,14 @@ Competency questions on graph/openalex 578,982 triples (build/graph.nt) and grap
    (6 rows)
 
 == cq09.rq  CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
-   authorshipsWithoutPerson  orcidsOnSeveralRecords  recordsSharingAnOrcid
-   2101                      20                      40                   
-   (1 rows)
+   step                                                     count
+   1 authorships with no person in OpenAlex                 2101 
+   2 ... still none with the links by ORCID                 1790 
+   3 ... of which matched to a Crossref author              1449 
+   4 ... of which Crossref names the person by ORCID        1    
+   5 ORCIDs on two OpenAlex author records                  20   
+   6 ... of which the two records are linked as one person  20   
+   (6 rows)
 
 == cq10.rq  CQ10. For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue?
    aspect   answer                   papers

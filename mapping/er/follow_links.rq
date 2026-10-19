@@ -1,0 +1,19 @@
+# Follow the links: one paper's two records and its authors, across the four graphs (D15).
+# The OpenAlex paper W3023054831 (graph/openalex) is the same as a Crossref record
+# (graph/links, by its DOI); each of its authorships is the same as a Crossref
+# author (graph/matches, by the matcher). Each graph is named, so each step says
+# which source, or which kind of link, it relies on.
+# Run it on the endpoint (Fuseki, dataset kr) after python pipeline/run.py.
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?order ?openalexName ?crossrefName ?record
+WHERE {
+  GRAPH <https://ul.edu.lb/kr/graph/links> {
+    <https://ul.edu.lb/kr/id/work/openalex/W3023054831> owl:sameAs ?record }
+  GRAPH <https://ul.edu.lb/kr/graph/openalex> {
+    <https://ul.edu.lb/kr/id/work/openalex/W3023054831> pub:hasAuthorship ?a .
+    ?a pub:authorOrder ?order ; pub:nameAsListed ?openalexName }
+  GRAPH <https://ul.edu.lb/kr/graph/matches> { ?a owl:sameAs ?c }
+  GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?record pub:hasAuthorship ?c . ?c pub:nameAsListed ?crossrefName }
+}
+ORDER BY ?order

@@ -46,4 +46,4 @@ WHERE {
   BIND (IF(?aspect = "1 title", ?title, IF(?aspect = "2 year", ?year, IF(?aspect = "3 day", ?date, ?venue))) AS ?answer)
 }
 GROUP BY ?aspect ?answer
-ORDER BY ?aspect DESC(?papers)
+ORDER BY ?aspect DESC(?papers) ?answer

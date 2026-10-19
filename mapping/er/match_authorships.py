@@ -287,6 +287,20 @@ def main():
               f"of which the first initials differ and the names are not the same: "
               f"{sum(1 for s, p in links.values() if s >= THRESHOLD and p['out'][1] == 'initial different' and p['out'][0] != 'name same'):,}"]
 
+    # Where both sources give the person an ORCID and the two differ. The measurement
+    # above sees such a link only when Crossref's ORCID is on another OpenAlex
+    # authorship of the paper; shapes/matches-shapes.ttl flags every one of them.
+    differ = sorted(((p["wid"], p["a"], p["c"], s, p["out"]) for s, p in links.values()
+                     if s >= THRESHOLD and p["a"]["orcid"] and p["c"]["orcid"]
+                     and p["a"]["orcid"] != p["c"]["orcid"]), key=lambda x: (x[0], x[1]["order"]))
+    by_name = Counter(out[0] for *_, out in differ)
+    lines += ["", f"links kept whose two sources give the person two different ORCIDs: {len(differ)} "
+              f"({', '.join(f'{k} {v}' for k, v in by_name.most_common())})"]
+    for wid, a, c, s, out in differ:
+        if out[0] != "name same":
+            lines.append(f"  {wid}: OpenAlex {a['order']} {a['name']!r} {a['orcid']} <-> Crossref {c['order']} "
+                         f"{c['given']!r} {c['family']!r} {c['orcid']} ({out[0]}, score {s:.1f})")
+
     sample_path = ER / "hand_sample.csv"
     if not sample_path.exists():
         with open(sample_path, "w", newline="", encoding="utf-8-sig") as f:

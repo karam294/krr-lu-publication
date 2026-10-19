@@ -6,4 +6,4 @@ WHERE {
   ?paper pub:language ?language .
 }
 GROUP BY ?language
-ORDER BY DESC(?papers)
+ORDER BY DESC(?papers) ?language

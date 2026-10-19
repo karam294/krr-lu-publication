@@ -14,5 +14,5 @@ WHERE {
   ?person pub:name ?name .
 }
 GROUP BY ?person ?name
-ORDER BY DESC(?papers)
+ORDER BY DESC(?papers) ?name
 LIMIT 10

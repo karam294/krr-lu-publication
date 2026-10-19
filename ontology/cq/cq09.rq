@@ -1,12 +1,40 @@
 # CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
+# Step by step: in OpenAlex alone, then with the links by key (graph/links), then
+# with the matcher's links (graph/matches, guessed: D13, D15). Each graph is named
+# with GRAPH, so the answer says which links it relies on.
 PREFIX pub: <https://ul.edu.lb/kr/pub#>
-SELECT ?authorshipsWithoutPerson ?orcidsOnSeveralRecords ?recordsSharingAnOrcid
-FROM <https://ul.edu.lb/kr/graph/openalex>    # OpenAlex only: the default graph holds both sources (D14)
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?step ?count
+FROM NAMED <https://ul.edu.lb/kr/graph/openalex>
+FROM NAMED <https://ul.edu.lb/kr/graph/crossref>
+FROM NAMED <https://ul.edu.lb/kr/graph/links>
+FROM NAMED <https://ul.edu.lb/kr/graph/matches>
 WHERE {
-  { SELECT (COUNT(?a) AS ?authorshipsWithoutPerson)
-    WHERE { ?a a pub:Authorship . FILTER NOT EXISTS { ?a pub:author ?person } } }
-  { SELECT (COUNT(?orcid) AS ?orcidsOnSeveralRecords) (SUM(?n) AS ?recordsSharingAnOrcid)
-    WHERE { { SELECT ?orcid (COUNT(?person) AS ?n)
-              WHERE { ?person pub:orcid ?orcid }
-              GROUP BY ?orcid HAVING (COUNT(?person) > 1) } } }
+  {
+    SELECT ("1 authorships with no person in OpenAlex" AS ?step) (COUNT(?a) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?a a pub:Authorship FILTER NOT EXISTS { ?a pub:author ?p } } }
+  } UNION {
+    SELECT ("2 ... still none with the links by ORCID" AS ?step) (COUNT(?a) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?a a pub:Authorship FILTER NOT EXISTS { ?a pub:author ?p } }
+      FILTER NOT EXISTS { GRAPH <https://ul.edu.lb/kr/graph/links> { ?a pub:author ?q } } }
+  } UNION {
+    SELECT ("3 ... of which matched to a Crossref author" AS ?step) (COUNT(?a) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?a a pub:Authorship FILTER NOT EXISTS { ?a pub:author ?p } }
+      FILTER NOT EXISTS { GRAPH <https://ul.edu.lb/kr/graph/links> { ?a pub:author ?q } }
+      GRAPH <https://ul.edu.lb/kr/graph/matches> { ?a owl:sameAs ?c } }
+  } UNION {
+    SELECT ("4 ... of which Crossref names the person by ORCID" AS ?step) (COUNT(?a) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?a a pub:Authorship FILTER NOT EXISTS { ?a pub:author ?p } }
+      FILTER NOT EXISTS { GRAPH <https://ul.edu.lb/kr/graph/links> { ?a pub:author ?q } }
+      GRAPH <https://ul.edu.lb/kr/graph/matches> { ?a owl:sameAs ?c }
+      GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?c pub:author ?person } }
+  } UNION {
+    SELECT ("5 ORCIDs on two OpenAlex author records" AS ?step) (COUNT(DISTINCT ?orcid) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?r1 pub:orcid ?orcid . ?r2 pub:orcid ?orcid FILTER (STR(?r1) < STR(?r2)) } }
+  } UNION {
+    SELECT ("6 ... of which the two records are linked as one person" AS ?step) (COUNT(DISTINCT ?orcid) AS ?count) WHERE {
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?r1 pub:orcid ?orcid . ?r2 pub:orcid ?orcid FILTER (STR(?r1) < STR(?r2)) }
+      GRAPH <https://ul.edu.lb/kr/graph/links> { ?r1 owl:sameAs ?r2 } }
+  }
 }
+ORDER BY ?step

@@ -12,6 +12,7 @@ often it is wrong. Every number below is in one of the files of this folder.
 | `match_authorships.py` | part 2: the matcher for authors, who share no identifier |
 | `authorship_links.csv`, `match_authorships.txt` | its links, and its measurement |
 | `hand_sample.csv` | 40 links checked by a person (the column `same`) |
+| `follow_links.rq` | a query that follows both kinds of link for one paper, on the endpoint |
 
 Run, from the repository root:
 
@@ -34,6 +35,8 @@ python mapping/er/match_authorships.py    # about a minute
 4. **Authorships OpenAlex gave no author ID** (Session 4: 2,101): 311 carry an
    ORCID. 158 link to the OpenAlex author with that ORCID; 153 to a person known
    only by the ORCID, 123 people (D12). 1,790 are left with a name only.
+5. **An OpenAlex author and the Crossref person of the same ORCID**: 3,827
+   author records, 3,812 ORCIDs (of the 4,450 that Crossref gives).
 
 ## Part 2: which Crossref author is which OpenAlex authorship?
 
@@ -64,6 +67,16 @@ with no ORCID on both sides (`hand_sample.csv`), drawn when the threshold was 8:
 20 with a score from 4 to 8, which a threshold of 8 drops, and 20 with 8 or more
 whose names are not plainly the same.
 
+**Where the two sources give two different ORCIDs.** 52 of the kept links join
+an OpenAlex authorship and a Crossref author whose ORCIDs differ (listed at the
+end of `match_authorships.txt`). 42 have the same name on both sides: one person
+with two ORCIDs, so one source is wrong or the person has two ORCID records. A
+few are the matcher's mistakes: Norma and Najah A. R. Ghamrawi (3 papers), Nigar
+and Najwaa Kirmani, two people each time with one family name and one first
+initial. The measurement above sees only one of the 52 (Heeba Anis): it can only
+measure a link where Crossref's ORCID is on exactly one OpenAlex authorship of
+the paper. The pipeline flags all 52 (shapes/matches-shapes.ttl).
+
 **What decided the threshold** (D13). On half B, thresholds 4 and 8 have the
 same precision, 0.9997; 4 has the higher recall, 0.9995 against 0.9957. In the
 hand sample, 19 of the 20 links from 4 to 8 are the same person: most are a
@@ -71,6 +84,22 @@ byline in another order in Crossref. So the threshold is 4. The weakness we
 keep: when the family name and the position agree, a different first initial
 does not cancel the link (28 links, most with a score of 9.1); 2 of the 4
 checked are two different people.
+
+## How the links reach the graph (D15)
+
+The two CSV files are the links; pipeline/run.py loads them as two tables and
+maps them like the sources, each into a named graph of its own:
+
+| Links | Mapping | Named graph | Shapes |
+|---|---|---|---|
+| `links_by_key.csv`: by DOI and ORCID, no guessing | `mapping/links.ttl` | graph/links | `shapes/links-shapes.ttl` |
+| `authorship_links.csv`: the matcher's, score 4 or more | `mapping/matches.ttl` | graph/matches | `shapes/matches-shapes.ttl` |
+
+A link is `owl:sameAs` (kinds 1, 2, 3, 5 and the matcher's) or `pub:author`
+(kind 4), always from OpenAlex to Crossref. The records stay two nodes, each in
+its source's graph: a wrong link is removed by changing this folder, never by
+editing a source. And a query chooses how sure it must be: graph/links only,
+or graph/matches too (ontology/cq/cq09.rq does both, step by step).
 
 ### Labelling the hand sample (how it was done, and how to redo it)
 

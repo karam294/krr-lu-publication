@@ -1,0 +1,8 @@
+== graph/links (9,651 triples with the ontology, with 144,226 triples of the graphs it links) against shapes/links-shapes.ttl
+  focus nodes  39,941  Every authorship with a person
+  focus nodes   8,720  Every link's start
+  focus nodes     123  Every person a link names by ORCID
+  focus nodes   8,720  Every record linked by key
+
+validated in 9 s. conforms (SHACL): True. 0 Violation, 0 Warning, 0 Info
+

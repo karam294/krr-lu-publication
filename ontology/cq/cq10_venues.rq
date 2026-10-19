@@ -23,4 +23,4 @@ WHERE {
   BIND (COALESCE(?type, "(no venue)") AS ?openalexVenueType)
 }
 GROUP BY ?openalexVenueType ?answer
-ORDER BY ?openalexVenueType DESC(?papers)
+ORDER BY ?openalexVenueType DESC(?papers) ?answer

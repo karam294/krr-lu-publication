@@ -15,6 +15,11 @@ key is match_authorships.py.
   4 author: an authorship OpenAlex gave no author ID, but with an ORCID: the
             author record that has this ORCID, or else a person known only by
             the ORCID (D12).
+  5 author: an OpenAlex author record and the person of the Crossref graph
+            named by the same ORCID (D12: .../author/orcid/{ORCID}).
+
+pipeline/run.py loads the links into the graph: 1, 2, 3 and 5 as owl:sameAs,
+4 as pub:author, all in the named graph graph/links (mapping/links.ttl, D15).
 """
 
 import csv
@@ -103,6 +108,18 @@ def main():
     lines.append(f"  -> an OpenAlex author with this ORCID: {to_known}")
     lines.append(f"  -> a person known only by the ORCID: {to_new} authorships, {len(new_people)} people")
     lines.append(f"  still without a person: {total - len(rows):,}")
+    in_crossref = {o for (o,) in con.execute("SELECT DISTINCT orcid FROM cr_authors WHERE orcid IS NOT NULL")}
+    lines.append(f"  of the {len(new_people)} people known only by the ORCID, {len(set(new_people) & in_crossref)} "
+                 "are also in Crossref")
+
+    # 5 an OpenAlex author record <-> the Crossref person with the same ORCID
+    pairs = con.execute("SELECT author_id, orcid FROM authors WHERE orcid IS NOT NULL ORDER BY orcid, author_id").fetchall()
+    same = [(a, o) for a, o in pairs if o in in_crossref]
+    for author_id, orcid in same:
+        links.append(["author <-> person by ORCID", f"author/openalex/{author_id}", f"author/orcid/{orcid}",
+                      "same ORCID", orcid])
+    lines.append(f"5 OpenAlex author record <-> Crossref person, same ORCID: {len(same):,} links, "
+                 f"{len({o for _, o in same}):,} ORCIDs (of {len(in_crossref):,} ORCIDs in Crossref)")
 
     with open(ER / "links_by_key.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)

@@ -1,13 +1,15 @@
 """Run every competency question (ontology/cq/*.rq) on the graph and save the answers.
 
-    python ontology/run_cqs.py        after pipeline/run.py (it reads build/graph.nt
-                                      and build/crossref.nt)
+    python ontology/run_cqs.py        after pipeline/run.py (it reads build/graph.nt,
+                                      crossref.nt, links.nt and matches.nt)
 
-The graphs are loaded as the endpoint holds them: each source in its own named
-graph (graph/openalex, graph/crossref), and the default graph is their union,
-as in Fuseki (fuseki/config.ttl). So a question gives the same answer here and
-on the endpoint. The questions about OpenAlex name their graph (FROM); the ones
-that compare the sources (CQ8 both sources, CQ10) use both (FROM NAMED).
+The graphs are loaded as the endpoint holds them: each source and each kind of
+link in its own named graph (graph/openalex, graph/crossref, graph/links,
+graph/matches), and the default graph is their union, as in Fuseki
+(fuseki/config.ttl). So a question gives the same answer here and on the
+endpoint. The questions about OpenAlex name their graph (FROM); the ones that
+compare the sources or follow the links (CQ6 and CQ8 both sources, CQ9, CQ10)
+name each graph they use (FROM NAMED, GRAPH).
 
 The answers go to ontology/cq_answers.txt: the evidence that the graph answers
 each question, and the numbers the report may quote.
@@ -20,7 +22,7 @@ import pyoxigraph as ox
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "ontology" / "cq_answers.txt"
-GRAPHS = {"openalex": "graph.nt", "crossref": "crossref.nt"}
+GRAPHS = {"openalex": "graph.nt", "crossref": "crossref.nt", "links": "links.nt", "matches": "matches.nt"}
 
 
 def show(term):
@@ -39,7 +41,7 @@ for name, filename in GRAPHS.items():
     store.bulk_load(path=str(ROOT / "build" / filename), format=ox.RdfFormat.N_TRIPLES, to_graph=graph)
     n = next(iter(store.query(f"SELECT (COUNT(*) AS ?n) WHERE {{ GRAPH <{graph.value}> {{ ?s ?p ?o }} }}")))["n"]
     sizes.append(f"graph/{name} {int(n.value):,} triples (build/{filename})")
-lines = [f"Competency questions on {' and '.join(sizes)}, run {datetime.date.today()}", ""]
+lines = [f"Competency questions, run {datetime.date.today()}, on", *[f"  {s}" for s in sizes], ""]
 
 for path in sorted((ROOT / "ontology" / "cq").glob("*.rq")):
     query = path.read_text(encoding="utf-8")

@@ -1,0 +1,98 @@
+## links.ttl: the links by key (mapping/er/links_by_key.csv) to triples, in R2RML.
+## pipeline/run.py loads the CSV as the table er_links (its columns left and
+## right as left_node and right_node, D15), runs this mapping with Morph-KGC into
+## build/links.nt, checks it against shapes/links-shapes.ttl and loads it into
+## the named graph https://ul.edu.lb/kr/graph/links.
+##
+## A link by key needs no guessing: two records carry the same DOI, or the same
+## ORCID (mapping/er/README.md, part 1). Two records of one thing stay two nodes,
+## each in its source's graph; owl:sameAs says they are one thing (D15). Always
+## written from OpenAlex to Crossref, and between two OpenAlex records from the
+## lower ID to the higher one.
+##
+## The CSV writes a node as {kind}/{source}/{key}, the key as the source writes
+## it (a DOI with its slash). Each view takes the key out with replace(), and the
+## template writes the IRI as the source mappings do: the same key gives the
+## same IRI (the DOI's slash as %2F).
+@prefix rr:  <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pub: <https://ul.edu.lb/kr/pub#> .
+
+########################################################################
+## Papers: one DOI
+########################################################################
+
+## 1 an OpenAlex paper = the Crossref record of its DOI (4,887)
+<#PaperSameDoi>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'work/openalex/', '') AS work_id,
+               replace(right_node, 'work/crossref/', '') AS doi
+        FROM er_links WHERE kind = 'paper'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{work_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate owl:sameAs ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ] .
+
+## 2 two OpenAlex records of one paper, one DOI (2)
+<#PaperTwoRecords>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'work/openalex/', '') AS work_id,
+               replace(right_node, 'work/openalex/', '') AS other_id
+        FROM er_links WHERE kind = 'paper (two OpenAlex records)'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{work_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate owl:sameAs ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{other_id}" ] ] .
+
+########################################################################
+## People: one ORCID
+########################################################################
+
+## 3 two OpenAlex author records of one person, one ORCID (20)
+<#AuthorTwoRecords>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'author/openalex/', '') AS author_id,
+               replace(right_node, 'author/openalex/', '') AS other_id
+        FROM er_links WHERE kind = 'author (two OpenAlex records)'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{author_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate owl:sameAs ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{other_id}" ] ] .
+
+## 5 an OpenAlex author record = the person of the Crossref graph with its ORCID (3,827)
+<#AuthorSameOrcid>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'author/openalex/', '') AS author_id, evidence AS orcid
+        FROM er_links WHERE kind = 'author <-> person by ORCID'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{author_id}" ] ;
+    rr:predicateObjectMap [ rr:predicate owl:sameAs ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/orcid/{orcid}" ] ] .
+
+########################################################################
+## 4 Authorships OpenAlex gave no author ID, but an ORCID: their person (D12)
+########################################################################
+
+## the OpenAlex author record with that ORCID (158)
+<#AuthorshipAuthor>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'authorship/openalex/', '') AS authorship,
+               replace(right_node, 'author/openalex/', '') AS author_id
+        FROM er_links WHERE kind = 'authorship -> author'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{authorship}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:author ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/openalex/{author_id}" ] ] .
+
+## else the person named by the ORCID (153 authorships, 123 people). The person
+## is stated here too, so this graph does not depend on Crossref listing them.
+<#AuthorshipPerson>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT replace(left_node, 'authorship/openalex/', '') AS authorship, evidence AS orcid
+        FROM er_links WHERE kind = 'authorship -> person by ORCID'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/openalex/{authorship}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:author ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/orcid/{orcid}" ] ] .
+
+<#PersonByOrcid>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT DISTINCT evidence AS orcid
+        FROM er_links WHERE kind = 'authorship -> person by ORCID'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/author/orcid/{orcid}" ; rr:class pub:Author ] ;
+    rr:predicateObjectMap [ rr:predicate pub:orcid ; rr:objectMap [ rr:column "orcid" ] ] .

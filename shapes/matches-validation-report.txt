@@ -1,0 +1,11 @@
+== graph/matches (31,206 triples with the ontology, with 240,690 triples of the graphs it links) against shapes/matches-shapes.ttl
+  focus nodes   5,211  Every OpenAlex paper (its matches on the same paper)
+  focus nodes   5,211  Every OpenAlex paper (the ORCIDs of its matches)
+  focus nodes  68,552  Every authorship (one to one)
+
+validated in 84 s. conforms (SHACL): False. 0 Violation, 60 Warning, 0 Info
+  Warning       52  Every OpenAlex paper (the ORCIDs of its matches) · SPARQL   e.g. work/W3209309754, work/W4229030802, work/W4283323774
+                    Authorship https://ul.edu.lb/kr/id/authorship/openalex/W4283323774-1 is matched to a Crossref author with another ORCID: 0000-0002-8277-2068 in OpenAlex, 0000-0003-3283-0204 in Crossref.
+  Warning        8  Every authorship (one to one) · MaxCount on ^owl:sameAs   e.g. authorship/crossref/10.4088%2Fpcc.20m02902-1, authorship/crossref/10.4088%2Fpcc.20m02902-2, authorship/crossref/10.4088%2Fpcc.20m02902-3
+                    A Crossref author is matched to two OpenAlex authorships: right only if the two are on two OpenAlex records of one paper.
+

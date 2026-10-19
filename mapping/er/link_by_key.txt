@@ -10,4 +10,6 @@
   -> an OpenAlex author with this ORCID: 158
   -> a person known only by the ORCID: 153 authorships, 123 people
   still without a person: 1,790
-written: mapping/er/links_by_key.csv, 5,220 links
+  of the 123 people known only by the ORCID, 123 are also in Crossref
+5 OpenAlex author record <-> Crossref person, same ORCID: 3,827 links, 3,812 ORCIDs (of 4,450 ORCIDs in Crossref)
+written: mapping/er/links_by_key.csv, 9,047 links

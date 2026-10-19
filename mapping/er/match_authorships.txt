@@ -35,6 +35,18 @@ links kept (score 4 or more, all papers): 30,848, of 31,565 OpenAlex authorships
 of which with a score from 4 to 8: 151
 of which the first initials differ and the names are not the same: 28
 
+links kept whose two sources give the person two different ORCIDs: 52 (name same 42, family in name 10)
+  W4229030802: OpenAlex 12 'Monty Singh Duggal' 0000-0002-8052-0676 <-> Crossref 12 'Monty' 'Duggal' 0000-0003-3652-5741 (family in name, score 20.6)
+  W4283323774: OpenAlex 1 'Ali Daher' 0000-0002-8277-2068 <-> Crossref 1 'Ali W.' 'Daher' 0000-0003-3283-0204 (family in name, score 20.6)
+  W4306840660: OpenAlex 3 'Pierre El Khoury' 0009-0007-4078-8989 <-> Crossref 3 'Pierre' 'Khoury' 0000-0003-3382-4666 (family in name, score 20.6)
+  W4385685255: OpenAlex 1 'Ruohong Li' 0000-0002-6113-0859 <-> Crossref 1 'R.' 'Li' 0000-0002-2782-2333 (family in name, score 20.6)
+  W4390807579: OpenAlex 3 'Norma Ghamrawi' 0000-0002-5754-9657 <-> Crossref 3 'Najah A. R.' 'Ghamrawi' 0009-0000-7588-4996 (family in name, score 20.6)
+  W4408147176: OpenAlex 1 'Ruohong Li' 0000-0002-6113-0859 <-> Crossref 1 'R.' 'Li' 0000-0002-2782-2333 (family in name, score 20.6)
+  W4411139145: OpenAlex 2 'Norma Ghamrawi' 0000-0002-5754-9657 <-> Crossref 2 'Najah A. R.' 'Ghamrawi' 0009-0000-7588-4996 (family in name, score 20.6)
+  W4413288162: OpenAlex 2 'Nigar Kirmani' 0009-0005-1614-6551 <-> Crossref 2 'Najwaa' 'Kirmani' 0009-0006-4936-7008 (family in name, score 20.6)
+  W4414938878: OpenAlex 1 'Ruohong Li' 0000-0002-6113-0859 <-> Crossref 1 'R.' 'Li' 0000-0002-2782-2333 (family in name, score 20.6)
+  W4415167929: OpenAlex 2 'Najah A. R. Ghamrawi' 0009-0000-7588-4996 <-> Crossref 2 'Norma' 'Ghamrawi' 0000-0002-5754-9657 (family in name, score 20.6)
+
 hand-labelled sample: 39 of 40 pairs labelled
   score 8 or more, names not plainly the same: 17 of 19 are the same person
   score 4 to 8: 19 of 20 are the same person

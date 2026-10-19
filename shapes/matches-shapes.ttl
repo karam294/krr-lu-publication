@@ -1,0 +1,82 @@
+## matches-shapes.ttl: the rules the matcher's links must obey, in SHACL (Session 5).
+##
+## pipeline/run.py checks build/matches.nt against this file, with the ontology
+## and the triples these rules look at: the rdf:type, pub:hasAuthorship,
+## pub:author, pub:orcid and pub:isOpenAccess triples of the two source graphs,
+## and the links by key (build/links.nt), which say which OpenAlex paper is which
+## Crossref record. So the rules check a match against what the sources say, not
+## only against the matcher (D15). Same policy as shapes.ttl (D9).
+##
+## Written, run once, then triaged: the first run gave 8 Violations (the
+## one-to-one rule, see its TRIAGE comment) and 52 Warnings (two ORCIDs).
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pub:   <https://ul.edu.lb/kr/pub#> .
+@prefix pubsh: <https://ul.edu.lb/kr/shapes#> .
+
+<https://ul.edu.lb/kr/shapes/matches> a owl:Ontology ;
+    rdfs:label "Shapes for the matcher's links" ;
+    owl:versionInfo "1.0.0" ;
+    sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] ,
+               [ sh:prefix "owl" ; sh:namespace "http://www.w3.org/2002/07/owl#"^^xsd:anyURI ] .
+
+## One to one (the matcher's last step): an OpenAlex authorship is the same as at
+## most one Crossref author, and a Crossref author as at most one OpenAlex
+## authorship. The target is every authorship of both sources.
+pubsh:MatchShape a sh:NodeShape ;
+    rdfs:label "Every authorship (one to one)" ;
+    sh:targetClass pub:Authorship ;
+    sh:property [
+        sh:path owl:sameAs ; sh:maxCount 1 ; sh:class pub:Authorship ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/authorship/crossref/" ;
+        sh:message "An OpenAlex authorship is matched to at most one author, a Crossref authorship."
+    ] ;
+    sh:property [
+        sh:path [ sh:inversePath owl:sameAs ] ; sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "A Crossref author is matched to two OpenAlex authorships: right only if the two are on two OpenAlex records of one paper." ;
+        rdfs:comment "TRIAGE: the rule is wrong for a paper OpenAlex has twice. It was a Violation; the first run gave 8, the 8 authors of 10.4088/pcc.20m02902: W4205255002 and W4206272747 are one paper (graph/links), so each Crossref author is rightly matched once from each record. A Warning. Expect 8: a ninth is a new problem, either another paper twice in OpenAlex or a mistake of the one-to-one step."
+    ] .
+
+## Blocking: the matcher compares only the authors of one paper. So the two
+## authorships of a match belong to the OpenAlex paper and to the Crossref record
+## that a link by key says are the same paper. It compares nodes of three graphs:
+## SPARQL. pySHACL asks a SPARQL rule once per focus node and parses the query
+## each time, so the focus nodes are the 5,211 OpenAlex papers only: the
+## subjects of pub:isOpenAccess, a value only OpenAlex gives (shapes.ttl makes
+## it exactly one per paper), not the Crossref records too.
+pubsh:SamePaperShape a sh:NodeShape ;
+    rdfs:label "Every OpenAlex paper (its matches on the same paper)" ;
+    sh:targetSubjectsOf pub:isOpenAccess ;
+    sh:sparql [
+        sh:message "Authorship {?a} of this paper is matched to an author of another paper ({?other})." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes/matches> ;
+        sh:select """
+            SELECT $this ?a ?other WHERE {
+                $this pub:hasAuthorship ?a .
+                ?a owl:sameAs ?c .
+                ?other pub:hasAuthorship ?c .
+                FILTER NOT EXISTS { $this owl:sameAs ?other } }"""
+    ] .
+
+## Where both sources name the person by an ORCID, they should name the same one.
+## The ORCID is never a field of the matcher, so this is a check from outside it.
+pubsh:MatchOrcidShape a sh:NodeShape ;
+    rdfs:label "Every OpenAlex paper (the ORCIDs of its matches)" ;
+    sh:targetSubjectsOf pub:isOpenAccess ;
+    sh:sparql [
+        sh:message "Authorship {?a} is matched to a Crossref author with another ORCID: {?orcid} in OpenAlex, {?other} in Crossref." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes/matches> ;
+        sh:select """
+            SELECT $this ?a ?orcid ?other WHERE {
+                $this pub:hasAuthorship ?a .
+                ?a owl:sameAs ?c ;
+                   pub:author/pub:orcid ?orcid .
+                ?c pub:author/pub:orcid ?other .
+                FILTER (?orcid != ?other) }"""
+    ] ;
+    sh:severity sh:Warning ;
+    rdfs:comment "TRIAGE: mostly the sources disagree, a few times the matcher is wrong. 52 matches, listed in mapping/er/match_authorships.txt: 42 have the same name on both sides (Dany Azar, Salim Nassreddine): one person whom the two sources give two ORCIDs, so one source is wrong or the person has two ORCID records. Of the 10 others, Norma and Najah A. R. Ghamrawi (3 papers) and Nigar and Najwaa Kirmani are, by their first names, two people: the matcher compares the family name and the first initial only, so two people with one family name and one initial, at the same position, look like one. The matcher's measurement counts one of the 52 (Heeba Anis, its 1 wrong link in half B): it measures only where Crossref's ORCID is on exactly one OpenAlex authorship of the paper, and these ORCIDs are mostly on none. A Warning: a person decides, and no rule here can say which source is right." .

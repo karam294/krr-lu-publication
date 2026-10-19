@@ -7,5 +7,5 @@ WHERE {
   ?cited pub:title ?title .
 }
 GROUP BY ?cited ?title
-ORDER BY DESC(?citedByLU)
+ORDER BY DESC(?citedByLU) ?cited
 LIMIT 10

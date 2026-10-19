@@ -221,3 +221,34 @@ Crossref record of its DOI: the same title for 4,882, the same year for 4,697, t
 venue (by ISSN or by name) for 4,175; cq08_sources: of the 6 papers OpenAlex flags as
 retracted, Crossref has a notice retracting 2 and says 2 others are retraction notices
 themselves. ontology/reasoner-run.txt (1.1.0): consistent, no unsatisfiable class.
+
+
+## D15. Links as owl:sameAs in two named graphs: by key, and by the matcher (2026-10-19)
+**Decision.** The links of mapping/er enter the graph through two mappings, each into
+a named graph of its own. graph/links holds the links by key (mapping/links.ttl):
+owl:sameAs for 4,887 papers, the 2 pairs of OpenAlex records of one paper, the 20
+pairs of author records of one person and 3,827 author records to the Crossref person
+of their ORCID; and pub:author for the 311 authorships OpenAlex left without a person
+(D12). graph/matches holds the matcher's 30,848 links (mapping/matches.ttl), owl:sameAs
+between an OpenAlex authorship and a Crossref author. The records are never merged:
+each stays a node in its source's graph, and a link is written from OpenAlex to
+Crossref. Each link graph has its own shapes, which also see the triples of the
+graphs it joins: both ends exist and are of one kind; a match is one to one, on one
+paper, and the two sources give the matched person the same ORCID.
+**Alternative.** Merge the two records of a paper into one node; put all links in one
+graph; or skos:exactMatch, or a node per link with its score, instead of owl:sameAs.
+**Why.** Merged, a triple no longer says which source said it (D10), and a wrong link
+cannot be undone without rebuilding the sources. In two graphs the certainty of a link
+is said once, in the provenance of its graph: by key, no guessing; by the matcher,
+guessed, with its precision and recall in match_authorships.txt. So a query chooses:
+graph/links only when it must not guess, graph/matches too when a measured precision
+of 0.9997 is enough (cq09 shows both). owl:sameAs is the standard word for "the same
+thing"; no reasoner runs on the data, so it merges nothing. A score per link would
+need a node per link; it stays in the CSV, the graph's evidence.
+**Evidence.** mapping/er/link_by_key.txt; shapes/links-validation-report.txt: 0
+results; shapes/matches-validation-report.txt: 0 Violations, 60 Warnings: 8 for the 8
+authors of a paper OpenAlex has twice, 52 for matched people whose ORCIDs differ
+between the sources, most with the same name (listed in match_authorships.txt).
+ontology/cq_answers.txt: cq09, of 2,101 authorships with no person, 1,790 are left
+after the links by ORCID, the matcher links 1,449 of those, and Crossref names 1 of
+them by an ORCID; cq06_sources, Crossref confirms 4 of the 75 self-citations.

@@ -223,3 +223,52 @@ The links between the two graphs come next; with them, the Session 4
 Warnings that wait for Session 5 (the self-citations, the duplicate DOIs and
 ORCIDs, the authorships without an author) are re-checked, and their TRIAGE
 comments in shapes.ttl say what the links changed.
+
+# Session 5: the links (shapes/links-shapes.ttl, shapes/matches-shapes.ttl)
+
+A link is right only if it fits the graphs it joins, so the link shapes see
+some triples of the source graphs too: the classes of both ends, the
+authorships of each paper, the people and their ORCIDs (pipeline/run.py,
+CONTEXT). The reports: `shapes/links-validation-report.txt`,
+`shapes/matches-validation-report.txt`.
+
+**The links by key** (graph/links, 9,293 triples): every rule held on the first
+run, so every rule is a Violation. Both ends of each link exist and are of one
+kind (a paper and a paper, a person and a person); each OpenAlex record is the
+same as at most one Crossref record or person; a link by ORCID never gives an
+authorship a second person; every person named by ORCID has a well-formed one.
+
+**The matcher's links** (graph/matches, 30,848 triples), first run: 8
+Violations, 52 Warnings.
+
+| Results | Rule | Rule or data? | Decision | Now |
+|---:|---|---|---|---|
+| 52 | Both sources give a matched person the same ORCID | mostly the sources disagree; a few times the matcher is wrong | a person decides; listed in match_authorships.txt | Warning |
+| 8 | A Crossref author is matched to one OpenAlex authorship | **rule wrong** for a paper OpenAlex has twice | expect 8 | Warning (was a Violation) |
+| 0 | A matched pair is on one paper (the links by key say which) | | | Violation |
+| 0 | An OpenAlex authorship is matched to one Crossref author | | | Violation |
+
+- **52 ORCID disagreements.** 42 have the same name on both sides (Dany
+  Azar): one person with two ORCIDs, so one source is wrong, or the person has
+  two ORCID records. A few are the matcher's mistakes: Norma and Najah A. R.
+  Ghamrawi (3 papers), Nigar and Najwaa Kirmani, two people each time with one
+  family name and one first initial. The matcher's own measurement sees one of
+  the 52 (mapping/er/README.md), so this rule is what finds the rest.
+- **8 Crossref authors matched twice.** They are the 8 authors of
+  10.4088/pcc.20m02902, which OpenAlex has twice (W4205255002 and W4206272747,
+  linked in graph/links): each record's authors are matched to the same
+  Crossref authors, rightly. The rule was right for every other paper and too
+  strong for this one; a Warning, and a ninth result would be a new problem.
+
+What the links settle among Session 4's Warnings (`ontology/cq_answers.txt`),
+written in shapes.ttl's TRIAGE comments (version 1.0.1). The Warnings stay:
+shapes.ttl checks graph/openalex alone, which is unchanged (D4).
+
+- **2 DOIs on two records, 20 ORCIDs on two records**: all linked as one
+  paper, one person (cq09; link_by_key.txt).
+- **2,101 authorships with no person**: 311 get one by ORCID; 1,790 are left,
+  1,449 of them matched to a Crossref author, and Crossref names only 1 of
+  those by an ORCID (cq09).
+- **75 self-citations**: for 43 the Crossref record has references, and only 4
+  list the paper itself (cq06_sources): Crossref does not confirm them.
+- **1,051 papers with no reference**: Crossref has references for 20 (cq06_sources).

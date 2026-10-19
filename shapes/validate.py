@@ -35,6 +35,8 @@ ORDER = {"Violation": 0, "Warning": 1, "Info": 2}
 def short(node):
     """A readable name: the key at the end of one of our IRIs."""
     s = str(node)
+    if s.startswith("http://www.w3.org/2002/07/owl#"):
+        return "owl:" + s[len("http://www.w3.org/2002/07/owl#"):]
     for base in ("https://ul.edu.lb/kr/id/", "https://ul.edu.lb/kr/pub#", "https://ul.edu.lb/kr/shapes#",
                  "http://www.w3.org/ns/shacl#"):
         if s.startswith(base):

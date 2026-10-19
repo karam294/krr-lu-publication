@@ -1,12 +1,14 @@
 # shapes/
 
 The rules our graphs must obey, checked with SHACL before anything reaches
-the endpoint (Session 4). Each source's graph has its own shapes (D14): the
-OpenAlex graph `shapes.ttl`, the Crossref graph `crossref-shapes.ttl`.
+the endpoint (Session 4). Each graph has its own shapes (D14, D15): the OpenAlex
+graph `shapes.ttl`, the Crossref graph `crossref-shapes.ttl`, the links by key
+`links-shapes.ttl`, the matcher's links `matches-shapes.ttl`. The link shapes
+see the triples of the graphs a link joins, as the pipeline gives them.
 
 | File | What it is |
 |---|---|
-| `shapes.ttl` | the shapes, version 1.0.0 (after triage); every changed rule has a TRIAGE comment |
+| `shapes.ttl` | the shapes of the OpenAlex graph, version 1.0.1 (after triage, with the Session 5 evidence); every changed rule has a TRIAGE comment |
 | `validate.py` | runs the shapes and prints the report as a work queue; `pipeline/run.py` uses it as its gate |
 | `triage.md` | the first report (3,636 Violations) and the decision for each group |
 | `shapes-v0.ttl` | the first draft (0.1.0): every rule a Violation, kept as evidence |
@@ -14,6 +16,8 @@ OpenAlex graph `shapes.ttl`, the Crossref graph `crossref-shapes.ttl`.
 | `validation-report.txt` | the report after triage: 0 Violations, 2,585 Warnings, 1,070 Info |
 | `crossref-shapes.ttl` | the shapes of the Crossref graph (Session 5), version 1.0.0, each rule not a Violation with its TRIAGE comment |
 | `crossref-validation-report.txt` | its report: 0 Violations, 73 Warnings, 28,182 Info |
+| `links-shapes.ttl`, `links-validation-report.txt` | the links by key: their two ends exist, of one kind; 0 results |
+| `matches-shapes.ttl`, `matches-validation-report.txt` | the matcher's links: one to one, same paper, the same ORCID on both sides; 0 Violations, 60 Warnings |
 
 Run it, from the repository root:
 
@@ -24,6 +28,10 @@ python shapes/validate.py               # the gate alone, on build/graph.nt (2 t
 python shapes/validate.py --shapes shapes/crossref-shapes.ttl --data build/crossref.nt --data ontology/ontology.ttl
                                         # the gate alone, on the Crossref graph
 ```
+
+The link graphs are checked by the pipeline only, because their shapes need
+some triples of the other graphs (pipeline/run.py, CONTEXT): their reports are
+build/shacl-report-links.txt and build/shacl-report-matches.txt.
 
 The gate fails (exit code 1) on any Violation, and on a shape with 0 focus
 nodes: a shape that targets nothing checks nothing, and would pass forever.
@@ -85,4 +93,6 @@ everything core SHACL can state is core.
 The Crossref shapes have three SPARQL rules (a record citing itself, a notice
 updating itself, an ORCID on two authors of one record): 3,714, 61 and 4,450
 queries. The last one is asked per person, not per record, because a record
-can have 1,512 authors (triage.md, Session 5).
+can have 1,512 authors (triage.md, Session 5). The two SPARQL rules of the
+matcher's links are asked per OpenAlex paper (5,211 each): pySHACL parses the
+query again for each focus node, so fewer focus nodes is what makes them fast.

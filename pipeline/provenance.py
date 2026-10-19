@@ -7,14 +7,16 @@ and is loaded into the named graph https://ul.edu.lb/kr/graph/provenance.
 Regenerated on every run: do not edit it.
 
 PROV-O has three kinds of thing:
-  entity    a thing: data/lu.sql, data/crossref.sql, a mapping, the ontology,
-            a shapes file, a graph
+  entity    a thing: data/lu.sql, data/crossref.sql, the links of mapping/er,
+            a mapping, the ontology, a shapes file, a graph
   activity  something that happened: this run of the pipeline
   agent     who or what is responsible: the programs; OpenAlex and Crossref
-            for the data
+            for the data; the two programs of mapping/er for the links
 
-Provenance is per named graph, not per triple: a few dozen triples describe
-the 578,982 of graph/openalex and the 341,926 of graph/crossref (D10, D14).
+Provenance is per named graph, not per triple: about a hundred triples describe
+the four data graphs (D10, D14, D15). For the matcher's links that is where
+their certainty is said: graph/matches comes from match_authorships.py, at a
+threshold of 4, measured in match_authorships.txt (its checksum).
 """
 
 import hashlib
@@ -124,6 +126,26 @@ def write_provenance(root, out, graphs, started, ended):
     ontology = entity(onto_version, "ontology/ontology.ttl", root / "ontology" / "ontology.ttl")
     shapes = shapes_file(root / "shapes" / "shapes.ttl")
     cr_shapes = shapes_file(root / "shapes" / "crossref-shapes.ttl")
+    links_shapes = shapes_file(root / "shapes" / "links-shapes.ttl")
+    matches_shapes = shapes_file(root / "shapes" / "matches-shapes.ttl")
+    links_mapping = entity(f"{ID}file/links.ttl", "mapping/links.ttl", root / "mapping" / "links.ttl")
+    matches_mapping = entity(f"{ID}file/matches.ttl", "mapping/matches.ttl", root / "mapping" / "matches.ttl")
+
+    # The links: made earlier by the two programs of mapping/er from both sources,
+    # committed as CSV, and read by this run (D15).
+    er = root / "mapping" / "er"
+    by_key = program(f"{ID}software/er/link_by_key.py", "mapping/er/link_by_key.py", er / "link_by_key.py")
+    matcher = program(f"{ID}software/er/match_authorships.py", "mapping/er/match_authorships.py",
+                      er / "match_authorships.py")
+    links_csv = entity(f"{ID}file/links_by_key.csv", "mapping/er/links_by_key.csv", er / "links_by_key.csv")
+    matches_csv = entity(f"{ID}file/authorship_links.csv", "mapping/er/authorship_links.csv",
+                         er / "authorship_links.csv")
+    measurement = entity(f"{ID}file/match_authorships.txt", "mapping/er/match_authorships.txt",
+                         er / "match_authorships.txt")
+    for made, by in ((links_csv, by_key), (matches_csv, matcher), (measurement, matcher)):
+        g.add((made, PROV.wasAttributedTo, by))
+        g.add((made, PROV.wasDerivedFrom, sql))
+        g.add((made, PROV.wasDerivedFrom, cr_sql))
 
     # Who ran: our pipeline, Morph-KGC for the mappings, pySHACL for the gate.
     run_py = program(f"{ID}software/pipeline/run.py", "pipeline/run.py", root / "pipeline" / "run.py")
@@ -136,15 +158,19 @@ def write_provenance(root, out, graphs, started, ended):
     g.add((run, RDFS.label, Literal("Pipeline run: map, SHACL gate, provenance")))
     g.add((run, PROV.startedAtTime, stamp(started)))
     g.add((run, PROV.endedAtTime, stamp(ended)))
-    for used in (sql, cr_sql, mapping, cr_mapping, ontology, shapes, cr_shapes):
+    for used in (sql, cr_sql, links_csv, matches_csv, mapping, cr_mapping, links_mapping, matches_mapping,
+                 ontology, shapes, cr_shapes, links_shapes, matches_shapes):
         g.add((run, PROV.used, used))
     for agent in (run_py, morph, pyshacl):
         g.add((run, PROV.wasAssociatedWith, agent))
 
-    # What came out: one named graph per source, each from its own file and
-    # checked by its own shapes; and the ontology.
+    # What came out: one named graph per source and per kind of link, each from
+    # its own file and checked by its own shapes; and the ontology.
     made_from = {"openalex": (sql, shapes, "LU publications from OpenAlex, mapped to RDF"),
-                 "crossref": (cr_sql, cr_shapes, "The Crossref records of our DOIs, mapped to RDF")}
+                 "crossref": (cr_sql, cr_shapes, "The Crossref records of our DOIs, mapped to RDF"),
+                 "links": (links_csv, links_shapes, "Links by key between the two sources: same DOI, same ORCID"),
+                 "matches": (matches_csv, matches_shapes,
+                             "The matcher's links between OpenAlex authorships and Crossref authors")}
     for name, (n_triples, gate_summary) in graphs.items():
         source_file, checked_by, title = made_from[name]
         data = entity(f"{GRAPH}{name}", title)
@@ -154,6 +180,11 @@ def write_provenance(root, out, graphs, started, ended):
         g.add((data, VOID.triples, Literal(n_triples)))
         g.add((data, RDFS.comment, Literal(f"SHACL gate passed against {g.value(checked_by, DCT.title)}: "
                                            f"{gate_summary}")))
+    if "matches" in graphs:
+        matches = URIRef(f"{GRAPH}matches")
+        g.add((matches, RDFS.seeAlso, measurement))
+        g.add((matches, DCT.description, Literal("Guessed, not read from a key: links with a score of 4 or more "
+                                                 "(D13). Precision and recall: mapping/er/match_authorships.txt.")))
     schema = entity(f"{GRAPH}ontology", "The ontology, as loaded")
     g.add((schema, PROV.wasDerivedFrom, ontology))
     g.add((schema, PROV.wasGeneratedBy, run))
