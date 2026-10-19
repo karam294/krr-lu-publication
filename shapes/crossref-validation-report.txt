@@ -9,7 +9,7 @@ shapes: crossref-shapes.ttl
   focus nodes   4,450  Every person known by an ORCID
   focus nodes   4,450  Every person with a Crossref authorship
 
-validated in 101 s. conforms (SHACL): False. 0 Violation, 780 Warning, 28,182 Info
+validated in 78 s. conforms (SHACL): False. 0 Violation, 780 Warning, 28,182 Info
   Warning      707  Every Crossref record · Not on cites   e.g. work/crossref/10.1002%2F9781119865247.ch18, work/crossref/10.1002%2F9781394160839.ch7, work/crossref/10.1002%2Facn3.52165
                     A reference of this record has a DOI with a character that is not ASCII, such as a typographic hyphen for - (written %E2%80%90 in the IRI).
   Warning       38  Every Crossref record · MaxInclusive on publicationYear   e.g. work/crossref/10.1016%2Fb978-0-443-26608-9.00022-6, work/crossref/10.1016%2Fj.accpm.2025.101614, work/crossref/10.1016%2Fj.afres.2025.101648
@@ -25,7 +25,7 @@ validated in 101 s. conforms (SHACL): False. 0 Violation, 780 Warning, 28,182 In
   Warning        4  Every Crossref record · Not on cites   e.g. work/crossref/10.1007%2F16833_2023_132, work/crossref/10.1101%2F2023.11.09.23298241, work/crossref/10.4018%2F978-1-6684-7015-2.ch012
                     A reference of this record has a DOI with a space in it (written %20 in the IRI).
   Warning        2  Every person with a Crossref authorship · SPARQL   e.g. author/orcid/0000-0002-1558-2731, author/orcid/0000-0002-7793-7083
-                    Two authors of https://ul.edu.lb/kr/id/work/crossref/10.5534%2Fwjmh.230034 have this person's ORCID.
+                    Two authors of https://ul.edu.lb/kr/id/work/crossref/10.5812%2Fans-129929 have this person's ORCID.
   Warning        1  Every Crossref record · MinCount on title   e.g. work/crossref/10.32549%2Fopi-nsc-105
                     Crossref gives no title for this record.
   Info      26,821  Every Crossref authorship · MinCount on author   e.g. authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-1, authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-10, authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-11

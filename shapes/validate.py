@@ -103,7 +103,7 @@ def check(data, shapes):
         path = path_text(shapes, shapes.value(src, SH.path)) if parent is not None else None
         key = (sev, shape, f"{comp} on {path}" if path else comp, src)  # one line per rule
         groups[key].append(report.value(r, SH.focusNode))
-        messages.setdefault(key, report.value(r, SH.resultMessage))
+        messages.setdefault(key, []).append((str(report.value(r, SH.focusNode)), str(report.value(r, SH.resultMessage))))
 
     by_sev = Counter()
     for (sev, _, _, _), nodes in groups.items():
@@ -114,7 +114,7 @@ def check(data, shapes):
         sev, shape, what, _ = key
         ex = ", ".join(short(n) for n in sorted(set(nodes), key=str)[:3])
         lines.append(f"  {sev:<9} {len(nodes):>6,}  {shape} · {what}   e.g. {ex}")
-        lines.append(f"                    {messages[key]}")
+        lines.append(f"                    {min(messages[key])[1]}")  # the first focus node's message: the same every run
     return by_sev, empty, lines
 
 

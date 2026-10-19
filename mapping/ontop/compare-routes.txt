@@ -1,0 +1,38 @@
+The two routes compared, 2026-10-20: Fuseki (http://127.0.0.1:3030/kr/sparql, the materialized graph) and Ontop (http://127.0.0.1:8080/sparql, answers from PostgreSQL)
+
+1 answers and 2 time: each query on both endpoints (median of 3 runs, after a warm-up run)
+
+  query                 Fuseki     Ontop  answer
+  cq01.rq                0.26s     0.03s  the same (4 rows)
+  cq01_types.rq          0.16s     0.04s  the same (20 rows)
+  cq02.rq                    -     1.55s  Fuseki failed: Parse error: Variable used when already in-scope: ?corresponding in ((AGG ?.3 SUM(if(?corresponding, 1, 0))) AS ?corresponding)
+  cq03.rq                2.83s     0.60s  the same (10 rows)
+  cq04.rq                0.11s     0.03s  the same (5 rows)
+  cq05.rq                0.19s     0.01s  the same (16 rows)
+  cq06.rq                3.05s     0.03s  the same (10 rows)
+  cq06_sources.rq        1.77s     0.14s  the same (8 rows)
+  cq07.rq                0.03s     0.01s  the same (14 rows)
+  cq08.rq                0.01s     0.01s  the same (6 rows)
+  cq08_sources.rq        0.03s         -  Ontop failed: The EXISTS operator is not supported when there are non-nullable common variables
+  cq09.rq                0.73s     0.64s  the same (6 rows)
+  cq10.rq                0.40s         -  Ontop failed: Only DBFunctionSymbols must be provided to a SQLTermSerializer
+  cq10_titles.rq         0.11s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
+  cq10_venues.rq         0.18s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
+  follow_links.rq        0.02s     0.09s  the same (3 rows)
+
+  the same answer on both: 11 of 16 queries
+
+3 freshness: the title of W3023054831, changed in PostgreSQL, then changed back
+  Fuseki  does not see it: Stochastic Homogenization of Hamilton–Jacobi Equations on a Junction
+  Ontop   sees the change: Stochastic Homogenization of Hamilton–Jacobi Equations on a Junction [changed in PostgreSQL]
+  The materialized graph sees a change after the next pipeline run (map, SHACL gate, load):
+  the last one took 5 min 31 s (build/provenance.ttl). Ontop sees it at the next query, and nothing checks it first.
+
+4 graph: Ontop's materialization of the same four mappings, against the pipeline's (Morph-KGC)
+  Morph-KGC 961,049 triples, Ontop 961,049; only in Morph-KGC 707, only in Ontop 707
+  in graph/crossref; all of them the same triple once percent-encoding is undone: a character that is not ASCII in a key, which Morph-KGC writes encoded and Ontop as it is
+    Morph-KGC  <https://ul.edu.lb/kr/id/work/crossref/10.1186%2Fs40854%E2%80%90016%E2%80%900031%E2%80%90z>
+    Morph-KGC  <https://ul.edu.lb/kr/id/work/crossref/10.2308%2Fisys%E2%80%902020%E2%80%90004>
+    Ontop      <https://ul.edu.lb/kr/id/work/crossref/10.1186%2Fs40854‐016‐0031‐z>
+    Ontop      <https://ul.edu.lb/kr/id/work/crossref/10.2308%2Fisys‐2020‐004>
+

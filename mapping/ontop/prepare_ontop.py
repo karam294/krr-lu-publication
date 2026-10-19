@@ -68,8 +68,13 @@ def main():
     try:
         with engine.connect() as c:
             c.execute(text("SELECT 1"))
-    except Exception:
-        sys.exit(f"PostgreSQL is not answering on {host}:5432: docker compose --profile virtual up -d postgres")
+    except Exception as e:
+        # say why: not running, or running with another password
+        reason = str(getattr(e, "orig", e)).strip().splitlines()[0]
+        sys.exit(f"Cannot connect to PostgreSQL on {host}:5432: {reason}\n"
+                 "Not running: docker compose --profile virtual up -d postgres\n"
+                 "Password authentication failed: the database keeps the password it was first started "
+                 "with; to use the one in .env, start it fresh (mapping/README.md, D16).")
 
     # 1 the same tables as the pipeline, from our data (not DB_URL)
     os.environ.pop("DB_URL", None)

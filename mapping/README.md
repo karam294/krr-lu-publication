@@ -77,6 +77,19 @@ docker compose --profile virtual run --rm ontop /opt/ontop/ontop materialize \
 python mapping/ontop/compare_routes.py                 # writes ontop/compare-routes.txt
 ```
 
+If prepare_ontop.py cannot connect:
+
+- **Password authentication failed.** PostgreSQL reads POSTGRES_PASSWORD only
+  the first time it starts, when it creates its data in the volume
+  postgres-data; later it keeps that password, whatever .env says. To use the
+  password now in .env, start it fresh (prepare_ontop.py copies the tables again):
+  `docker compose --profile virtual rm -sf postgres ontop`, then
+  `docker volume rm krr-lu-publication_postgres-data` (the name starts with the
+  folder's name: `docker volume ls`), then `docker compose --profile virtual up -d postgres`.
+- **Port 5432 is already allocated.** Another PostgreSQL container on this
+  computer uses it: `docker ps --filter "publish=5432"` names it, `docker stop`
+  it while this route runs.
+
 What the comparison showed (compare-routes.txt):
 
 - **The same graph, from two engines.** Ontop's materialization of our four
