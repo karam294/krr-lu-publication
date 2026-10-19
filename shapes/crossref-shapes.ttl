@@ -22,7 +22,7 @@
 
 <https://ul.edu.lb/kr/shapes/crossref> a owl:Ontology ;
     rdfs:label "Shapes for the Crossref graph" ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "1.0.1" ;
     sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] .
 
 ########################################################################
@@ -120,6 +120,13 @@ pubsh:CrossrefRecordShape a sh:NodeShape ;
         sh:severity sh:Warning ;
         sh:message "A reference of this record has a DOI with a space in it (written %20 in the IRI)." ;
         rdfs:comment "TRIAGE: the data is wrong, at the source: 4 references, on 4 records, such as 10.1007/978-3-030-27809 0_10 for 10.1007/978-3-030-27809-0_10, or two DOIs in one (10.14694/edbk_100005 10.1200/edbk_100005). A DOI has no space. A Warning."
+    ] ;
+    # New in 1.0.1 (Session 5, D16), found by comparing the two engines.
+    sh:property [
+        sh:path pub:cites ; sh:not [ sh:pattern "%[89A-F][0-9A-F]" ] ;
+        sh:severity sh:Warning ;
+        sh:message "A reference of this record has a DOI with a character that is not ASCII, such as a typographic hyphen for - (written %E2%80%90 in the IRI)." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source, and no rule saw it until the two routes were compared (mapping/ontop/compare-routes.txt): Morph-KGC writes such a character percent-encoded in the IRI, Ontop as it is, so the two graphs differed by these triples only. 707 references, on 66 records: 702 with U+2010 HYPHEN, 4 with an en dash, 1 with a non-breaking hyphen, most likely the typesetting of the reference list. Not a DOI as written: Crossref's approved characters for a DOI suffix are a-z, A-Z, 0-9 and -._;()/ (Crossref, constructing your DOI suffixes), and none of our own 5,055 DOIs has a character that is not ASCII. A Warning."
     ] ;
     sh:property [
         sh:path pub:cites ; sh:minCount 1 ;

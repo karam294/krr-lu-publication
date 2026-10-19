@@ -75,7 +75,7 @@
             WHEN 'software-paper'      THEN 'SoftwarePaper'
             WHEN 'retraction'          THEN 'Retraction'
         END AS class
-        FROM works) WHERE class IS NOT NULL""" ] ;
+        FROM works) AS typed WHERE class IS NOT NULL""" ] ;
     rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/openalex/{work_id}" ] ;
     rr:predicateObjectMap [ rr:predicate rdf:type ;
         rr:objectMap [ rr:template "https://ul.edu.lb/kr/pub#{class}" ] ] .

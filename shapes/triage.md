@@ -185,6 +185,14 @@ decision is in the rule's TRIAGE comment; the report is
 | 4 | A reference's DOI has no space | data wrong at the source | accept | Warning |
 | 2 | Two authors of a record do not share an ORCID | data wrong at the source | accept; one of the two authorships is linked to the wrong person | Warning |
 | 1 | Every record has a title | data incomplete: the DOI of a whole journal issue | accept | Warning |
+| 707 | A reference's DOI is ASCII (new in 1.0.1) | data wrong at the source: typographic hyphens | accept | Warning |
+
+The last rule came later, from comparing the two routes (D16): Ontop and
+Morph-KGC made the same graph but for 707 triples, the references whose DOI
+has a typographic hyphen (U+2010) or a dash where a DOI has "-". Morph-KGC
+writes the character percent-encoded, Ontop as it is. No rule had looked at the
+characters of a cited DOI, only at its start. Since then the Crossref report has
+780 Warnings.
 
 Every other rule held on all the data (0 results) and is a Violation, so the
 gate stops the first row that breaks it: a record is a pub:Work named

@@ -50,10 +50,49 @@ Two R2RML habits matter in both files:
 - one value per view row: cr_works.issn holds up to three ISSNs, so the
   view gives one row per ISSN (`<#CrossrefIssns>`).
 
-## Materialized, or virtualized?
+## Materialized, or virtualized? (D16)
 
-Today the pipeline materializes: it writes every triple once, checks it with
-SHACL and loads it into Fuseki. The same mappings can also be answered
-without copying the data (virtualized, with Ontop, as in the Session 5 lab).
-Which route the deployed system takes, argued on freshness, latency and
-workload, is decided later in Session 5.
+**The deployed system materializes**: pipeline/run.py writes every triple once
+with Morph-KGC, checks it with SHACL, and loads it into Fuseki. The same four
+mappings also run **virtualized**: Ontop keeps no graph, and turns each SPARQL
+query into SQL on PostgreSQL. That route is not part of the stack; it is here
+to compare the two on the same questions, and to keep the mappings honest.
+
+| File | What it is |
+|---|---|
+| `ontop/prepare_ontop.py` | our tables into PostgreSQL, with their keys; Ontop's mapping (the four in one file, each in its named graph) and connection, in build/ontop/ |
+| `ontop/Dockerfile` | Ontop 5.5.0 and the PostgreSQL driver, pinned and checksummed |
+| `ontop/compare_routes.py` | every competency question on both endpoints: the same answer? how long? then a change in the database, and the two graphs triple by triple |
+| `ontop/compare-routes.txt` | its result, the evidence of D16 |
+
+Run it, from the repository root (POSTGRES_PASSWORD in .env, Fuseki loaded by
+python pipeline/run.py):
+
+```sh
+docker compose --profile virtual up -d postgres
+python mapping/ontop/prepare_ontop.py                  # about a minute
+docker compose --profile virtual up -d --build ontop   # http://127.0.0.1:8080/sparql
+docker compose --profile virtual run --rm ontop /opt/ontop/ontop materialize \
+    -m build/ontop/mapping.ttl -p build/ontop/ontop.properties -f nquads -o build/ontop/materialized.nq
+python mapping/ontop/compare_routes.py                 # writes ontop/compare-routes.txt
+```
+
+What the comparison showed (compare-routes.txt):
+
+- **The same graph, from two engines.** Ontop's materialization of our four
+  mappings and Morph-KGC's have the same number of triples, and differ only
+  where a key has a character that is not ASCII: R2RML lets an IRI keep it,
+  Morph-KGC percent-encodes it. These were 707 reference DOIs with a
+  typographic hyphen, which no shape had seen: crossref-shapes.ttl 1.0.1 now
+  flags them.
+- **One change to the mapping.** Ontop refused a view of mapping.ttl, a
+  subquery without a name (`FROM (SELECT ...) WHERE`): SQL requires one,
+  SQLite does not. With `AS typed`, the same file serves both engines.
+- **The same answers, where Ontop answers.** 12 of the 16 queries give the
+  same rows, in the same order. Ontop cannot answer 4: an EXISTS it does not
+  support in that form (cq08_sources), and the title and venue comparisons of
+  CQ10, whose regular expression (`\p{L}`, a letter in any script) PostgreSQL
+  does not know, or which Ontop cannot turn into SQL at all.
+- **Freshness.** A title changed in PostgreSQL is in Ontop's next answer;
+  Fuseki shows it only after the next pipeline run, minutes later, once the
+  SHACL gate has checked it.

@@ -252,3 +252,28 @@ between the sources, most with the same name (listed in match_authorships.txt).
 ontology/cq_answers.txt: cq09, of 2,101 authorships with no person, 1,790 are left
 after the links by ORCID, the matcher links 1,449 of those, and Crossref names 1 of
 them by an ORCID; cq06_sources, Crossref confirms 4 of the 75 self-citations.
+
+
+## D16. Materialize for the deployed system; keep Ontop as a checked second route (2026-10-19)
+**Decision.** The deployed system materializes: pipeline/run.py maps the sources with
+Morph-KGC, checks every graph with SHACL, and loads Fuseki. The same four mappings
+also run virtualized, with Ontop 5.5.0 over PostgreSQL (docker compose --profile
+virtual, mapping/README.md), compared with the deployed route by
+mapping/ontop/compare_routes.py. That route is kept for the comparison and for live
+questions on a changing database; it is not part of the stack.
+**Alternative.** Virtualize: Ontop as the endpoint, no stored graph. Or both in
+production: Ontop for live questions, the materialized graph for checks and learning.
+**Why.** Freshness: our two sources are frozen downloads (D4, D11) that change only
+when we download again, and a pipeline run makes the change visible within minutes.
+Ontop would show a change at once (compare-routes.txt, part 3), but our database
+does not change between downloads, and what Ontop shows has passed no check: the
+SHACL gate (D9) needs a stored graph. Latency: on the questions both routes answer,
+both answer in seconds (part 2), so it does not decide. Workload: Ontop could not
+answer 4 of our 16 queries (part 1), and the system's next users need full SPARQL on
+a stored graph: the access layer (Session 7) will send queries a model writes, which
+may use the * and + paths Ontop does not support, and the learning of Session 6
+reads the graph itself. The comparison was worth doing anyway: the two engines make
+the same graph from the same mappings except 707 triples, all of them a reference
+DOI with a character that is not ASCII (now a Warning in crossref-shapes.ttl 1.0.1),
+and mapping.ttl needed one change to run on both, a name for a subquery.
+**Evidence.** mapping/ontop/compare-routes.txt; shapes/crossref-validation-report.txt.

@@ -14,8 +14,8 @@ see the triples of the graphs a link joins, as the pipeline gives them.
 | `shapes-v0.ttl` | the first draft (0.1.0): every rule a Violation, kept as evidence |
 | `validation-report-v0.txt` | the first draft's report: 3,636 Violations |
 | `validation-report.txt` | the report after triage: 0 Violations, 2,585 Warnings, 1,070 Info |
-| `crossref-shapes.ttl` | the shapes of the Crossref graph (Session 5), version 1.0.0, each rule not a Violation with its TRIAGE comment |
-| `crossref-validation-report.txt` | its report: 0 Violations, 73 Warnings, 28,182 Info |
+| `crossref-shapes.ttl` | the shapes of the Crossref graph (Session 5), version 1.0.1, each rule not a Violation with its TRIAGE comment |
+| `crossref-validation-report.txt` | its report: 0 Violations, 780 Warnings, 28,182 Info |
 | `links-shapes.ttl`, `links-validation-report.txt` | the links by key: their two ends exist, of one kind; 0 results |
 | `matches-shapes.ttl`, `matches-validation-report.txt` | the matcher's links: one to one, same paper, the same ORCID on both sides; 0 Violations, 60 Warnings |
 
