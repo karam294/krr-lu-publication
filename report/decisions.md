@@ -100,3 +100,21 @@ class; our file passes the OWL 2 DL check; the 976 violations with the imports c
 from FaBiO's own Dublin Core declarations. With pub:Dataset rdfs:subClassOf
 fabio:Dataset both reasoners found pub:Dataset unsatisfiable (step 3.5), which is why
 D7 links it with skos:closeMatch instead.   
+
+## D9. Validate the whole graph; the severity says what the pipeline does (2026-10-19)
+**Decision.** The SHACL gate checks the whole graph (578,982 triples and the
+ontology), in CI and in the stack, against shapes/shapes.ttl. A Violation, or a
+shape with 0 focus nodes, stops the pipeline before the endpoint is loaded. A
+rule that is right but broken by known problems of the source is a Warning,
+with a TRIAGE comment that says why and until when; a coverage figure is Info.
+**Alternative.** Validate a small sample in CI (the course lab: seconds, not
+minutes); or keep every broken rule a Violation until the source is fixed.
+**Why.** A sample can miss the one bad row, and the whole graph takes about two
+minutes on a laptop, which CI affords. Known problems kept as Violations would
+keep the gate red forever, and a gate that is always red is ignored. A shape
+that targets nothing passes forever: the template's order shape did, on our
+graph, from Session 2 to Session 4. So the gate counts focus nodes first.
+**Evidence.** shapes/triage.md: first draft 3,636 Violations; after triage 0
+Violations, 2,585 Warnings, 1,070 Info. The cost: a Warning does not stop a new
+case of a known problem (a 21st shared ORCID); the counts in
+shapes/validation-report.txt show it.

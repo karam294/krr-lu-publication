@@ -9,9 +9,10 @@ the "pipeline" service, before the access layer starts.
   1 source     DB_URL if set (your database), otherwise our data:
                data/lu.sql loaded into build/lu.sqlite
   2 map        mapping/mapping.ttl with Morph-KGC -> build/graph.nt
-  3 validate   build/graph.nt + ontology/ontology.ttl against shapes/shapes.ttl;
-               any Violation stops here (exit 1), so bad data never reaches
-               the endpoint; the report goes to build/shacl-report.txt
+  3 validate   build/graph.nt + ontology/ontology.ttl against shapes/shapes.ttl
+               (shapes/validate.py); any Violation, or a shape that checks
+               nothing, stops here (exit 1), so bad data never reaches the
+               endpoint; the report goes to build/shacl-report.txt
   4 describe   VoID of the graph -> build/void.ttl (the access layer reads it)
   5 load       ontology and graph into the endpoint (FUSEKI_URL, dataset kr)
 """
@@ -24,12 +25,10 @@ import time
 from pathlib import Path
 
 import requests
-from pyshacl import validate
-from rdflib import Graph, Namespace
+from rdflib import Graph
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
-SH = Namespace("http://www.w3.org/ns/shacl#")
 FUSEKI = os.environ.get("FUSEKI_URL", "http://127.0.0.1:3030")
 DATASET = os.environ.get("FUSEKI_DATASET", "kr")
 
@@ -64,15 +63,21 @@ def materialize(db_url):
 
 
 def gate(graph_path):
+    sys.path.insert(0, str(ROOT / "shapes"))
+    from validate import check
     data = Graph().parse(graph_path, format="nt").parse(ROOT / "ontology" / "ontology.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "shapes.ttl")
-    conforms, report, text = validate(data, shacl_graph=shapes, inference="none", allow_warnings=True)
-    (BUILD / "shacl-report.txt").write_text(text)
-    violations = len(list(report.subjects(SH.resultSeverity, SH.Violation)))
-    warnings = len(list(report.subjects(SH.resultSeverity, SH.Warning)))
-    step(3, f"validate: {violations} Violation, {warnings} Warning -> build/shacl-report.txt")
-    if violations:
-        sys.exit("SHACL gate: the data has Violations, so the endpoint is not loaded. Read build/shacl-report.txt.")
+    counts, empty, lines = check(data, shapes)
+    (BUILD / "shacl-report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    step(3, f"validate: {counts['Violation']:,} Violation, {counts['Warning']:,} Warning, "
+            f"{counts['Info']:,} Info -> build/shacl-report.txt")
+    print("\n".join(lines), flush=True)
+    if counts["Violation"]:
+        sys.exit(f"SHACL gate: {counts['Violation']:,} Violation, so the endpoint is not loaded. "
+                 "Read build/shacl-report.txt.")
+    if empty:
+        sys.exit(f"SHACL gate: {', '.join(empty)} checks nothing (0 focus nodes), so the endpoint is not loaded.")
+    return counts
 
 
 def describe(graph_path):

@@ -99,18 +99,18 @@ def check(data, shapes):
         shape = labels.get(parent if parent is not None else src, short(src))
         comp = short(report.value(r, SH.sourceConstraintComponent)).replace("ConstraintComponent", "")
         path = path_text(shapes, shapes.value(src, SH.path)) if parent is not None else None
-        key = (sev, shape, f"{comp} on {path}" if path else comp)
+        key = (sev, shape, f"{comp} on {path}" if path else comp, src)  # one line per rule
         groups[key].append(report.value(r, SH.focusNode))
         messages.setdefault(key, report.value(r, SH.resultMessage))
 
     by_sev = Counter()
-    for (sev, _, _), nodes in groups.items():
+    for (sev, _, _, _), nodes in groups.items():
         by_sev[sev] += len(nodes)
     lines.append(f"\nvalidated in {secs:.0f} s. conforms (SHACL): {conforms}. "
                  + ", ".join(f"{by_sev[s]:,} {s}" for s in ORDER))
     for key, nodes in sorted(groups.items(), key=lambda kv: (ORDER.get(kv[0][0], 3), -len(kv[1]))):
-        sev, shape, what = key
-        ex = ", ".join(short(n) for n in sorted(nodes, key=str)[:3])
+        sev, shape, what, _ = key
+        ex = ", ".join(short(n) for n in sorted(set(nodes), key=str)[:3])
         lines.append(f"  {sev:<9} {len(nodes):>6,}  {shape} · {what}   e.g. {ex}")
         lines.append(f"                    {messages[key]}")
     return by_sev, empty, lines
