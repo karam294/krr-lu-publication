@@ -442,11 +442,14 @@ W4206511748-5,10.1093/nutrit/nuac008-5,27.1,name same,initial same,position same
 W4206511748-7,10.1093/nutrit/nuac008-6,12.7,name same,initial same,position near
 W4206511748-8,10.1093/nutrit/nuac008-7,12.7,name same,initial same,position near
 W4206511748-9,10.1093/nutrit/nuac008-8,12.7,name same,initial same,position near
+W4206511748-10,10.1093/nutrit/nuac008-9,6.2,family in name,initial same,position near
 W4206511748-11,10.1093/nutrit/nuac008-10,12.7,name same,initial same,position near
 W4206511748-12,10.1093/nutrit/nuac008-11,12.7,name same,initial same,position near
 W4206511748-13,10.1093/nutrit/nuac008-12,12.7,name same,initial same,position near
 W4206511748-14,10.1093/nutrit/nuac008-13,12.7,name same,initial same,position near
+W4206511748-15,10.1093/nutrit/nuac008-14,6.2,family in name,initial same,position near
 W4206511748-16,10.1093/nutrit/nuac008-15,12.7,name same,initial same,position near
+W4206511748-17,10.1093/nutrit/nuac008-16,6.2,family in name,initial same,position near
 W4206511748-18,10.1093/nutrit/nuac008-17,12.7,name same,initial same,position near
 W4206525674-1,10.1016/j.neucom.2021.12.068-1,20.6,family in name,initial same,position same
 W4206525674-2,10.1016/j.neucom.2021.12.068-2,27.1,name same,initial same,position same
@@ -1502,8 +1505,11 @@ W4220971931-6,10.1111/ijd.16066-6,27.1,name same,initial same,position same
 W4220971931-7,10.1111/ijd.16066-7,20.6,family in name,initial same,position same
 W4220971931-8,10.1111/ijd.16066-8,20.6,family in name,initial same,position same
 W4220972465-1,10.22453/lsj-022.2.232-241-2,12.7,name same,initial same,position near
+W4220972465-2,10.22453/lsj-022.2.232-241-7,7.6,name same,initial same,position far
 W4220972465-3,10.22453/lsj-022.2.232-241-3,12.8,family close,initial unknown,position same
+W4220972465-4,10.22453/lsj-022.2.232-241-9,7.6,name same,initial same,position far
 W4220972465-5,10.22453/lsj-022.2.232-241-5,12.8,family close,initial unknown,position same
+W4220972465-7,10.22453/lsj-022.2.232-241-13,7.6,name same,initial same,position far
 W4220979106-1,10.1016/b978-0-12-822127-3.00006-5-1,20.6,family in name,initial same,position same
 W4220980475-1,10.30773/pi.2021.0239-1,27.1,name same,initial same,position same
 W4220980475-2,10.30773/pi.2021.0239-2,27.1,name same,initial same,position same
@@ -2040,6 +2046,7 @@ W4225338016-4,10.1186/s12889-022-12501-9-4,27.1,name same,initial same,position 
 W4225343802-1,10.1504/ijmri.2022.10046134-3,12.7,name same,initial same,position near
 W4225343802-2,10.1504/ijmri.2022.10046134-4,12.7,name same,initial same,position near
 W4225343802-3,10.1504/ijmri.2022.10046134-2,12.7,name same,initial same,position near
+W4225343802-4,10.1504/ijmri.2022.10046134-1,7.6,name same,initial same,position far
 W4225379510-1,10.1017/s1355617722000236-1,27.1,name same,initial same,position same
 W4225379510-2,10.1017/s1355617722000236-2,27.1,name same,initial same,position same
 W4225379510-3,10.1017/s1355617722000236-3,27.1,name same,initial same,position same
@@ -3152,6 +3159,14 @@ W4283777850-1,10.21608/cguaa.2022.116433.1108-1,27.1,name same,initial same,posi
 W4283784017-1,10.22453/lsj-023.1.033-047-2,12.7,name same,initial same,position near
 W4283784017-2,10.22453/lsj-023.1.033-047-3,12.7,name same,initial same,position near
 W4283784017-3,10.22453/lsj-023.1.033-047-5,12.7,name same,initial same,position near
+W4283784017-4,10.22453/lsj-023.1.033-047-7,7.6,name same,initial same,position far
+W4283784017-5,10.22453/lsj-023.1.033-047-9,7.6,name same,initial same,position far
+W4283784017-6,10.22453/lsj-023.1.033-047-10,4.8,name same,initial unknown,position far
+W4283784017-7,10.22453/lsj-023.1.033-047-11,7.6,name same,initial same,position far
+W4283784017-8,10.22453/lsj-023.1.033-047-13,7.6,name same,initial same,position far
+W4283784017-9,10.22453/lsj-023.1.033-047-14,4.8,name same,initial unknown,position far
+W4283784017-10,10.22453/lsj-023.1.033-047-15,7.6,name same,initial same,position far
+W4283784017-11,10.22453/lsj-023.1.033-047-17,7.6,name same,initial same,position far
 W4283788648-1,10.22453/lsj-023.1.078-098-2,12.7,name same,initial same,position near
 W4283801444-1,10.1016/j.jksuci.2022.06.017-1,27.1,name same,initial same,position same
 W4283801444-2,10.1016/j.jksuci.2022.06.017-2,27.1,name same,initial same,position same
@@ -5655,6 +5670,7 @@ W4308019614-2,10.1186/s12872-022-02907-z-2,20.6,family in name,initial same,posi
 W4308019614-3,10.1186/s12872-022-02907-z-3,27.1,name same,initial same,position same
 W4308019614-4,10.1186/s12872-022-02907-z-4,27.1,name same,initial same,position same
 W4308087361-1,10.1109/isc255366.2022.9921836-1,27.1,name same,initial same,position same
+W4308087361-2,10.1109/isc255366.2022.9921836-2,5.9,name different,initial same,position same
 W4308087361-3,10.1109/isc255366.2022.9921836-3,27.1,name same,initial same,position same
 W4308087361-4,10.1109/isc255366.2022.9921836-4,27.1,name same,initial same,position same
 W4308087361-5,10.1109/isc255366.2022.9921836-5,27.1,name same,initial same,position same
@@ -5795,6 +5811,10 @@ W4308409909-5,10.4088/pcc.21m03092-5,27.1,name same,initial same,position same
 W4308446400-1,10.47191/ijpbms/v2-i10-12-2,12.7,name same,initial same,position near
 W4308446400-2,10.47191/ijpbms/v2-i10-12-3,12.7,name same,initial same,position near
 W4308446400-3,10.47191/ijpbms/v2-i10-12-5,12.7,name same,initial same,position near
+W4308446400-4,10.47191/ijpbms/v2-i10-12-7,7.6,name same,initial same,position far
+W4308446400-5,10.47191/ijpbms/v2-i10-12-9,7.6,name same,initial same,position far
+W4308446400-6,10.47191/ijpbms/v2-i10-12-11,7.6,name same,initial same,position far
+W4308446400-7,10.47191/ijpbms/v2-i10-12-13,7.6,name same,initial same,position far
 W4308471590-1,10.1016/j.fbio.2022.102175-1,27.1,name same,initial same,position same
 W4308471590-2,10.1016/j.fbio.2022.102175-2,27.1,name same,initial same,position same
 W4308471590-3,10.1016/j.fbio.2022.102175-3,27.1,name same,initial same,position same
@@ -6515,9 +6535,15 @@ W4311884685-3,10.1016/j.quaint.2022.12.005-3,27.1,name same,initial same,positio
 W4311886253-1,10.30687/tol/2499-5975/2022/01/010-1,27.1,name same,initial same,position same
 W4311911518-2,10.22453/lsj-023.2.118-133-3,12.7,name same,initial same,position near
 W4311911518-3,10.22453/lsj-023.2.118-133-5,12.7,name same,initial same,position near
+W4311911518-4,10.22453/lsj-023.2.118-133-7,7.6,name same,initial same,position far
+W4311911518-5,10.22453/lsj-023.2.118-133-9,7.6,name same,initial same,position far
 W4311911519-1,10.22453/lsj-023.2.163-177-2,12.7,name same,initial same,position near
 W4311911519-2,10.22453/lsj-023.2.163-177-3,12.7,name same,initial same,position near
 W4311911519-3,10.22453/lsj-023.2.163-177-5,12.7,name same,initial same,position near
+W4311911519-4,10.22453/lsj-023.2.163-177-7,7.6,name same,initial same,position far
+W4311911519-5,10.22453/lsj-023.2.163-177-9,7.6,name same,initial same,position far
+W4311911519-6,10.22453/lsj-023.2.163-177-11,7.6,name same,initial same,position far
+W4311911519-7,10.22453/lsj-023.2.163-177-13,7.6,name same,initial same,position far
 W4311939635-1,10.1186/s12909-022-03940-4-1,27.1,name same,initial same,position same
 W4311939635-2,10.1186/s12909-022-03940-4-2,27.1,name same,initial same,position same
 W4311939635-3,10.1186/s12909-022-03940-4-3,27.1,name same,initial same,position same
@@ -8513,6 +8539,7 @@ W4327581352-2,10.1097/js9.0000000000000130-2,27.1,name same,initial same,positio
 W4327581352-3,10.1097/js9.0000000000000130-3,20.6,family in name,initial same,position same
 W4327581352-4,10.1097/js9.0000000000000130-4,27.1,name same,initial same,position same
 W4327581352-5,10.1097/js9.0000000000000130-5,27.1,name same,initial same,position same
+W4327581352-6,10.1097/js9.0000000000000130-6,5.9,name different,initial same,position same
 W4327581352-7,10.1097/js9.0000000000000130-7,27.1,name same,initial same,position same
 W4327581352-8,10.1097/js9.0000000000000130-8,27.1,name same,initial same,position same
 W4327611835-1,10.31973/aj.v1i144.3955-1,27.1,name same,initial same,position same
@@ -8949,6 +8976,7 @@ W4362521461-5,10.1186/s12888-023-04711-1-5,27.1,name same,initial same,position 
 W4362524389-1,10.1016/j.msard.2022.104267-1,20.6,family in name,initial same,position same
 W4362524389-2,10.1016/j.msard.2022.104267-2,27.1,name same,initial same,position same
 W4362524389-3,10.1016/j.msard.2022.104267-3,27.1,name same,initial same,position same
+W4362524389-4,10.1016/j.msard.2022.104267-4,5.9,name different,initial same,position same
 W4362524389-5,10.1016/j.msard.2022.104267-5,20.6,family in name,initial same,position same
 W4362524389-6,10.1016/j.msard.2022.104267-6,20.6,family in name,initial same,position same
 W4362524389-7,10.1016/j.msard.2022.104267-7,27.1,name same,initial same,position same
@@ -9687,6 +9715,7 @@ W4367187464-1,10.21203/rs.3.rs-2802857/v1-1,27.1,name same,initial same,position
 W4367187464-2,10.21203/rs.3.rs-2802857/v1-2,27.1,name same,initial same,position same
 W4367187464-3,10.21203/rs.3.rs-2802857/v1-3,20.6,family in name,initial same,position same
 W4367187464-4,10.21203/rs.3.rs-2802857/v1-4,27.1,name same,initial same,position same
+W4367187464-5,10.21203/rs.3.rs-2802857/v1-5,5.9,name different,initial same,position same
 W4367187464-6,10.21203/rs.3.rs-2802857/v1-6,27.1,name same,initial same,position same
 W4367187464-7,10.21203/rs.3.rs-2802857/v1-7,20.6,family in name,initial same,position same
 W4367187464-8,10.21203/rs.3.rs-2802857/v1-8,20.6,family in name,initial same,position same
@@ -10502,6 +10531,7 @@ W4380091277-11,10.1016/j.seizure.2023.06.007-11,27.1,name same,initial same,posi
 W4380091277-12,10.1016/j.seizure.2023.06.007-12,20.6,family in name,initial same,position same
 W4380149461-1,10.16965/ijpr.2023.110-2,12.7,name same,initial same,position near
 W4380149461-2,10.16965/ijpr.2023.110-4,12.7,name same,initial same,position near
+W4380149461-3,10.16965/ijpr.2023.110-7,7.6,name same,initial same,position far
 W4380152071-1,10.1007/978-981-99-1513-2_8-1,27.1,name same,initial same,position same
 W4380152071-2,10.1007/978-981-99-1513-2_8-2,27.1,name same,initial same,position same
 W4380152071-3,10.1007/978-981-99-1513-2_8-3,27.1,name same,initial same,position same
@@ -11949,6 +11979,7 @@ W4385781798-95,10.1016/j.jaci.2023.07.019-95,27.1,name same,initial same,positio
 W4385781798-96,10.1016/j.jaci.2023.07.019-96,27.1,name same,initial same,position same
 W4385781798-97,10.1016/j.jaci.2023.07.019-97,27.1,name same,initial same,position same
 W4385781798-98,10.1016/j.jaci.2023.07.019-98,27.1,name same,initial same,position same
+W4385781798-99,10.1016/j.jaci.2023.07.019-99,5.9,name different,initial same,position same
 W4385781798-100,10.1016/j.jaci.2023.07.019-100,27.1,name same,initial same,position same
 W4385830579-1,10.1016/j.scitotenv.2023.166345-1,20.6,family in name,initial same,position same
 W4385830579-2,10.1016/j.scitotenv.2023.166345-2,27.1,name same,initial same,position same
@@ -12217,6 +12248,7 @@ W4386209230-9,10.1111/ijd.16815-9,27.1,name same,initial same,position same
 W4386209230-10,10.1111/ijd.16815-10,27.1,name same,initial same,position same
 W4386209230-11,10.1111/ijd.16815-11,20.6,family in name,initial same,position same
 W4386209230-12,10.1111/ijd.16815-12,27.1,name same,initial same,position same
+W4386209230-13,10.1111/ijd.16815-14,6.2,family in name,initial same,position near
 W4386215858-1,10.46827/ejlll.v7i2.462-1,27.1,name same,initial same,position same
 W4386220072-1,10.3390/d15090962-1,27.1,name same,initial same,position same
 W4386220072-2,10.3390/d15090962-2,27.1,name same,initial same,position same
@@ -12644,6 +12676,9 @@ W4386699478-6,10.1007/s10853-023-08902-9-6,27.1,name same,initial same,position 
 W4386712120-1,10.32598/pbr.9.3.1155.1-2,12.7,name same,initial same,position near
 W4386712120-2,10.32598/pbr.9.3.1155.1-3,12.7,name same,initial same,position near
 W4386712120-3,10.32598/pbr.9.3.1155.1-5,12.7,name same,initial same,position near
+W4386712120-4,10.32598/pbr.9.3.1155.1-7,7.6,name same,initial same,position far
+W4386712120-5,10.32598/pbr.9.3.1155.1-9,7.6,name same,initial same,position far
+W4386712120-6,10.32598/pbr.9.3.1155.1-11,7.6,name same,initial same,position far
 W4386715798-1,10.1098/rspa.2023.0191-1,27.1,name same,initial same,position same
 W4386715798-2,10.1098/rspa.2023.0191-2,27.1,name same,initial same,position same
 W4386715798-3,10.1098/rspa.2023.0191-3,20.6,family in name,initial same,position same
@@ -12857,6 +12892,7 @@ W4387028981-3,10.1007/978-3-031-32408-6_24-3,20.6,family in name,initial same,po
 W4387049030-1,10.54646/bjbnt.2023.07-2,12.7,name same,initial same,position near
 W4387049030-2,10.54646/bjbnt.2023.07-3,12.7,name same,initial same,position near
 W4387049030-3,10.54646/bjbnt.2023.07-5,12.7,name same,initial same,position near
+W4387049030-4,10.54646/bjbnt.2023.07-7,7.6,name same,initial same,position far
 W4387055931-1,10.3389/fimmu.2023.1294963-1,27.1,name same,initial same,position same
 W4387055931-2,10.3389/fimmu.2023.1294963-2,27.1,name same,initial same,position same
 W4387055931-3,10.3389/fimmu.2023.1294963-3,27.1,name same,initial same,position same
@@ -13206,6 +13242,7 @@ W4387737964-10,10.3390/su152015024-10,27.1,name same,initial same,position same
 W4387737964-11,10.3390/su152015024-11,20.6,family in name,initial same,position same
 W4387757875-1,10.56082/annalsarscimath.2023.1-2.443-2,12.7,name same,initial same,position near
 W4387757875-2,10.56082/annalsarscimath.2023.1-2.443-3,12.7,name same,initial same,position near
+W4387757875-3,10.56082/annalsarscimath.2023.1-2.443-5,6.2,family in name,initial same,position near
 W4387765116-1,10.1002/ijgo.15198-1,27.1,name same,initial same,position same
 W4387765116-2,10.1002/ijgo.15198-2,27.1,name same,initial same,position same
 W4387765116-3,10.1002/ijgo.15198-3,27.1,name same,initial same,position same
@@ -13219,8 +13256,15 @@ W4387765116-10,10.1002/ijgo.15198-10,20.6,family in name,initial same,position s
 W4387780944-1,10.58489/2836-2411/027-2,12.7,name same,initial same,position near
 W4387780944-2,10.58489/2836-2411/027-3,12.7,name same,initial same,position near
 W4387780944-3,10.58489/2836-2411/027-5,12.7,name same,initial same,position near
+W4387780944-4,10.58489/2836-2411/027-7,7.6,name same,initial same,position far
+W4387780944-6,10.58489/2836-2411/027-10,7.6,name same,initial same,position far
+W4387780944-8,10.58489/2836-2411/027-12,7.6,name same,initial same,position far
+W4387780944-9,10.58489/2836-2411/027-14,7.6,name same,initial same,position far
+W4387780944-10,10.58489/2836-2411/027-16,7.6,name same,initial same,position far
+W4387781202-1,10.58489/2836-2411/028-2,6.2,family in name,initial same,position near
 W4387781202-2,10.58489/2836-2411/028-3,12.7,name same,initial same,position near
 W4387781202-3,10.58489/2836-2411/028-4,12.7,name same,initial same,position near
+W4387781202-4,10.58489/2836-2411/028-5,6.2,family in name,initial same,position near
 W4387781202-5,10.58489/2836-2411/028-6,12.7,name same,initial same,position near
 W4387781202-6,10.58489/2836-2411/028-7,12.7,name same,initial same,position near
 W4387781202-7,10.58489/2836-2411/028-9,12.7,name same,initial same,position near
@@ -13251,6 +13295,7 @@ W4387872917-1,10.1109/icc45041.2023.10279401-1,27.1,name same,initial same,posit
 W4387872917-2,10.1109/icc45041.2023.10279401-2,27.1,name same,initial same,position same
 W4387872917-3,10.1109/icc45041.2023.10279401-3,27.1,name same,initial same,position same
 W4387872917-4,10.1109/icc45041.2023.10279401-4,27.1,name same,initial same,position same
+W4387874483-1,10.3897/jhr.96.105494-1,5.9,name different,initial same,position same
 W4387874483-2,10.3897/jhr.96.105494-2,27.1,name same,initial same,position same
 W4387874483-3,10.3897/jhr.96.105494-3,27.1,name same,initial same,position same
 W4387874483-4,10.3897/jhr.96.105494-4,27.1,name same,initial same,position same
@@ -13853,10 +13898,14 @@ W4388702901-3,10.3390/pathogens12111354-3,27.1,name same,initial same,position s
 W4388702901-4,10.3390/pathogens12111354-4,27.1,name same,initial same,position same
 W4388702901-5,10.3390/pathogens12111354-5,27.1,name same,initial same,position same
 W4388704604-1,10.3390/app132212326-1,27.1,name same,initial same,position same
+W4388704604-2,10.3390/app132212326-9,7.6,name same,initial same,position far
+W4388704604-3,10.3390/app132212326-4,6.2,family in name,initial same,position near
 W4388704604-4,10.3390/app132212326-3,12.7,name same,initial same,position near
 W4388704604-5,10.3390/app132212326-5,27.1,name same,initial same,position same
 W4388704604-6,10.3390/app132212326-8,12.7,name same,initial same,position near
+W4388704604-7,10.3390/app132212326-2,7.6,name same,initial same,position far
 W4388704604-8,10.3390/app132212326-7,12.7,name same,initial same,position near
+W4388704604-9,10.3390/app132212326-6,7.6,name same,initial same,position far
 W4388708523-1,10.1007/978-3-031-34779-5_1-1,27.1,name same,initial same,position same
 W4388708523-2,10.1007/978-3-031-34779-5_1-2,15.6,family close,initial same,position same
 W4388708523-3,10.1007/978-3-031-34779-5_1-3,27.1,name same,initial same,position same
@@ -14906,7 +14955,11 @@ W4390636617-99,10.1186/s13073-023-01278-0-99,27.1,name same,initial same,positio
 W4390636617-100,10.1186/s13073-023-01278-0-100,27.1,name same,initial same,position same
 W4390641880-1,10.4000/communication.18296-1,20.6,family in name,initial same,position same
 W4390647464-1,10.4000/narratologie.14669-1,27.1,name same,initial same,position same
+W4390649988-1,10.22271/2582-3744.2022.mar.10-2,6.2,family in name,initial same,position near
 W4390649988-2,10.22271/2582-3744.2022.mar.10-3,12.7,name same,initial same,position near
+W4390649988-3,10.22271/2582-3744.2022.mar.10-5,6.2,family in name,initial same,position near
+W4390649988-4,10.22271/2582-3744.2022.mar.10-7,7.6,name same,initial same,position far
+W4390649988-5,10.22271/2582-3744.2022.mar.10-9,7.6,name same,initial same,position far
 W4390650214-1,10.1016/j.msard.2024.105435-1,20.6,family in name,initial same,position same
 W4390650214-2,10.1016/j.msard.2024.105435-2,20.6,family in name,initial same,position same
 W4390650214-3,10.1016/j.msard.2024.105435-3,20.6,family in name,initial same,position same
@@ -15200,6 +15253,7 @@ W4391069985-4,10.1016/j.compstruct.2024.117912-4,27.1,name same,initial same,pos
 W4391074308-1,10.35940/ijitee.b9774.13020124-2,12.7,name same,initial same,position near
 W4391074308-2,10.35940/ijitee.b9774.13020124-3,12.7,name same,initial same,position near
 W4391074308-3,10.35940/ijitee.b9774.13020124-5,12.7,name same,initial same,position near
+W4391074308-4,10.35940/ijitee.b9774.13020124-7,7.6,name same,initial same,position far
 W4391074897-1,10.1016/j.jwpe.2024.104828-1,27.1,name same,initial same,position same
 W4391074897-2,10.1016/j.jwpe.2024.104828-2,27.1,name same,initial same,position same
 W4391074897-3,10.1016/j.jwpe.2024.104828-3,27.1,name same,initial same,position same
@@ -15663,6 +15717,9 @@ W4391708046-1,10.1016/j.disc.2024.113920-1,27.1,name same,initial same,position 
 W4391741238-1,10.1016/j.dam.2024.02.002-1,27.1,name same,initial same,position same
 W4391741238-2,10.1016/j.dam.2024.02.002-2,27.1,name same,initial same,position same
 W4391753390-1,10.37394/23202.2024.23.10-1,27.1,name same,initial same,position same
+W4391753390-2,10.37394/23202.2024.23.10-2,5.9,name different,initial same,position same
+W4391753390-3,10.37394/23202.2024.23.10-3,5.9,name different,initial same,position same
+W4391753390-4,10.37394/23202.2024.23.10-4,5.9,name different,initial same,position same
 W4391765349-1,10.4018/979-8-3693-1536-1.ch006-1,20.6,family in name,initial same,position same
 W4391765376-1,10.4018/979-8-3693-1536-1.ch009-1,27.1,name same,initial same,position same
 W4391775238-1,10.1016/j.apsusc.2024.159698-1,27.1,name same,initial same,position same
@@ -15942,6 +15999,7 @@ W4392233201-7,10.21203/rs.3.rs-3958390/v1-7,20.6,family in name,initial same,pos
 W4392233201-8,10.21203/rs.3.rs-3958390/v1-8,27.1,name same,initial same,position same
 W4392234451-1,10.1177/08920206241234769-1,27.1,name same,initial same,position same
 W4392234451-2,10.1177/08920206241234769-2,20.6,family in name,initial same,position same
+W4392234451-5,10.1177/08920206241234769-3,6.2,family in name,initial same,position near
 W4392240928-1,10.7759/cureus.55137-1,27.1,name same,initial same,position same
 W4392240928-2,10.7759/cureus.55137-2,27.1,name same,initial same,position same
 W4392240928-3,10.7759/cureus.55137-3,27.1,name same,initial same,position same
@@ -16244,6 +16302,7 @@ W4392778318-5,10.1016/j.soda.2024.100133-5,27.1,name same,initial same,position 
 W4392779917-1,10.61186/san.4.177-1,27.1,name same,initial same,position same
 W4392779917-2,10.61186/san.4.177-2,27.1,name same,initial same,position same
 W4392779917-3,10.61186/san.4.177-3,27.1,name same,initial same,position same
+W4392782001-1,10.52133/ijrsp.v5.52.6-2,6.2,family in name,initial same,position near
 W4392782001-2,10.52133/ijrsp.v5.52.6-3,12.7,name same,initial same,position near
 W4392782663-1,10.7759/cureus.54483-1,27.1,name same,initial same,position same
 W4392782663-2,10.7759/cureus.54483-2,27.1,name same,initial same,position same
@@ -16581,6 +16640,7 @@ W4393237914-2,10.1016/j.dwt.2024.100209-2,27.1,name same,initial same,position s
 W4393237914-3,10.1016/j.dwt.2024.100209-3,27.1,name same,initial same,position same
 W4393237914-4,10.1016/j.dwt.2024.100209-4,27.1,name same,initial same,position same
 W4393237914-5,10.1016/j.dwt.2024.100209-5,27.1,name same,initial same,position same
+W4393259005-1,10.4274/turkjorthod.2023.2022.20-1,5.9,name different,initial same,position same
 W4393259005-2,10.4274/turkjorthod.2023.2022.20-2,27.1,name same,initial same,position same
 W4393259005-3,10.4274/turkjorthod.2023.2022.20-3,27.1,name same,initial same,position same
 W4393260616-1,10.1177/21501319241235588-1,27.1,name same,initial same,position same
@@ -18021,9 +18081,43 @@ W4399044253-9,10.1097/ms9.0000000000002231-9,20.6,family in name,initial same,po
 W4399044253-10,10.1097/ms9.0000000000002231-10,27.1,name same,initial same,position same
 W4399044253-11,10.1097/ms9.0000000000002231-11,27.1,name same,initial same,position same
 W4399056955-1,10.1016/j.revmed.2024.05.017-1,20.6,family in name,initial same,position same
+W4399056955-3,10.1016/j.revmed.2024.05.017-2,6.2,family in name,initial same,position near
+W4399056955-4,10.1016/j.revmed.2024.05.017-3,6.2,family in name,initial same,position near
+W4399056955-5,10.1016/j.revmed.2024.05.017-4,6.2,family in name,initial same,position near
+W4399056955-6,10.1016/j.revmed.2024.05.017-5,6.2,family in name,initial same,position near
+W4399056955-7,10.1016/j.revmed.2024.05.017-6,6.2,family in name,initial same,position near
+W4399056955-8,10.1016/j.revmed.2024.05.017-7,6.2,family in name,initial same,position near
+W4399056955-9,10.1016/j.revmed.2024.05.017-8,6.2,family in name,initial same,position near
 W4399056955-10,10.1016/j.revmed.2024.05.017-9,12.7,name same,initial same,position near
+W4399056955-11,10.1016/j.revmed.2024.05.017-10,6.2,family in name,initial same,position near
 W4399056955-12,10.1016/j.revmed.2024.05.017-11,12.7,name same,initial same,position near
+W4399056955-14,10.1016/j.revmed.2024.05.017-12,6.2,family in name,initial same,position near
+W4399056955-15,10.1016/j.revmed.2024.05.017-13,6.2,family in name,initial same,position near
+W4399056955-16,10.1016/j.revmed.2024.05.017-14,6.2,family in name,initial same,position near
+W4399056955-17,10.1016/j.revmed.2024.05.017-15,6.2,family in name,initial same,position near
 W4399056955-18,10.1016/j.revmed.2024.05.017-16,12.7,name same,initial same,position near
+W4399056955-19,10.1016/j.revmed.2024.05.017-17,6.2,family in name,initial same,position near
+W4399056955-20,10.1016/j.revmed.2024.05.017-18,6.2,family in name,initial same,position near
+W4399056955-21,10.1016/j.revmed.2024.05.017-19,6.2,family in name,initial same,position near
+W4399056955-22,10.1016/j.revmed.2024.05.017-20,6.2,family in name,initial same,position near
+W4399056955-23,10.1016/j.revmed.2024.05.017-21,6.2,family in name,initial same,position near
+W4399056955-24,10.1016/j.revmed.2024.05.017-22,6.2,family in name,initial same,position near
+W4399056955-25,10.1016/j.revmed.2024.05.017-23,6.2,family in name,initial same,position near
+W4399056955-26,10.1016/j.revmed.2024.05.017-24,6.2,family in name,initial same,position near
+W4399056955-27,10.1016/j.revmed.2024.05.017-25,6.2,family in name,initial same,position near
+W4399056955-28,10.1016/j.revmed.2024.05.017-26,6.2,family in name,initial same,position near
+W4399056955-29,10.1016/j.revmed.2024.05.017-27,6.2,family in name,initial same,position near
+W4399056955-30,10.1016/j.revmed.2024.05.017-28,6.2,family in name,initial same,position near
+W4399056955-31,10.1016/j.revmed.2024.05.017-29,6.2,family in name,initial same,position near
+W4399056955-32,10.1016/j.revmed.2024.05.017-30,6.2,family in name,initial same,position near
+W4399056955-33,10.1016/j.revmed.2024.05.017-31,6.2,family in name,initial same,position near
+W4399056955-34,10.1016/j.revmed.2024.05.017-32,6.2,family in name,initial same,position near
+W4399056955-35,10.1016/j.revmed.2024.05.017-33,6.2,family in name,initial same,position near
+W4399056955-36,10.1016/j.revmed.2024.05.017-34,6.2,family in name,initial same,position near
+W4399056955-37,10.1016/j.revmed.2024.05.017-35,6.2,family in name,initial same,position near
+W4399056955-38,10.1016/j.revmed.2024.05.017-36,6.2,family in name,initial same,position near
+W4399056955-39,10.1016/j.revmed.2024.05.017-37,6.2,family in name,initial same,position near
+W4399056955-40,10.1016/j.revmed.2024.05.017-38,6.2,family in name,initial same,position near
 W4399069624-1,10.1007/s11665-024-09637-7-1,27.1,name same,initial same,position same
 W4399069624-2,10.1007/s11665-024-09637-7-2,27.1,name same,initial same,position same
 W4399069624-3,10.1007/s11665-024-09637-7-3,27.1,name same,initial same,position same
@@ -18310,6 +18404,7 @@ W4399500840-4,10.9734/jsrr/2024/v30i72121-4,27.1,name same,initial same,position
 W4399533163-1,10.1080/21683565.2024.2364752-1,27.1,name same,initial same,position same
 W4399533163-2,10.1080/21683565.2024.2364752-2,27.1,name same,initial same,position same
 W4399533163-3,10.1080/21683565.2024.2364752-3,20.6,family in name,initial same,position same
+W4399533163-4,10.1080/21683565.2024.2364752-4,5.9,name different,initial same,position same
 W4399537608-1,10.1007/s40889-024-00192-2-1,27.1,name same,initial same,position same
 W4399537608-2,10.1007/s40889-024-00192-2-2,27.1,name same,initial same,position same
 W4399537608-3,10.1007/s40889-024-00192-2-3,27.1,name same,initial same,position same
@@ -18360,9 +18455,13 @@ W4399631225-3,10.1016/j.ijscr.2024.109903-3,27.1,name same,initial same,position
 W4399631225-4,10.1016/j.ijscr.2024.109903-4,20.6,family in name,initial same,position same
 W4399631225-5,10.1016/j.ijscr.2024.109903-5,27.1,name same,initial same,position same
 W4399656406-1,10.1093/neuonc/noae106-1,27.1,name same,initial same,position same
+W4399656406-2,10.1093/neuonc/noae106-8,7.6,name same,initial same,position far
 W4399656406-3,10.1093/neuonc/noae106-5,12.7,name same,initial same,position near
 W4399656406-4,10.1093/neuonc/noae106-2,12.7,name same,initial same,position near
 W4399656406-5,10.1093/neuonc/noae106-3,12.7,name same,initial same,position near
+W4399656406-7,10.1093/neuonc/noae106-4,7.6,name same,initial same,position far
+W4399656406-9,10.1093/neuonc/noae106-6,7.6,name same,initial same,position far
+W4399656406-10,10.1093/neuonc/noae106-7,7.6,name same,initial same,position far
 W4399656406-11,10.1093/neuonc/noae106-9,12.7,name same,initial same,position near
 W4399668059-1,10.1063/5.0210171-1,27.1,name same,initial same,position same
 W4399676261-1,10.7759/cureus.62365-1,27.1,name same,initial same,position same
@@ -19069,6 +19168,7 @@ W4400876357-5,10.3390/wevj15070324-5,27.1,name same,initial same,position same
 W4400878067-1,10.3390/ijgi13070259-1,27.1,name same,initial same,position same
 W4400878067-2,10.3390/ijgi13070259-4,12.7,name same,initial same,position near
 W4400878067-3,10.3390/ijgi13070259-3,27.1,name same,initial same,position same
+W4400878067-4,10.3390/ijgi13070259-2,6.2,family in name,initial same,position near
 W4400878775-1,10.1080/19440049.2024.2374358-1,27.1,name same,initial same,position same
 W4400878775-2,10.1080/19440049.2024.2374358-2,27.1,name same,initial same,position same
 W4400878775-3,10.1080/19440049.2024.2374358-3,27.1,name same,initial same,position same
@@ -20134,6 +20234,8 @@ W4402311778-4,10.1007/s12542-024-00699-5-4,20.6,family in name,initial same,posi
 W4402316713-1,10.13107/jocr.2024.v14.i09.4750-2,12.7,name same,initial same,position near
 W4402316713-2,10.13107/jocr.2024.v14.i09.4750-3,12.7,name same,initial same,position near
 W4402316713-3,10.13107/jocr.2024.v14.i09.4750-5,12.7,name same,initial same,position near
+W4402316713-4,10.13107/jocr.2024.v14.i09.4750-7,7.6,name same,initial same,position far
+W4402316713-5,10.13107/jocr.2024.v14.i09.4750-9,7.6,name same,initial same,position far
 W4402322429-1,10.1007/s00423-024-03458-x-1,27.1,name same,initial same,position same
 W4402322429-2,10.1007/s00423-024-03458-x-2,27.1,name same,initial same,position same
 W4402322429-3,10.1007/s00423-024-03458-x-3,27.1,name same,initial same,position same
@@ -21750,6 +21852,7 @@ W4404971247-15,10.3390/healthcare12232422-15,27.1,name same,initial same,positio
 W4404971247-16,10.3390/healthcare12232422-16,27.1,name same,initial same,position same
 W4404971247-17,10.3390/healthcare12232422-17,27.1,name same,initial same,position same
 W4404972103-1,10.9734/air/2024/v25i61199-1,27.1,name same,initial same,position same
+W4404979227-1,10.48084/etasr.9020-1,5.9,name different,initial same,position same
 W4404979227-2,10.48084/etasr.9020-2,27.1,name same,initial same,position same
 W4404979227-3,10.48084/etasr.9020-3,27.1,name same,initial same,position same
 W4404996904-1,10.1016/j.nucengdes.2024.113729-1,27.1,name same,initial same,position same
@@ -21774,6 +21877,8 @@ W4405056315-5,10.1109/wimob61911.2024.10770496-5,27.1,name same,initial same,pos
 W4405061946-1,10.22456/2448-3923.135034-1,27.1,name same,initial same,position same
 W4405067748-1,10.30919/esmm1333-2,12.7,name same,initial same,position near
 W4405067748-2,10.30919/esmm1333-4,12.7,name same,initial same,position near
+W4405067748-4,10.30919/esmm1333-8,7.6,name same,initial same,position far
+W4405067748-6,10.30919/esmm1333-12,7.6,name same,initial same,position far
 W4405068492-1,10.3389/fnut.2024.1475223-1,27.1,name same,initial same,position same
 W4405068492-2,10.3389/fnut.2024.1475223-2,27.1,name same,initial same,position same
 W4405068492-3,10.3389/fnut.2024.1475223-3,27.1,name same,initial same,position same
@@ -22104,10 +22209,12 @@ W4405444871-31,10.1084/jem.20241413-32,12.7,name same,initial same,position near
 W4405444871-32,10.1084/jem.20241413-33,12.7,name same,initial same,position near
 W4405444871-33,10.1084/jem.20241413-34,12.7,name same,initial same,position near
 W4405444871-34,10.1084/jem.20241413-35,12.7,name same,initial same,position near
+W4405444871-35,10.1084/jem.20241413-36,6.2,family in name,initial same,position near
 W4405444871-36,10.1084/jem.20241413-37,12.7,name same,initial same,position near
 W4405444871-37,10.1084/jem.20241413-38,12.7,name same,initial same,position near
 W4405444871-38,10.1084/jem.20241413-39,12.7,name same,initial same,position near
 W4405444871-39,10.1084/jem.20241413-40,12.7,name same,initial same,position near
+W4405444871-40,10.1084/jem.20241413-41,6.2,family in name,initial same,position near
 W4405444871-41,10.1084/jem.20241413-42,12.7,name same,initial same,position near
 W4405444871-42,10.1084/jem.20241413-43,12.7,name same,initial same,position near
 W4405444871-43,10.1084/jem.20241413-44,12.7,name same,initial same,position near
@@ -22127,11 +22234,13 @@ W4405444871-56,10.1084/jem.20241413-57,12.7,name same,initial same,position near
 W4405444871-57,10.1084/jem.20241413-58,12.7,name same,initial same,position near
 W4405444871-58,10.1084/jem.20241413-59,12.7,name same,initial same,position near
 W4405444871-59,10.1084/jem.20241413-60,12.7,name same,initial same,position near
+W4405444871-60,10.1084/jem.20241413-61,6.2,family in name,initial same,position near
 W4405444871-61,10.1084/jem.20241413-62,12.7,name same,initial same,position near
 W4405444871-62,10.1084/jem.20241413-63,12.7,name same,initial same,position near
 W4405444871-63,10.1084/jem.20241413-64,12.7,name same,initial same,position near
 W4405444871-64,10.1084/jem.20241413-65,12.7,name same,initial same,position near
 W4405444871-65,10.1084/jem.20241413-66,12.7,name same,initial same,position near
+W4405444871-66,10.1084/jem.20241413-67,6.2,family in name,initial same,position near
 W4405444871-67,10.1084/jem.20241413-68,12.7,name same,initial same,position near
 W4405444871-68,10.1084/jem.20241413-69,12.7,name same,initial same,position near
 W4405444871-69,10.1084/jem.20241413-70,12.7,name same,initial same,position near
@@ -22143,17 +22252,21 @@ W4405444871-74,10.1084/jem.20241413-75,12.7,name same,initial same,position near
 W4405444871-75,10.1084/jem.20241413-76,12.7,name same,initial same,position near
 W4405444871-76,10.1084/jem.20241413-77,12.7,name same,initial same,position near
 W4405444871-77,10.1084/jem.20241413-78,12.7,name same,initial same,position near
+W4405444871-78,10.1084/jem.20241413-79,6.2,family in name,initial same,position near
 W4405444871-79,10.1084/jem.20241413-80,12.7,name same,initial same,position near
 W4405444871-80,10.1084/jem.20241413-81,12.7,name same,initial same,position near
+W4405444871-81,10.1084/jem.20241413-82,6.2,family in name,initial same,position near
 W4405444871-82,10.1084/jem.20241413-83,12.7,name same,initial same,position near
 W4405444871-83,10.1084/jem.20241413-84,12.7,name same,initial same,position near
 W4405444871-84,10.1084/jem.20241413-85,12.7,name same,initial same,position near
 W4405444871-85,10.1084/jem.20241413-86,12.7,name same,initial same,position near
+W4405444871-86,10.1084/jem.20241413-87,6.2,family in name,initial same,position near
 W4405444871-87,10.1084/jem.20241413-88,12.7,name same,initial same,position near
 W4405444871-88,10.1084/jem.20241413-89,12.7,name same,initial same,position near
 W4405444871-89,10.1084/jem.20241413-90,12.7,name same,initial same,position near
 W4405444871-90,10.1084/jem.20241413-91,12.7,name same,initial same,position near
 W4405444871-91,10.1084/jem.20241413-92,12.7,name same,initial same,position near
+W4405444871-92,10.1084/jem.20241413-93,6.2,family in name,initial same,position near
 W4405444871-93,10.1084/jem.20241413-94,12.7,name same,initial same,position near
 W4405444871-94,10.1084/jem.20241413-95,12.7,name same,initial same,position near
 W4405444871-95,10.1084/jem.20241413-96,12.7,name same,initial same,position near
@@ -22720,8 +22833,10 @@ W4406485859-16,10.1186/s13033-024-00654-6-17,12.7,name same,initial same,positio
 W4406485859-17,10.1186/s13033-024-00654-6-18,12.7,name same,initial same,position near
 W4406485859-18,10.1186/s13033-024-00654-6-19,12.7,name same,initial same,position near
 W4406485859-19,10.1186/s13033-024-00654-6-20,12.7,name same,initial same,position near
+W4406485859-20,10.1186/s13033-024-00654-6-21,6.2,family in name,initial same,position near
 W4406485859-21,10.1186/s13033-024-00654-6-22,12.7,name same,initial same,position near
 W4406485859-22,10.1186/s13033-024-00654-6-23,12.7,name same,initial same,position near
+W4406485859-23,10.1186/s13033-024-00654-6-24,6.2,family in name,initial same,position near
 W4406485859-24,10.1186/s13033-024-00654-6-25,12.7,name same,initial same,position near
 W4406485859-25,10.1186/s13033-024-00654-6-26,12.7,name same,initial same,position near
 W4406485859-26,10.1186/s13033-024-00654-6-27,12.7,name same,initial same,position near
@@ -22730,6 +22845,7 @@ W4406485859-28,10.1186/s13033-024-00654-6-29,12.7,name same,initial same,positio
 W4406485859-29,10.1186/s13033-024-00654-6-30,12.7,name same,initial same,position near
 W4406485859-30,10.1186/s13033-024-00654-6-31,12.7,name same,initial same,position near
 W4406485859-31,10.1186/s13033-024-00654-6-32,12.7,name same,initial same,position near
+W4406485859-32,10.1186/s13033-024-00654-6-33,6.2,family in name,initial same,position near
 W4406485859-33,10.1186/s13033-024-00654-6-34,12.7,name same,initial same,position near
 W4406485859-34,10.1186/s13033-024-00654-6-35,12.7,name same,initial same,position near
 W4406485859-35,10.1186/s13033-024-00654-6-36,12.7,name same,initial same,position near
@@ -22743,6 +22859,7 @@ W4406485859-42,10.1186/s13033-024-00654-6-43,12.7,name same,initial same,positio
 W4406485859-43,10.1186/s13033-024-00654-6-44,12.7,name same,initial same,position near
 W4406485859-44,10.1186/s13033-024-00654-6-45,12.7,name same,initial same,position near
 W4406485859-45,10.1186/s13033-024-00654-6-46,12.7,name same,initial same,position near
+W4406485859-46,10.1186/s13033-024-00654-6-47,6.2,family in name,initial same,position near
 W4406485859-47,10.1186/s13033-024-00654-6-48,12.7,name same,initial same,position near
 W4406485859-48,10.1186/s13033-024-00654-6-49,12.7,name same,initial same,position near
 W4406485859-49,10.1186/s13033-024-00654-6-50,12.7,name same,initial same,position near
@@ -23078,6 +23195,7 @@ W4407115522-51,10.1016/j.jhep.2025.01.013-51,27.1,name same,initial same,positio
 W4407115522-52,10.1016/j.jhep.2025.01.013-52,27.1,name same,initial same,position same
 W4407115522-53,10.1016/j.jhep.2025.01.013-53,27.1,name same,initial same,position same
 W4407115522-54,10.1016/j.jhep.2025.01.013-54,27.1,name same,initial same,position same
+W4407115522-55,10.1016/j.jhep.2025.01.013-55,5.9,name different,initial same,position same
 W4407115522-56,10.1016/j.jhep.2025.01.013-56,27.1,name same,initial same,position same
 W4407115522-57,10.1016/j.jhep.2025.01.013-57,27.1,name same,initial same,position same
 W4407115522-58,10.1016/j.jhep.2025.01.013-58,20.6,family in name,initial same,position same
@@ -23213,6 +23331,7 @@ W4407183943-10,10.1016/j.scitotenv.2025.178688-10,27.1,name same,initial same,po
 W4407194178-1,10.5195/d3000.2025.785-1,24.3,name same,initial unknown,position same
 W4407194178-2,10.5195/d3000.2025.785-2,27.1,name same,initial same,position same
 W4407194178-3,10.5195/d3000.2025.785-3,27.1,name same,initial same,position same
+W4407194178-4,10.5195/d3000.2025.785-4,5.9,name different,initial same,position same
 W4407196225-1,10.1016/j.heliyon.2025.e42509-1,27.1,name same,initial same,position same
 W4407196225-2,10.1016/j.heliyon.2025.e42509-2,27.1,name same,initial same,position same
 W4407196225-3,10.1016/j.heliyon.2025.e42509-3,27.1,name same,initial same,position same
@@ -24047,6 +24166,7 @@ W4408490302-6,10.1016/j.trim.2025.102218-6,27.1,name same,initial same,position 
 W4408490302-7,10.1016/j.trim.2025.102218-7,27.1,name same,initial same,position same
 W4408490302-8,10.1016/j.trim.2025.102218-8,27.1,name same,initial same,position same
 W4408490302-9,10.1016/j.trim.2025.102218-9,27.1,name same,initial same,position same
+W4408490302-10,10.1016/j.trim.2025.102218-10,5.9,name different,initial same,position same
 W4408498348-1,10.7759/cureus.80646-1,27.1,name same,initial same,position same
 W4408498348-2,10.7759/cureus.80646-2,27.1,name same,initial same,position same
 W4408498348-3,10.7759/cureus.80646-3,27.1,name same,initial same,position same
@@ -25069,6 +25189,7 @@ W4410214066-1,10.35409/ijbmer.2025.3664-1,27.1,name same,initial same,position s
 W4410214066-2,10.35409/ijbmer.2025.3664-2,27.1,name same,initial same,position same
 W4410214066-3,10.35409/ijbmer.2025.3664-3,27.1,name same,initial same,position same
 W4410214066-4,10.35409/ijbmer.2025.3664-4,27.1,name same,initial same,position same
+W4410225563-1,10.17656/jlps.10295-2,6.2,family in name,initial same,position near
 W4410225563-2,10.17656/jlps.10295-3,12.7,name same,initial same,position near
 W4410229668-1,10.1109/wcnc61545.2025.10978723-1,27.1,name same,initial same,position same
 W4410229668-2,10.1109/wcnc61545.2025.10978723-2,27.1,name same,initial same,position same
@@ -25708,6 +25829,7 @@ W4411250304-3,10.63682/fhi255-3,27.1,name same,initial same,position same
 W4411250304-4,10.63682/fhi255-4,27.1,name same,initial same,position same
 W4411250304-5,10.63682/fhi255-5,27.1,name same,initial same,position same
 W4411250304-6,10.63682/fhi255-6,27.1,name same,initial same,position same
+W4411250304-7,10.63682/fhi255-7,4.0,family close,initial different,position same
 W4411250304-8,10.63682/fhi255-8,27.1,name same,initial same,position same
 W4411256441-1,10.1080/13607863.2025.2512215-1,27.1,name same,initial same,position same
 W4411256441-2,10.1080/13607863.2025.2512215-2,27.1,name same,initial same,position same
@@ -25759,6 +25881,8 @@ W4411378672-6,10.1177/01455613251350486-6,27.1,name same,initial same,position s
 W4411388995-1,10.3389/feduc.2025.1614623-1,27.1,name same,initial same,position same
 W4411388995-3,10.3389/feduc.2025.1614623-2,12.7,name same,initial same,position near
 W4411388995-4,10.3389/feduc.2025.1614623-3,12.7,name same,initial same,position near
+W4411388995-6,10.3389/feduc.2025.1614623-4,6.2,family in name,initial same,position near
+W4411388995-7,10.3389/feduc.2025.1614623-5,6.2,family in name,initial same,position near
 W4411396834-1,10.1017/gmh.2025.10029-1,27.1,name same,initial same,position same
 W4411396834-2,10.1017/gmh.2025.10029-2,27.1,name same,initial same,position same
 W4411396834-3,10.1017/gmh.2025.10029-3,27.1,name same,initial same,position same
@@ -25843,7 +25967,9 @@ W4411441321-4,10.1002/macp.202500165-4,27.1,name same,initial same,position same
 W4411441321-5,10.1002/macp.202500165-5,27.1,name same,initial same,position same
 W4411441321-6,10.1002/macp.202500165-6,27.1,name same,initial same,position same
 W4411455250-1,10.54615/2231-7805.24.23.1114-2,12.7,name same,initial same,position near
+W4411455250-2,10.54615/2231-7805.24.23.1114-3,6.2,family in name,initial same,position near
 W4411455250-3,10.54615/2231-7805.24.23.1114-5,12.7,name same,initial same,position near
+W4411455250-4,10.54615/2231-7805.24.23.1114-7,7.6,name same,initial same,position far
 W4411457694-1,10.14293/p2199-8442.1.sop-.poncw8.v1-1,27.1,name same,initial same,position same
 W4411457694-2,10.14293/p2199-8442.1.sop-.poncw8.v1-2,27.1,name same,initial same,position same
 W4411457694-3,10.14293/p2199-8442.1.sop-.poncw8.v1-3,27.1,name same,initial same,position same
@@ -26201,6 +26327,7 @@ W4411853792-11,10.1038/s41598-025-05626-5-11,27.1,name same,initial same,positio
 W4411853792-12,10.1038/s41598-025-05626-5-12,27.1,name same,initial same,position same
 W4411855195-1,10.1038/s41598-025-07076-5-1,27.1,name same,initial same,position same
 W4411855195-2,10.1038/s41598-025-07076-5-2,27.1,name same,initial same,position same
+W4411855195-3,10.1038/s41598-025-07076-5-3,5.9,name different,initial same,position same
 W4411855195-4,10.1038/s41598-025-07076-5-4,27.1,name same,initial same,position same
 W4411855195-5,10.1038/s41598-025-07076-5-5,27.1,name same,initial same,position same
 W4411855195-6,10.1038/s41598-025-07076-5-6,27.1,name same,initial same,position same
@@ -27196,6 +27323,7 @@ W4413104108-7,10.3390/pr13082547-7,27.1,name same,initial same,position same
 W4413104108-8,10.3390/pr13082547-8,27.1,name same,initial same,position same
 W4413104108-9,10.3390/pr13082547-9,27.1,name same,initial same,position same
 W4413104108-10,10.3390/pr13082547-10,27.1,name same,initial same,position same
+W4413111741-1,10.1177/11795441251360805-1,5.9,name different,initial same,position same
 W4413111741-2,10.1177/11795441251360805-2,27.1,name same,initial same,position same
 W4413111741-3,10.1177/11795441251360805-3,27.1,name same,initial same,position same
 W4413111741-4,10.1177/11795441251360805-4,27.1,name same,initial same,position same
@@ -27317,6 +27445,7 @@ W4413258528-5,10.1038/s41598-025-15355-4-5,27.1,name same,initial same,position 
 W4413258528-6,10.1038/s41598-025-15355-4-6,27.1,name same,initial same,position same
 W4413280011-1,10.1038/s41598-025-15646-w-1,27.1,name same,initial same,position same
 W4413280011-2,10.1038/s41598-025-15646-w-2,27.1,name same,initial same,position same
+W4413280011-3,10.1038/s41598-025-15646-w-3,5.9,name different,initial same,position same
 W4413280011-4,10.1038/s41598-025-15646-w-4,27.1,name same,initial same,position same
 W4413280011-5,10.1038/s41598-025-15646-w-5,27.1,name same,initial same,position same
 W4413280011-6,10.1038/s41598-025-15646-w-6,27.1,name same,initial same,position same
@@ -27525,6 +27654,7 @@ W4413998550-1,10.1155/crra/8870515-1,20.6,family in name,initial same,position s
 W4413998550-2,10.1155/crra/8870515-2,27.1,name same,initial same,position same
 W4413998550-3,10.1155/crra/8870515-3,27.1,name same,initial same,position same
 W4413998550-4,10.1155/crra/8870515-4,27.1,name same,initial same,position same
+W4413998550-5,10.1155/crra/8870515-5,5.9,name different,initial same,position same
 W4413998550-6,10.1155/crra/8870515-6,27.1,name same,initial same,position same
 W4413998550-7,10.1155/crra/8870515-7,20.6,family in name,initial same,position same
 W4413998888-1,10.7759/cureus.91571-1,27.1,name same,initial same,position same
@@ -27637,6 +27767,7 @@ W4414162632-17,10.1111/all.70047-17,27.1,name same,initial same,position same
 W4414162632-18,10.1111/all.70047-18,27.1,name same,initial same,position same
 W4414162632-19,10.1111/all.70047-19,27.1,name same,initial same,position same
 W4414162632-20,10.1111/all.70047-20,27.1,name same,initial same,position same
+W4414162632-21,10.1111/all.70047-21,5.9,name different,initial same,position same
 W4414162632-22,10.1111/all.70047-22,27.1,name same,initial same,position same
 W4414162632-23,10.1111/all.70047-23,20.6,family in name,initial same,position same
 W4414162632-24,10.1111/all.70047-24,27.1,name same,initial same,position same
@@ -27744,6 +27875,7 @@ W4414282286-16,10.1016/j.resmer.2025.101207-16,27.1,name same,initial same,posit
 W4414282286-17,10.1016/j.resmer.2025.101207-17,27.1,name same,initial same,position same
 W4414282286-18,10.1016/j.resmer.2025.101207-18,27.1,name same,initial same,position same
 W4414282286-19,10.1016/j.resmer.2025.101207-19,27.1,name same,initial same,position same
+W4414292710-1,10.63620/mkpjsshr.2025.1043-2,6.2,family in name,initial same,position near
 W4414295527-1,10.1021/acsanm.5c03342-1,27.1,name same,initial same,position same
 W4414295527-2,10.1021/acsanm.5c03342-2,27.1,name same,initial same,position same
 W4414295527-3,10.1021/acsanm.5c03342-3,27.1,name same,initial same,position same
@@ -27857,8 +27989,14 @@ W4414391583-3,10.21203/rs.3.rs-7446176/v1-3,27.1,name same,initial same,position
 W4414391583-4,10.21203/rs.3.rs-7446176/v1-4,27.1,name same,initial same,position same
 W4414392919-1,10.12688/f1000research.164165.1-1,27.1,name same,initial same,position same
 W4414392919-2,10.12688/f1000research.164165.1-2,15.6,family close,initial same,position same
+W4414392919-3,10.12688/f1000research.164165.1-3,5.9,name different,initial same,position same
+W4414392919-4,10.12688/f1000research.164165.1-4,5.9,name different,initial same,position same
 W4414392919-5,10.12688/f1000research.164165.1-5,27.1,name same,initial same,position same
+W4414392919-6,10.12688/f1000research.164165.1-6,5.9,name different,initial same,position same
 W4414392919-7,10.12688/f1000research.164165.1-7,27.1,name same,initial same,position same
+W4414392919-8,10.12688/f1000research.164165.1-8,5.9,name different,initial same,position same
+W4414392919-9,10.12688/f1000research.164165.1-9,5.9,name different,initial same,position same
+W4414409293-1,10.69755/2995-2212.1367-1,5.9,name different,initial same,position same
 W4414417563-1,10.21203/rs.3.rs-7661359/v1-1,27.1,name same,initial same,position same
 W4414417563-2,10.21203/rs.3.rs-7661359/v1-2,27.1,name same,initial same,position same
 W4414417563-3,10.21203/rs.3.rs-7661359/v1-3,27.1,name same,initial same,position same
@@ -28387,6 +28525,8 @@ W4415097838-2,10.1097/md.0000000000045027-2,27.1,name same,initial same,position
 W4415102286-1,10.11648/j.plm.20250902.11-1,27.1,name same,initial same,position same
 W4415102286-2,10.11648/j.plm.20250902.11-2,20.6,family in name,initial same,position same
 W4415102286-4,10.11648/j.plm.20250902.11-4,27.1,name same,initial same,position same
+W4415102286-6,10.11648/j.plm.20250902.11-5,6.2,family in name,initial same,position near
+W4415102286-7,10.11648/j.plm.20250902.11-6,6.2,family in name,initial same,position near
 W4415102286-8,10.11648/j.plm.20250902.11-7,12.7,name same,initial same,position near
 W4415102286-9,10.11648/j.plm.20250902.11-8,12.7,name same,initial same,position near
 W4415102286-11,10.11648/j.plm.20250902.11-9,12.7,name same,initial same,position near
@@ -29201,27 +29341,34 @@ W4416285510-28,10.1186/s43058-025-00801-1-29,12.7,name same,initial same,positio
 W4416285510-29,10.1186/s43058-025-00801-1-30,12.7,name same,initial same,position near
 W4416285510-30,10.1186/s43058-025-00801-1-31,12.7,name same,initial same,position near
 W4416285510-31,10.1186/s43058-025-00801-1-32,12.7,name same,initial same,position near
+W4416285510-32,10.1186/s43058-025-00801-1-33,6.2,family in name,initial same,position near
 W4416285510-33,10.1186/s43058-025-00801-1-34,12.7,name same,initial same,position near
 W4416285510-34,10.1186/s43058-025-00801-1-35,12.7,name same,initial same,position near
 W4416285510-35,10.1186/s43058-025-00801-1-36,12.7,name same,initial same,position near
 W4416285510-36,10.1186/s43058-025-00801-1-37,12.7,name same,initial same,position near
 W4416285510-37,10.1186/s43058-025-00801-1-38,12.7,name same,initial same,position near
+W4416285510-38,10.1186/s43058-025-00801-1-39,6.2,family in name,initial same,position near
 W4416285510-39,10.1186/s43058-025-00801-1-40,12.7,name same,initial same,position near
 W4416285510-40,10.1186/s43058-025-00801-1-41,12.7,name same,initial same,position near
+W4416285510-41,10.1186/s43058-025-00801-1-42,6.2,family in name,initial same,position near
 W4416285510-42,10.1186/s43058-025-00801-1-43,12.7,name same,initial same,position near
 W4416285510-43,10.1186/s43058-025-00801-1-44,12.7,name same,initial same,position near
 W4416285510-44,10.1186/s43058-025-00801-1-45,12.7,name same,initial same,position near
 W4416285510-45,10.1186/s43058-025-00801-1-46,12.7,name same,initial same,position near
 W4416285510-46,10.1186/s43058-025-00801-1-47,12.7,name same,initial same,position near
 W4416285510-47,10.1186/s43058-025-00801-1-48,12.7,name same,initial same,position near
+W4416285510-48,10.1186/s43058-025-00801-1-49,6.2,family in name,initial same,position near
 W4416285510-49,10.1186/s43058-025-00801-1-50,12.7,name same,initial same,position near
 W4416285510-50,10.1186/s43058-025-00801-1-51,12.7,name same,initial same,position near
 W4416285510-51,10.1186/s43058-025-00801-1-52,12.7,name same,initial same,position near
 W4416285510-52,10.1186/s43058-025-00801-1-53,12.7,name same,initial same,position near
+W4416285510-53,10.1186/s43058-025-00801-1-54,6.2,family in name,initial same,position near
 W4416285510-54,10.1186/s43058-025-00801-1-55,12.7,name same,initial same,position near
 W4416285510-55,10.1186/s43058-025-00801-1-56,12.7,name same,initial same,position near
 W4416285510-56,10.1186/s43058-025-00801-1-57,12.7,name same,initial same,position near
 W4416285510-57,10.1186/s43058-025-00801-1-58,12.7,name same,initial same,position near
+W4416285510-58,10.1186/s43058-025-00801-1-59,6.2,family in name,initial same,position near
+W4416285510-59,10.1186/s43058-025-00801-1-60,6.2,family in name,initial same,position near
 W4416285510-60,10.1186/s43058-025-00801-1-61,12.7,name same,initial same,position near
 W4416285510-61,10.1186/s43058-025-00801-1-62,12.7,name same,initial same,position near
 W4416292192-1,10.1002/bco2.70111-1,27.1,name same,initial same,position same
@@ -29891,6 +30038,8 @@ W4417198326-15,10.3390/antibiotics14121250-15,20.6,family in name,initial same,p
 W4417199564-1,10.1177/08920206251404225-1,27.1,name same,initial same,position same
 W4417199564-3,10.1177/08920206251404225-2,12.7,name same,initial same,position near
 W4417199564-4,10.1177/08920206251404225-3,12.7,name same,initial same,position near
+W4417199564-6,10.1177/08920206251404225-4,6.2,family in name,initial same,position near
+W4417199564-7,10.1177/08920206251404225-5,6.2,family in name,initial same,position near
 W4417199564-8,10.1177/08920206251404225-6,12.7,name same,initial same,position near
 W4417214393-1,10.25130/tjes.32.4.12-1,20.6,family in name,initial same,position same
 W4417214393-2,10.25130/tjes.32.4.12-2,27.1,name same,initial same,position same
@@ -29933,6 +30082,7 @@ W4417279930-14,10.1016/j.jor.2025.12.022-14,27.1,name same,initial same,position
 W4417295043-1,10.1007/s10965-025-04686-5-1,27.1,name same,initial same,position same
 W4417295043-2,10.1007/s10965-025-04686-5-2,27.1,name same,initial same,position same
 W4417308789-1,10.70322/ces.2025.10019-1,27.1,name same,initial same,position same
+W4417308789-2,10.70322/ces.2025.10019-2,5.9,name different,initial same,position same
 W4417308789-3,10.70322/ces.2025.10019-3,27.1,name same,initial same,position same
 W4417308789-4,10.70322/ces.2025.10019-4,27.1,name same,initial same,position same
 W4417317193-1,10.3390/brainsci15121331-1,27.1,name same,initial same,position same
@@ -29955,6 +30105,7 @@ W4417415028-1,10.17576/jkmjc-2025-4104-27-2,12.7,name same,initial same,position
 W4417415031-1,10.17576/jkmjc-2025-4104-29-2,12.7,name same,initial same,position near
 W4417415032-1,10.17576/jkmjc-2025-4104-33-2,12.7,name same,initial same,position near
 W4417415032-2,10.17576/jkmjc-2025-4104-33-3,12.7,name same,initial same,position near
+W4417415042-1,10.17576/jkmjc-2025-4104-28-2,6.2,family in name,initial same,position near
 W4417415042-2,10.17576/jkmjc-2025-4104-28-3,12.7,name same,initial same,position near
 W4417426622-1,10.7759/cureus.99445-1,27.1,name same,initial same,position same
 W4417426622-2,10.7759/cureus.99445-2,27.1,name same,initial same,position same

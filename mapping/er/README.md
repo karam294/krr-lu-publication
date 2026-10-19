@@ -51,7 +51,7 @@ as in the course's lab:
   stated**, on labelled pairs: the pairs where both sources give an ORCID (same
   ORCID: same person). The ORCID is never a field of the matcher.
 - **One-to-one**: within a paper, the best pairs first, each author at most once;
-  a link is kept if its score reaches the threshold (D13).
+  a link is kept if its score is 4 or more (the threshold, D13): 30,848 links.
 
 **Measured honestly**: the papers are split in two halves; the weights are
 counted on half A, the matcher is measured on half B, on the 3,681 Crossref
@@ -59,11 +59,20 @@ authors of half B whose true match is known by ORCID. The results, threshold by
 threshold, and each field alone, are in `match_authorships.txt`.
 
 **What the ORCID labels cannot check.** They exist only where both sources have
-an ORCID, and those authors are the easy ones. So a person also checks 40 links
-with no ORCID on both sides (`hand_sample.csv`): 20 the threshold decides (score
-4 to 8, not kept today) and 20 kept links whose names are not plainly the same.
+an ORCID, and those authors are the easy ones. So a person also checked 40 links
+with no ORCID on both sides (`hand_sample.csv`), drawn when the threshold was 8:
+20 with a score from 4 to 8, which a threshold of 8 drops, and 20 with 8 or more
+whose names are not plainly the same.
 
-### Labelling the hand sample
+**What decided the threshold** (D13). On half B, thresholds 4 and 8 have the
+same precision, 0.9997; 4 has the higher recall, 0.9995 against 0.9957. In the
+hand sample, 19 of the 20 links from 4 to 8 are the same person: most are a
+byline in another order in Crossref. So the threshold is 4. The weakness we
+keep: when the family name and the position agree, a different first initial
+does not cancel the link (28 links, most with a score of 9.1); 2 of the 4
+checked are two different people.
+
+### Labelling the hand sample (how it was done, and how to redo it)
 
 Open `hand_sample.csv` in VS Code or Notepad (not Excel: it can change the
 file's format when it saves). Each line is one link: the OpenAlex name and its

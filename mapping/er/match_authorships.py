@@ -41,7 +41,8 @@ from collections import Counter, defaultdict
 
 from sources import ER, load
 
-THRESHOLD = 8           # the score a link must reach (see match_authorships.txt and D13)
+THRESHOLD = 4           # the score a link must reach: D13, chosen from match_authorships.txt
+DRAWN_AT = 8            # the threshold when hand_sample.csv was drawn (its two groups are split there)
 SHOWN = (0, 4, 8, 12, 16)
 SPECIAL = str.maketrans({"ı": "i", "ø": "o", "ł": "l", "đ": "d", "ß": "ss", "æ": "ae", "œ": "oe"})
 TITLES = {"dr", "prof", "pr", "md", "phd", "mr", "mrs", "ms", "mme", "obe", "jr", "sr"}   # not part of a name
@@ -202,12 +203,12 @@ def measure(oa, cr, links, threshold):
 # ------------------------------------------------------------------ the person's sample
 def hand_sample(links):
     """40 links a person can check, none with an ORCID on both sides (the ORCID labels
-    cannot check them): 20 the threshold decides (score 4 to THRESHOLD, not kept today),
-    and 20 kept links whose names are not plainly the same."""
+    cannot check them): 20 with a score from 4 to DRAWN_AT, which a threshold of DRAWN_AT
+    drops, and 20 with DRAWN_AT or more whose names are not plainly the same."""
     unlabelled = [(s, p) for s, p in links.values() if p["label"] is None]
     unlabelled.sort(key=lambda x: (x[1]["wid"], x[1]["c"]["order"]))
-    low = [x for x in unlabelled if 4 <= x[0] < THRESHOLD]
-    high = [x for x in unlabelled if x[0] >= THRESHOLD and x[1]["out"][0] != "name same" and
+    low = [x for x in unlabelled if 4 <= x[0] < DRAWN_AT]
+    high = [x for x in unlabelled if x[0] >= DRAWN_AT and x[1]["out"][0] != "name same" and
             (x[1]["out"][0] == "family close" or x[1]["out"][1] != "initial same")]
     rnd = random.Random(2026)
     return sorted(rnd.sample(low, min(20, len(low))) + rnd.sample(high, min(20, len(high))), key=lambda x: -x[0])
@@ -223,8 +224,8 @@ def label_results(links):
     if not done:
         return None
     out = []
-    for name, keep in ((f"kept (score {THRESHOLD} or more), names not plainly the same", lambda x: x >= THRESHOLD),
-                       (f"not kept (score 4 to {THRESHOLD})", lambda x: 4 <= x < THRESHOLD)):
+    for name, keep in ((f"score {DRAWN_AT} or more, names not plainly the same", lambda x: x >= DRAWN_AT),
+                       (f"score 4 to {DRAWN_AT}", lambda x: 4 <= x < DRAWN_AT)):
         part = [r for r in done if keep(float(r["score"]))]
         yes = sum(r["same"].strip().lower() == "y" for r in part)
         out.append(f"  {name}: {yes} of {len(part)} are the same person")
@@ -278,11 +279,13 @@ def main():
             w.writerow([f"{wid}-{ao}", f"{doi}-{co}", f"{s:.1f}", *out])
     unidentified = sum(1 for wid, ao, doi, co, s, out in kept
                        if any(a["order"] == ao and a["author_id"] is None for a in oa[(wid, doi)]))
-    zone = sum(1 for s, p in links.values() if 4 <= s < THRESHOLD)
+    zone = sum(1 for s, p in links.values() if 4 <= s < DRAWN_AT)
     lines += ["", f"links kept (score {THRESHOLD} or more, all papers): {len(kept):,}, of "
               f"{sum(len(v) for v in oa.values()):,} OpenAlex authorships on papers in both sources; "
               f"{unidentified:,} of them are authorships OpenAlex gave no author ID",
-              f"best pairs with a score from 4 to {THRESHOLD}, not kept: {zone:,}"]
+              f"of which with a score from 4 to {DRAWN_AT}: {zone:,}",
+              f"of which the first initials differ and the names are not the same: "
+              f"{sum(1 for s, p in links.values() if s >= THRESHOLD and p['out'][1] == 'initial different' and p['out'][0] != 'name same'):,}"]
 
     sample_path = ER / "hand_sample.csv"
     if not sample_path.exists():
