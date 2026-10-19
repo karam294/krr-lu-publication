@@ -1,42 +1,358 @@
-## shapes.ttl · YOUR TEAM: replace these with the shapes for your own
-## constraint inventory (Session 4). Every Violation stops the pipeline: the
-## endpoint is loaded only with data that passes (pipeline/run.py).
+## shapes.ttl: the rules our graph must obey, in SHACL (W3C, 2017).
 ##
-## The example: the core order shape of the course's Session 4 lab.
+## Every rule of data/constraint_inventory.csv (Session 1), and the new ones we
+## found in Sessions 2 and 3. Each rule we changed after the first run is marked
+## TRIAGE, with the decision and the evidence (shapes/triage.md has the whole story):
+##
+##   first draft (0.1.0)   3,636 Violations
+##   after triage (1.0.0)      0 Violations, 2,585 Warnings, 1,070 Info
+##
+## pipeline/run.py checks build/graph.nt + ontology/ontology.ttl against this
+## file (the ontology brings rdfs:subClassOf, so sh:targetClass pub:Work also
+## finds every pub:Article, pub:Review, ...). Any Violation stops the load; a
+## Warning or an Info is reported and does not.
 
-@prefix sh:   <http://www.w3.org/ns/shacl#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix ul:   <https://ul.edu.lb/kr/scm#> .
-@prefix uls:  <https://ul.edu.lb/kr/shapes#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pub:   <https://ul.edu.lb/kr/pub#> .
+@prefix pubsh: <https://ul.edu.lb/kr/shapes#> .
 
-uls:OrderShape a sh:NodeShape ;
-    rdfs:label "Every order" ;
-    sh:targetClass ul:Order ;
+## The shapes file itself, and the prefix its SPARQL rules use (sh:declare,
+## the standard way, so any SHACL engine accepts it).
+<https://ul.edu.lb/kr/shapes> a owl:Ontology ;
+    rdfs:label "Shapes for the LU publications graph" ;
+    owl:versionInfo "1.0.0, after triage" ;
+    sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] .
+
+########################################################################
+## Papers. Two targets: every pub:Work (with its 20 subclasses), and every
+## subject of pub:publicationYear, so a paper whose OpenAlex type got no
+## class (a new type, see <#WorkTypes> in the mapping) is still checked.
+########################################################################
+
+pubsh:PaperShape a sh:NodeShape ;
+    rdfs:label "Every paper" ;
+    sh:targetClass pub:Work ;
+    sh:targetSubjectsOf pub:publicationYear ;
+    sh:class pub:Work ;
+    sh:message "This paper has none of the 20 classes (D2): its OpenAlex type is new. Add it to <#WorkTypes> in the mapping and to the ontology." ;
     sh:property [
-        sh:path ul:orderId ; sh:minCount 1 ; sh:maxCount 1 ;
-        sh:datatype xsd:string ; sh:pattern "^[0-9]+\\.[0-9]$" ;
-        sh:name "order id" ; sh:message "An order has exactly one id, digits, a dot, one digit."
+        sh:path rdf:type ; sh:maxCount 1 ;
+        sh:message "A paper has one class of the 20, not two."
     ] ;
     sh:property [
-        sh:path ul:orderDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ;
-        sh:name "order date"
+        sh:path pub:title ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "A paper has exactly one title, not empty."
     ] ;
     sh:property [
-        sh:path ul:carriedBy ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ul:Carrier ;
-        sh:name "carrier" ; sh:message "An order has exactly one carrier, and it is a Carrier."
+        sh:path pub:publicationYear ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+        sh:minInclusive 2022 ; sh:maxInclusive 2025 ;
+        sh:message "A paper has one publication year, from 2022 to 2025: the years our data set covers."
     ] ;
     sh:property [
-        sh:path ul:fromPlant ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ul:Plant ;
-        sh:name "plant"
+        sh:path pub:publicationDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:message "A paper has one publication date, a valid xsd:date (YYYY-MM-DD)."
     ] ;
     sh:property [
-        sh:path ul:serviceLevel ; sh:minCount 1 ; sh:maxCount 1 ;
-        sh:in ( "CRF" "DTD" "DTP" ) ;
-        sh:name "service level" ; sh:message "Service level is one of CRF, DTD, DTP."
+        sh:path pub:isOpenAccess ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "A paper is open access or not: exactly one true/false."
     ] ;
     sh:property [
-        sh:path ul:weight ; sh:minCount 1 ; sh:maxCount 1 ;
-        sh:datatype xsd:decimal ; sh:minExclusive 0 ;
-        sh:name "weight" ; sh:message "An order has one weight, above 0 kg."
+        sh:path pub:isRetracted ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "A paper is retracted or not: exactly one true/false."
+    ] ;
+    sh:property [
+        sh:path pub:language ; sh:maxCount 1 ; sh:pattern "^[a-z]{2}$" ;
+        sh:message "A paper has at most one language, a two-letter ISO 639-1 code."
+    ] ;
+
+    # A DOI starts with 10., a registrant code, a slash. At most one per paper.
+    sh:property [
+        sh:path pub:doi ; sh:maxCount 1 ; sh:pattern "^10\\.[0-9]{4,9}/\\S+$" ;
+        sh:message "A paper has at most one DOI, written 10.xxxx/..."
+    ] ;
+    # Inventory: "Every paper has a DOI".
+    sh:property [
+        sh:path pub:doi ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "This paper has no DOI: it cannot be matched with Crossref (Session 5)." ;
+        rdfs:comment "TRIAGE: the rule is too strong for the source. 154 of 5,211 papers have no DOI: 99 conference papers (proceedings that register no DOI), 28 articles, 9 preprints, 7 dissertations, 11 others. Nothing in our pipeline can add a DOI. Kept as a Warning, so the count stays in every report; re-checked at each new OpenAlex snapshot."
+    ] ;
+
+    sh:property [
+        sh:path pub:publishedIn ; sh:maxCount 1 ; sh:class pub:Venue ;
+        sh:message "A paper appeared in at most one venue, and it is a Venue from the sources table."
+    ] ;
+    # Inventory: "Every paper has a journal or venue".
+    sh:property [
+        sh:path pub:publishedIn ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "OpenAlex gives no venue for this paper." ;
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 214 of 5,211 papers have no venue: 84 conference papers, all 60 peer reviews, 28 preprints, 16 other, 15 articles, 11 more. We cannot invent a venue. A Warning; Session 5 checks the ones with a DOI against Crossref, which records the journal or proceedings."
+    ] ;
+
+    sh:property [
+        sh:path pub:hasTopic ; sh:maxCount 1 ; sh:class pub:Topic ;
+        sh:message "A paper has at most one primary topic, a Topic from the topics table."
+    ] ;
+    # Inventory: "Every paper has a topic".
+    sh:property [
+        sh:path pub:hasTopic ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "OpenAlex gives no topic for this paper." ;
+        rdfs:comment "TRIAGE: the data is incomplete at the source, and these are not research papers. 12 of 5,211: 9 paratext (\"List of contributors\", \"Contributors\"), a software release, \"Peer-Review Statements\", a chapter called \"Conclusions\". OpenAlex's classifier gives no topic to front matter. A Warning, re-checked at each new snapshot; CQ5 (topics by year) counts 5,199 papers, not 5,211."
+    ] ;
+
+    # Inventory: "OpenAlex lists at most 100 authors per paper".
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:minCount 1 ; sh:maxCount 100 ; sh:class pub:Authorship ;
+        sh:message "A paper has from 1 to 100 authorships (OpenAlex lists at most 100)."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:maxCount 99 ;
+        sh:severity sh:Info ;
+        sh:message "This paper lists exactly 100 authors, the OpenAlex cap: its byline is probably cut, so an LU author or the last author may be missing." ;
+        rdfs:comment "TRIAGE: new after the first run, to make the cap visible. 19 papers are at exactly 100; 17 of them have no author labelled last, and 6 have no LU author: the byline was cut. Info: nothing is wrong with the data we have, but it is not the whole byline."
+    ] ;
+
+    # Inventory: "Each paper has exactly one author labelled first, and it is the author at order 1".
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [ sh:path pub:authorPosition ; sh:hasValue "first" ] ;
+        sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ;
+        sh:message "A paper has exactly one authorship labelled first."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [
+            sh:property [ sh:path pub:authorPosition ; sh:hasValue "first" ] ;
+            sh:property [ sh:path pub:authorOrder ; sh:hasValue 1 ] ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "The authorship labelled first is the one at order 1."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [ sh:path pub:authorPosition ; sh:hasValue "last" ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "A paper has at most one authorship labelled last."
+    ] ;
+
+    # The cited papers are IRIs of our scheme; a key "None" would mean an
+    # empty cell went through a view (Session 2).
+    sh:property [
+        sh:path pub:cites ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/work/openalex/W[0-9]+$" ;
+        sh:message "Each cited paper is a work IRI with an OpenAlex ID W..."
+    ] ;
+    # Inventory: "Every paper's reference list is recorded".
+    sh:property [
+        sh:path pub:cites ; sh:minCount 1 ;
+        sh:severity sh:Info ;
+        sh:message "OpenAlex records no reference for this paper." ;
+        rdfs:comment "TRIAGE: the rule is wrong for some types, and the source is incomplete for the rest. 1,051 of 5,211 papers have no reference: 537 articles, 148 conference papers, 95 preprints, 92 other, 49 peer reviews, 24 errata, 106 more. An erratum or a peer review often cites nothing; an article does. Info: a coverage figure, not an error. Session 5 fills references from Crossref where the publisher deposited them."
+    ] .
+
+## Inventory: "Every LU paper lists at least one author affiliated with LU".
+## A path of two steps: paper -> its authorships -> their institutions.
+pubsh:LUAuthorShape a sh:NodeShape ;
+    rdfs:label "Every paper has an LU author" ;
+    sh:targetClass pub:Work ;
+    sh:or (
+        [ sh:path ( pub:hasAuthorship pub:affiliation ) ;
+          sh:hasValue <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ]
+        [ sh:path pub:hasAuthorship ; sh:minCount 100 ]
+    ) ;
+    sh:message "No author of this paper is affiliated with the Lebanese University (I160368002), and its byline is not cut at 100: it should not be in our data set." ;
+    rdfs:comment "TRIAGE: the rule was wrong. The first draft said every paper has an LU author: 6 Violations. All 6 list exactly 100 authors, the OpenAlex cap; OpenAlex selected them for an LU affiliation, so the LU author is past author 100. New rule: an LU author, unless the byline is cut. A Violation now means a paper that should not be in the set." ;
+    sh:property [
+        sh:path ( pub:hasAuthorship pub:affiliation ) ;
+        sh:hasValue <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;
+        sh:severity sh:Warning ;
+        sh:message "No author listed on this paper is affiliated with LU: the LU author is past the 100 cap." ;
+        rdfs:comment "TRIAGE: keeps the 6 papers of the first draft visible (W4284692190, W4367016987, W4382465100, W4394762783, W4394763175, W4412869153). Fixed when a second source gives the whole byline."
+    ] .
+
+## New (Session 3, CQ8): a retraction notice announces a retraction; it is not
+## itself retracted. The "if" (if it is a notice) is the target: still core.
+pubsh:RetractionNoticeShape a sh:NodeShape ;
+    rdfs:label "Every retraction notice" ;
+    sh:targetClass pub:Retraction ;
+    sh:property [
+        sh:path pub:isRetracted ; sh:hasValue false ;
+        sh:severity sh:Warning ;
+        sh:message "A retraction notice is not itself retracted: isRetracted should be false." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source. W4415060141 is the Retraction Note of W4297996152; OpenAlex flags the note as retracted too. The rule is right. We do not edit our copy of OpenAlex (D4), so a Warning until OpenAlex corrects it; CQ8 counts 5 retracted papers, not 6."
+    ] .
+
+## New: a paper does not cite itself. Core SHACL cannot compare a value with
+## the focus node itself, so this one is a SPARQL rule.
+pubsh:NoSelfCitationShape a sh:NodeShape ;
+    rdfs:label "Every citing paper" ;
+    sh:targetSubjectsOf pub:cites ;
+    sh:sparql [
+        sh:message "This paper cites itself." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes> ;
+        sh:select """
+            SELECT $this WHERE { $this pub:cites $this }"""
+    ] ;
+    sh:severity sh:Warning ;
+    rdfs:comment "TRIAGE: the data is wrong, at the source. 75 papers cite themselves (75 of the 2,116 citations between our own papers): 66 articles, 7 preprints, 1 review, 1 peer review. A paper cannot cite itself; most likely OpenAlex merged a preprint and its article into one work, so citing the preprint became citing itself. A Warning until Session 5 checks them against Crossref's reference lists; until then CQ6 (most cited within LU) counts them."
+    .
+
+## New: the authorship labelled last has the highest order on its paper. It
+## compares one authorship with the others of the same paper: other nodes, so SPARQL.
+pubsh:LastAuthorShape a sh:NodeShape ;
+    rdfs:label "Every paper with a last author" ;
+    sh:targetSubjectsOf pub:hasAuthorship ;
+    sh:sparql [
+        sh:message "The authorship labelled last (order {?last}) is not the highest order: there is one at {?after}." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes> ;
+        sh:select """
+            SELECT $this ?last ?after WHERE {
+                $this pub:hasAuthorship ?l , ?o .
+                ?l pub:authorPosition ?position ; pub:authorOrder ?last .
+                ?o pub:authorOrder ?after .
+                FILTER (?position = "last" && ?after > ?last) }"""
+    ] ;
+    rdfs:comment "TRIAGE: the rule was right (0 results) but its query was slow: timed alone, 330 of the first draft's 395 seconds. With the constant \"last\" in a triple pattern, rdflib starts from all 4,728 authorships labelled last, for each of the 5,211 papers. With \"last\" in the FILTER, it starts from the paper's own authorships: 118 seconds instead of 330, the same answer. Still the most expensive shape: pySHACL runs it once per paper, 5,211 queries." .
+
+## Inventory: "A DOI identifies exactly one paper". The focus nodes are the
+## DOI values themselves; the path goes back (^doi) to the papers that have it.
+pubsh:DoiShape a sh:NodeShape ;
+    rdfs:label "Every DOI" ;
+    sh:targetObjectsOf pub:doi ;
+    sh:property [
+        sh:path [ sh:inversePath pub:doi ] ; sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Two papers have this DOI: two records of the same paper." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source: 2 DOIs, each on two OpenAlex records of the same article (10.4088/pcc.20m02902: W4206272747 and W4205255002; 10.48327/mtsi.v5i4.2025.728: W7118513034 and W7214706685). The rule is right. Session 5 (entity resolution) links each pair as one paper; a Warning until then. Expect 2: a third is a new duplicate."
+    ] .
+
+########################################################################
+## Authorships: one author on one paper (D5)
+########################################################################
+
+pubsh:AuthorshipShape a sh:NodeShape ;
+    rdfs:label "Every authorship" ;
+    sh:targetClass pub:Authorship ;
+    sh:property [
+        sh:path [ sh:inversePath pub:hasAuthorship ] ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "An authorship belongs to exactly one paper."
+    ] ;
+    sh:property [
+        sh:path pub:authorOrder ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+        sh:minInclusive 1 ; sh:maxInclusive 100 ;
+        sh:message "An authorship has one place in the byline, from 1 to 100."
+    ] ;
+    sh:property [
+        sh:path pub:authorPosition ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "first" "middle" "last" ) ;
+        sh:message "An authorship is first, middle or last."
+    ] ;
+    sh:property [
+        sh:path pub:isCorresponding ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "An authorship is corresponding or not: exactly one true/false."
+    ] ;
+    sh:property [
+        sh:path pub:nameAsListed ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "An authorship has the name as printed on the paper (D5), exactly one."
+    ] ;
+    sh:property [
+        sh:path pub:author ; sh:maxCount 1 ; sh:class pub:Author ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/author/openalex/A[0-9]+$" ;
+        sh:message "An authorship has at most one author, an Author with an OpenAlex ID A..."
+    ] ;
+    # Inventory: "Every authorship has an OpenAlex author ID".
+    sh:property [
+        sh:path pub:author ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "OpenAlex did not identify the person behind this authorship: we only have the name as listed." ;
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 2,101 of 33,084 authorships (6.4%, on 1,217 papers) have no OpenAlex author ID. D5 already keeps the printed name for them. Session 5 (entity resolution) links them: 311 carry an ORCID in the source table, 158 of which match an author we have. A Warning until then."
+    ] ;
+    sh:property [
+        sh:path pub:affiliation ; sh:class pub:Institution ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/institution/openalex/I[0-9]+$" ;
+        sh:message "Each affiliation is an Institution from the institutions table, with an OpenAlex ID I..."
+    ] .
+
+########################################################################
+## Authors, institutions, venues, topics
+########################################################################
+
+pubsh:AuthorShape a sh:NodeShape ;
+    rdfs:label "Every author" ;
+    sh:targetClass pub:Author ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "An author has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:orcid ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "An author has at most one ORCID, written 0000-0000-0000-000X."
+    ] .
+
+## Inventory: "An ORCID identifies exactly one author record".
+pubsh:OrcidShape a sh:NodeShape ;
+    rdfs:label "Every ORCID" ;
+    sh:targetObjectsOf pub:orcid ;
+    sh:property [
+        sh:path [ sh:inversePath pub:orcid ] ; sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Two author records share this ORCID: one person split in two." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source. 20 ORCIDs are each on two OpenAlex author records (40 records), the same person written two ways: \"Hala Khalifeh\" and \"Hala K. Khalife\", \"ANDREA GIAMMANCO\" and \"Andrea Giammanco\". The rule is right. Session 5 (entity resolution) links each pair; a Warning until then. Expect 20."
+    ] .
+
+pubsh:InstitutionShape a sh:NodeShape ;
+    rdfs:label "Every institution" ;
+    sh:targetClass pub:Institution ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "An institution has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:countryCode ; sh:maxCount 1 ; sh:pattern "^[A-Z]{2}$" ;
+        sh:message "An institution has at most one country, a two-letter ISO 3166 code."
+    ] ;
+    sh:property [
+        sh:path pub:institutionType ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "education" "facility" "healthcare" "government" "nonprofit" "company" "other" "archive" "funder" ) ;
+        sh:message "An institution has one of OpenAlex's nine institution types."
+    ] .
+
+pubsh:VenueShape a sh:NodeShape ;
+    rdfs:label "Every venue" ;
+    sh:targetClass pub:Venue ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A venue has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:venueType ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "journal" "repository" "conference" "book series" "ebook platform" ) ;
+        sh:message "A venue is a journal, repository, conference, book series or ebook platform."
+    ] ;
+    sh:property [
+        sh:path pub:issnL ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "A venue has at most one linking ISSN, written 0000-000X."
+    ] ;
+    sh:property [
+        sh:path pub:publisher ; sh:maxCount 1 ;
+        sh:message "A venue has at most one publisher."
+    ] .
+
+pubsh:TopicShape a sh:NodeShape ;
+    rdfs:label "Every topic" ;
+    sh:targetClass pub:Topic ;
+    sh:property [ sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one name." ] ;
+    sh:property [ sh:path pub:subfield ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one subfield." ] ;
+    sh:property [ sh:path pub:field ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one field." ] ;
+    sh:property [
+        sh:path pub:domain ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "Health Sciences" "Life Sciences" "Physical Sciences" "Social Sciences" ) ;
+        sh:message "A topic has one of OpenAlex's four domains."
     ] .

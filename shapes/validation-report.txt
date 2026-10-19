@@ -1,0 +1,40 @@
+data: 579,317 triples from graph.nt, ontology.ttl
+shapes: shapes.ttl
+  focus nodes   5,055  Every DOI
+  focus nodes   9,061  Every ORCID
+  focus nodes  14,090  Every author
+  focus nodes  33,084  Every authorship
+  focus nodes   4,160  Every citing paper
+  focus nodes   3,656  Every institution
+  focus nodes   5,211  Every paper
+  focus nodes   5,211  Every paper has an LU author
+  focus nodes   5,211  Every paper with a last author
+  focus nodes       1  Every retraction notice
+  focus nodes   1,610  Every topic
+  focus nodes   2,216  Every venue
+
+validated in 108 s. conforms (SHACL): False. 0 Violation, 2,585 Warning, 1,070 Info
+  Warning    2,101  Every authorship · MinCount on author   e.g. authorship/W3154971059-3, authorship/W3195855474-2, authorship/W4205365611-3
+                    OpenAlex did not identify the person behind this authorship: we only have the name as listed.
+  Warning      214  Every paper · MinCount on publishedIn   e.g. work/W4220961989, work/W4224223867, work/W4224310908
+                    OpenAlex gives no venue for this paper.
+  Warning      154  Every paper · MinCount on doi   e.g. work/W3204742977, work/W4221147583, work/W4221156025
+                    This paper has no DOI: it cannot be matched with Crossref (Session 5).
+  Warning       75  Every citing paper · SPARQL   e.g. work/W4205740924, work/W4220679373, work/W4220784356
+                    This paper cites itself.
+  Warning       20  Every ORCID · MaxCount on ^orcid   e.g. 0000-0001-6748-6947, 0000-0001-7934-8322, 0000-0001-8565-3585
+                    Two author records share this ORCID: one person split in two.
+  Warning       12  Every paper · MinCount on hasTopic   e.g. work/W4220818669, work/W4298152649, work/W4303491983
+                    OpenAlex gives no topic for this paper.
+  Warning        6  Every paper has an LU author · HasValue on (hasAuthorship affiliation)   e.g. work/W4284692190, work/W4367016987, work/W4382465100
+                    No author listed on this paper is affiliated with LU: the LU author is past the 100 cap.
+  Warning        2  Every DOI · MaxCount on ^doi   e.g. 10.4088/pcc.20m02902, 10.48327/mtsi.v5i4.2025.728
+                    Two papers have this DOI: two records of the same paper.
+  Warning        1  Every retraction notice · HasValue on isRetracted   e.g. work/W4415060141
+                    A retraction notice is not itself retracted: isRetracted should be false.
+  Info       1,051  Every paper · MinCount on cites   e.g. work/W3117549862, work/W3204742977, work/W3210599163
+                    OpenAlex records no reference for this paper.
+  Info          19  Every paper · MaxCount on hasAuthorship   e.g. work/W4284692190, work/W4362611986, work/W4364856413
+                    This paper lists exactly 100 authors, the OpenAlex cap: its byline is probably cut, so an LU author or the last author may be missing.
+
+GATE: PASS, no Violation, every shape checks something.
