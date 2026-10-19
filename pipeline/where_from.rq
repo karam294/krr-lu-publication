@@ -1,0 +1,26 @@
+# Where does a fact come from? (Session 4, provenance, D10)
+# For the title of paper W3023054831: the named graph that holds it, the file
+# that graph was made from (with its checksum), the OpenAlex download behind
+# that file, and the pipeline run that made the graph: when, with which programs.
+# Run it on the endpoint (Fuseki, dataset kr) after python pipeline/run.py.
+PREFIX pub:     <https://ul.edu.lb/kr/pub#>
+PREFIX prov:    <http://www.w3.org/ns/prov#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?graph ?file ?checksum ?downloaded ?run ?ended
+       (GROUP_CONCAT(?program; separator=", ") AS ?programs)
+WHERE {
+  GRAPH ?graph { <https://ul.edu.lb/kr/id/work/openalex/W3023054831> pub:title ?title }
+  GRAPH <https://ul.edu.lb/kr/graph/provenance> {
+    ?graph prov:wasDerivedFrom ?f ;
+           prov:wasGeneratedBy ?run .
+    ?f dcterms:title ?file ;
+       dcterms:identifier ?checksum ;
+       prov:wasDerivedFrom ?download .
+    ?download dcterms:created ?downloaded .
+    ?run prov:endedAtTime ?ended ;
+         prov:wasAssociatedWith ?agent .
+    ?agent rdfs:label ?program .
+  }
+}
+GROUP BY ?graph ?file ?checksum ?downloaded ?run ?ended

@@ -118,3 +118,26 @@ graph, from Session 2 to Session 4. So the gate counts focus nodes first.
 Violations, 2,585 Warnings, 1,070 Info. The cost: a Warning does not stop a new
 case of a known problem (a 21st shared ORCID); the counts in
 shapes/validation-report.txt show it.
+
+## D10. One named graph per source; provenance of every run in PROV-O (2026-10-19)
+**Decision.** The pipeline empties the endpoint (DROP ALL), then loads the mapped
+OpenAlex data into the named graph https://ul.edu.lb/kr/graph/openalex, the
+ontology into .../graph/ontology and the run's provenance into
+.../graph/provenance. Fuseki's default graph is the union of the named graphs
+(fuseki/config.ttl), so a query without GRAPH sees everything, as before. On every
+run that passes the gate, pipeline/provenance.py writes in PROV-O: the OpenAlex
+download (2026-10-16), data/lu.sql and its checksum, the mapping, the ontology by
+its version IRI (1.0.0), the shapes, the programs and their versions, and the start
+and end of the run.
+**Alternative.** Everything in the default graph (Sessions 2 and 3); or one named
+graph per table (the course lab).
+**Why.** Provenance is recorded per graph: 51 triples describe 578,982. In the
+default graph nothing says which source a triple came from. Session 5 adds Crossref
+as a second graph and Session 6 predicted links as a third; a triple's graph then
+says who said it. Our questions cross tables (a paper, its authors, their
+institutions), and what we must trace is the source, not the table. DROP ALL first,
+so no graph from an older run or a manual upload stays behind. Checksums read
+Windows line endings as Unix ones, so a laptop and CI give the same value.
+**Evidence.** pipeline/where_from.rq: the title of W3023054831 is in graph/openalex,
+derived from data/lu.sql (its sha256), from the 2026-10-16 download, made by one run
+(its end time; pipeline/run.py, Morph-KGC 2.10.0, pySHACL 0.40.1).

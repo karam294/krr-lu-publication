@@ -1,20 +1,24 @@
-"""The graph pipeline: source tables -> graph -> SHACL gate -> VoID -> endpoint.
+"""The graph pipeline: source tables -> graph -> SHACL gate -> provenance -> VoID -> endpoint.
 
     python pipeline/run.py              all steps, loads the endpoint at the end
-    python pipeline/run.py --no-load    the first four steps only (no Fuseki needed)
+    python pipeline/run.py --no-load    the first five steps only (no Fuseki needed)
 
 Run from the repository root. In the stack, docker compose runs it once, as
 the "pipeline" service, before the access layer starts.
 
-  1 source     DB_URL if set (your database), otherwise our data:
-               data/lu.sql loaded into build/lu.sqlite
-  2 map        mapping/mapping.ttl with Morph-KGC -> build/graph.nt
-  3 validate   build/graph.nt + ontology/ontology.ttl against shapes/shapes.ttl
-               (shapes/validate.py); any Violation, or a shape that checks
-               nothing, stops here (exit 1), so bad data never reaches the
-               endpoint; the report goes to build/shacl-report.txt
-  4 describe   VoID of the graph -> build/void.ttl (the access layer reads it)
-  5 load       ontology and graph into the endpoint (FUSEKI_URL, dataset kr)
+  1 source       DB_URL if set (your database), otherwise our data:
+                 data/lu.sql loaded into build/lu.sqlite
+  2 map          mapping/mapping.ttl with Morph-KGC -> build/graph.nt
+  3 validate     build/graph.nt + ontology/ontology.ttl against shapes/shapes.ttl
+                 (shapes/validate.py); any Violation, or a shape that checks
+                 nothing, stops here (exit 1), so bad data never reaches the
+                 endpoint; the report goes to build/shacl-report.txt
+  4 provenance   what this run used and made, in PROV-O -> build/provenance.ttl
+                 (pipeline/provenance.py)
+  5 describe     VoID of the graph -> build/void.ttl (the access layer reads it)
+  6 load         empty the endpoint, then one named graph each (D10):
+                 graph/openalex (the data), graph/ontology, graph/provenance.
+                 Fuseki's default graph is their union (fuseki/config.ttl).
 """
 
 import argparse
@@ -26,6 +30,8 @@ from pathlib import Path
 
 import requests
 from rdflib import Graph
+
+from provenance import GRAPH, now, write_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
@@ -59,7 +65,7 @@ def materialize(db_url):
     out = BUILD / "graph.nt"
     graph.serialize(out, format="nt", encoding="utf-8")
     step(2, f"map: {len(graph):,} triples -> build/graph.nt")
-    return out
+    return out, len(graph)
 
 
 def gate(graph_path):
@@ -80,11 +86,17 @@ def gate(graph_path):
     return counts
 
 
+def record_provenance(n_triples, started, counts):
+    summary = ", ".join(f"{counts[s]:,} {s}" for s in ("Violation", "Warning", "Info"))
+    n = write_provenance(ROOT, BUILD / "provenance.ttl", n_triples, started, now(), summary)
+    step(4, f"provenance: {n} PROV-O triples -> build/provenance.ttl")
+
+
 def describe(graph_path):
     sys.path.insert(0, str(ROOT / "access-layer"))
     from make_void import write_void
     n = write_void(graph_path, BUILD / "void.ttl")
-    step(4, f"describe: {n} VoID triples -> build/void.ttl")
+    step(5, f"describe: {n} VoID triples -> build/void.ttl")
 
 
 def load(graph_path):
@@ -98,14 +110,21 @@ def load(graph_path):
         time.sleep(2)
     else:
         sys.exit(f"The endpoint at {FUSEKI} did not answer within a minute.")
-    ont = (ROOT / "ontology" / "ontology.ttl").read_bytes()
-    r1 = requests.put(f"{base}/data?default", data=graph_path.read_bytes(),
-                      headers={"Content-Type": "application/n-triples"}, timeout=300)
-    r2 = requests.post(f"{base}/data?default", data=ont, headers={"Content-Type": "text/turtle"}, timeout=60)
-    for r in (r1, r2):
+
+    def ok(r, what):
         if not r.ok:
-            sys.exit(f"Loading the endpoint failed ({r.status_code}): {r.text[:200]}")
-    step(5, f"load: graph and ontology -> {base}")
+            sys.exit(f"Loading the endpoint failed at {what} ({r.status_code}): {r.text[:200]}")
+
+    # Start from an empty endpoint: no graph from an older run or a manual upload stays behind.
+    ok(requests.post(f"{base}/update", data={"update": "DROP ALL"}, timeout=120), "DROP ALL")
+    parts = (("openalex", graph_path, "application/n-triples"),
+             ("ontology", ROOT / "ontology" / "ontology.ttl", "text/turtle; charset=utf-8"),
+             ("provenance", BUILD / "provenance.ttl", "text/turtle; charset=utf-8"))
+    for name, path, ctype in parts:
+        r = requests.put(f"{base}/data", params={"graph": GRAPH + name}, data=Path(path).read_bytes(),
+                         headers={"Content-Type": ctype}, timeout=300)
+        ok(r, f"graph/{name}")
+    step(6, f"load: graph/openalex, graph/ontology, graph/provenance -> {base}")
 
 
 def main():
@@ -113,8 +132,10 @@ def main():
     ap.add_argument("--no-load", action="store_true")
     a = ap.parse_args()
     BUILD.mkdir(exist_ok=True)
-    graph = materialize(source())
-    gate(graph)
+    started = now()
+    graph, n_triples = materialize(source())
+    counts = gate(graph)
+    record_provenance(n_triples, started, counts)
     describe(graph)
     if not a.no_load:
         load(graph)

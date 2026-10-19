@@ -13,7 +13,12 @@ RUN echo "${FUSEKI_SHA512}  /tmp/fuseki.tgz" | sha512sum -c - \
  && tar xzf /tmp/fuseki.tgz -C /opt/fuseki --strip-components=1 \
  && rm /tmp/fuseki.tgz
 
+# Session 4 (D10): the dataset is described in config.ttl instead of on the
+# command line, to add one setting: the default graph of a query is the union
+# of the named graphs.
+COPY config.ttl /opt/fuseki/config.ttl
+
 EXPOSE 3030
 # One persistent TDB2 dataset, /kr, open for updates. No login: the port is
 # published on localhost only (see docker-compose.yml).
-CMD ["sh", "-c", "mkdir -p /data/kr && exec java -jar /opt/fuseki/fuseki-server.jar --port=3030 --tdb2 --loc=/data/kr --update /kr"]
+CMD ["sh", "-c", "mkdir -p /data/kr && exec java -jar /opt/fuseki/fuseki-server.jar --port=3030 --config=/opt/fuseki/config.ttl"]
