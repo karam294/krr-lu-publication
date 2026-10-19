@@ -192,3 +192,32 @@ link (28 links, most with a score of 9.1), and 2 of the 4 checked are two people
 Abou-Mrad; Y. Satou and H. Sato). Refusing all of them would also drop right ones
 (Filippos and Phil Aravanopoulos).
 **Evidence.** mapping/er/match_authorships.txt; mapping/er/hand_sample.csv.
+
+## D14. Crossref in a named graph of its own, checked by its own shapes (2026-10-19)
+**Decision.** mapping/crossref.ttl maps data/crossref.sql into graph/crossref, with the
+same pub: words and the IRI scheme of D3 (.../work/crossref/{DOI}, a person by ORCID as
+in D12), checked against shapes/crossref-shapes.ttl, with its own provenance (the
+Crossref download of 2026-10-19, data/crossref.sql and its checksum). Ontology 1.1.0
+adds three words: pub:updates (a notice and the paper it updates), pub:venueName and
+pub:issn. The venue stays two values of the record, not a node. Crossref's types get no
+class, except its notices: a retraction is a pub:Retraction; a correction, erratum or
+corrigendum a pub:Erratum. The default graph is now the union of two sources, so every
+competency question names its graph (FROM).
+**Alternative.** Crossref's triples in graph/openalex, checked by shapes.ttl; a venue
+node per ISSN; Crossref's types mapped to our 20 classes.
+**Why.** In its own graph a triple says which source said it (D10), and the two records
+of a paper stay two nodes until a checked link joins them (D3). The OpenAlex rules do
+not hold for Crossref: a record may list no author or 1,512, have a year outside
+2022-2025, and has no open-access flag. Crossref gives no venue identifier, and the
+ISSNs it lists for one journal change from record to record (Medicine: 0025-7974 and
+1536-5964 on some records, 1536-5964 alone on others): a node per ISSN would split one
+journal, a node per name would merge two. Crossref's journal-article covers OpenAlex's
+article, review, editorial and letter: as a class it would contradict ours where it is
+only coarser. Without FROM, a count of papers on the default graph counts each paper
+twice, once per source.
+**Evidence.** shapes/crossref-validation-report.txt: 0 Violations, 73 Warnings, 28,182
+Info. ontology/cq_answers.txt, CQ10, on the 4,887 pairs of an OpenAlex paper and the
+Crossref record of its DOI: the same title for 4,882, the same year for 4,697, the same
+venue (by ISSN or by name) for 4,175; cq08_sources: of the 6 papers OpenAlex flags as
+retracted, Crossref has a notice retracting 2 and says 2 others are retraction notices
+themselves. ontology/reasoner-run.txt (1.1.0): consistent, no unsatisfiable class.

@@ -17,6 +17,11 @@
 ## imports it is not strictly OWL 2 DL, because FaBiO itself declares some Dublin
 ## Core terms both as annotation and as data or object properties. ELK (fast,
 ## the EL part only) and HermiT (complete) both reason over it (Session 3, 3.5).
+##
+## 1.1.0 (Session 5): the words the second source, Crossref, needs (D14):
+## pub:updates (a notice and the paper it updates), pub:venueName and pub:issn
+## (the venue as a Crossref record states it). Every word of 1.0.0 is kept with
+## the same meaning; a few definitions now say "a source", not "OpenAlex".
 
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -28,14 +33,16 @@
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix cito:    <http://purl.org/spar/cito/> .
 @prefix pro:     <http://purl.org/spar/pro/> .
+@prefix prism:   <http://prismstandard.org/namespaces/basic/2.0/> .
 @prefix pub:     <https://ul.edu.lb/kr/pub#> .
 
 <https://ul.edu.lb/kr/pub> a owl:Ontology ;
-    owl:versionIRI <https://ul.edu.lb/kr/pub/1.0.0> ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionIRI <https://ul.edu.lb/kr/pub/1.1.0> ;
+    owl:versionInfo "1.1.0" ;
+    owl:priorVersion <https://ul.edu.lb/kr/pub/1.0.0> ;
     owl:imports <http://purl.org/spar/fabio> , <http://purl.org/spar/foaf> ;
     rdfs:label "Lebanese University publications ontology"@en ;
-    dcterms:description "The meaning of the words used in the knowledge graph of Lebanese University's publications, 2022-2025 (OpenAlex)."@en ;
+    dcterms:description "The meaning of the words used in the knowledge graph of Lebanese University's publications, 2022-2025, from two sources: OpenAlex and Crossref."@en ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     pub:profile "OWL 2 DL" .
 
@@ -94,7 +101,7 @@ xsd:date a rdfs:Datatype .
 pub:Work a owl:Class ;
     rdfs:subClassOf fabio:Expression ;
     rdfs:label "Work"@en ;
-    skos:definition "A paper, book, dataset or other output recorded in OpenAlex: one published version (an FRBR Expression)."@en ;
+    skos:definition "A paper, book, dataset or other output recorded in a source (OpenAlex or Crossref): one published version (an FRBR Expression). The OpenAlex record and the Crossref record of one paper are two nodes, linked only once checked (D3)."@en ;
     pub:answersCQ "CQ1" .
 
 ## The 20 OpenAlex types (D2). Each is a pub:Work. Where FaBiO has the same
@@ -158,7 +165,7 @@ pub:ConferenceAbstract a owl:Class ;
 pub:Retraction a owl:Class ;
     rdfs:subClassOf pub:Work , fabio:RetractionNotice ;
     rdfs:label "Retraction notice"@en ;
-    skos:definition "OpenAlex type retraction: the notice that withdraws another paper, not the withdrawn paper itself."@en ;
+    skos:definition "OpenAlex type retraction, or a Crossref retraction notice: the notice that withdraws another paper, not the withdrawn paper itself."@en ;
     pub:answersCQ "CQ1" , "CQ8" .
 
 pub:Dataset a owl:Class ;
@@ -183,6 +190,7 @@ pub:Erratum a owl:Class ;
     rdfs:subClassOf pub:Work ;
     skos:closeMatch fabio:Erratum ;
     rdfs:label "Erratum"@en ;
+    skos:definition "OpenAlex type erratum, or a Crossref correction, erratum or corrigendum notice: the notice that corrects another paper."@en ;
     pub:answersCQ "CQ1" .
 
 pub:PeerReview a owl:Class ;
@@ -229,7 +237,7 @@ pub:Authorship a owl:Class ;
 pub:Author a owl:Class ;
     rdfs:subClassOf foaf:Person ;
     rdfs:label "Author"@en ;
-    skos:definition "A person with an OpenAlex author ID (D5)."@en ;
+    skos:definition "A person: with an OpenAlex author ID (D5), or known only by an ORCID (D12)."@en ;
     pub:answersCQ "CQ2" .
 
 pub:Institution a owl:Class ;
@@ -264,7 +272,7 @@ pub:author a owl:ObjectProperty ;
     rdfs:domain pub:Authorship ;
     rdfs:range pub:Author ;
     rdfs:label "author"@en ;
-    skos:definition "The person who holds this authorship, when OpenAlex identifies them."@en ;
+    skos:definition "The person who holds this authorship, when the source identifies them: by an OpenAlex author ID, or by an ORCID (D12)."@en ;
     pub:answersCQ "CQ2" , "CQ9" .
 
 pub:affiliation a owl:ObjectProperty ;
@@ -296,6 +304,15 @@ pub:cites a owl:ObjectProperty ;
     rdfs:label "cites"@en ;
     skos:definition "The work lists the other work in its references. The range makes every cited work a pub:Work, also the ones outside our 5,211."@en ;
     pub:answersCQ "CQ6" .
+
+pub:updates a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    skos:closeMatch cito:updates ;
+    rdfs:domain pub:Work ;
+    rdfs:range pub:Work ;
+    rdfs:label "updates"@en ;
+    skos:definition "This notice (a retraction, a correction, a new version or edition, a removal) updates the other work, as Crossref records it (update-to, updated-by). A kind of cito:cites: the notice names the work it updates. Not a subproperty of cito:retracts, cito:corrects or cito:updates: each of those is one kind of update, and ours is any of them."@en ;
+    pub:answersCQ "CQ8" .
 
 ########################################################################
 ## Values (datatype properties)
@@ -373,7 +390,7 @@ pub:nameAsListed a owl:DatatypeProperty ;
     rdfs:domain pub:Authorship ;
     rdfs:range xsd:string ;
     rdfs:label "name as listed"@en ;
-    skos:definition "The author's name as printed on this paper; present also when OpenAlex does not identify the person (D5)."@en ;
+    skos:definition "The author's name as the source lists it on this paper (for Crossref, the given and family names joined); present also when the source does not identify the person (D5)."@en ;
     pub:answersCQ "CQ9" .
 
 pub:name a owl:DatatypeProperty ;
@@ -411,6 +428,26 @@ pub:issnL a owl:DatatypeProperty ;
     rdfs:domain pub:Venue ;
     rdfs:range xsd:string ;
     rdfs:label "linking ISSN"@en ;
+    pub:answersCQ "CQ10" .
+
+## The venue as a Crossref record states it. Crossref's records carry no venue
+## identifier, and the ISSNs they list for one journal differ from record to
+## record, so the Crossref graph makes no venue node: the name and the ISSNs
+## stay values of the record (D14).
+
+pub:venueName a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:string ;
+    rdfs:label "venue name"@en ;
+    skos:definition "The name of the journal, proceedings or book the work appeared in, as this record writes it (Crossref's container-title)."@en ;
+    pub:answersCQ "CQ10" .
+
+pub:issn a owl:DatatypeProperty ;
+    rdfs:domain pub:Work ;
+    rdfs:range xsd:string ;
+    skos:closeMatch prism:issn ;
+    rdfs:label "ISSN"@en ;
+    skos:definition "An ISSN of the journal or series the work appeared in, print or electronic, as this record lists it: one record can list two or three. Not the linking ISSN (pub:issnL). Not a subproperty of prism:issn, which is functional (one value) and belongs to the journal, not to the work."@en ;
     pub:answersCQ "CQ10" .
 
 pub:publisher a owl:DatatypeProperty ;

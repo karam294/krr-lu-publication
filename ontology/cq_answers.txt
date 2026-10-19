@@ -1,4 +1,4 @@
-Competency questions on build/graph.nt (578,982 triples), run 2026-10-18
+Competency questions on graph/openalex 578,982 triples (build/graph.nt) and graph/crossref 341,926 triples (build/crossref.nt), run 2026-10-19
 
 == cq01.rq  CQ1. How many papers did LU publish each year from 2022 to 2025, of each type, and how many are open access?
    year  papers  openAccess  articles
@@ -19,14 +19,14 @@ Competency questions on build/graph.nt (578,982 triples), run 2026-10-18
    PeerReview          60    
    Erratum             32    
    ConferenceAbstract  30    
-   Paratext            11    
    Book                11    
+   Paratext            11    
    Dissertation        10    
-   Editorial           8     
    Dataset             8     
+   Editorial           8     
    Report              3     
-   Letter              2     
    BookReview          2     
+   Letter              2     
    DataPaper           1     
    Retraction          1     
    SoftwarePaper       1     
@@ -123,12 +123,22 @@ Competency questions on build/graph.nt (578,982 triples), run 2026-10-18
 
 == cq08.rq  CQ8. Which LU papers have been retracted?
    paper        year  title                                                       
-   W4308586991  2022  [Retracted] Effects of nutrients on matrix metalloproteinase
    W4297996152  2022  RETRACTED ARTICLE: Combination Therapy of Mesenchymal Stem C
+   W4308586991  2022  [Retracted] Effects of nutrients on matrix metalloproteinase
    W4400363515  2024  The effect of resection of gliomas of the primary motor and 
    W4404387095  2024  RETRACTED: Analysis of the street network of cities of Krasn
    W4415060141  2025  Retraction Note: Combination Therapy of Mesenchymal Stem Cel
    W7160835596  2025  RETRACTED: Fragmented resilience and the challenge of sustai
+   (6 rows)
+
+== cq08_sources.rq  CQ8, both sources. Which LU papers have been retracted, according to OpenAlex and to Crossref?
+   paper        openalex                        crossref             
+   W4308586991  retracted                       a retraction notice  
+   W4415060141  a retraction notice, retracted  a retraction notice  
+   W4400363515  retracted                       no retraction        
+   W7160835596  retracted                       no retraction        
+   W4297996152  retracted                       retracted by a notice
+   W4404387095  retracted                       retracted by a notice
    (6 rows)
 
 == cq09.rq  CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
@@ -137,6 +147,48 @@ Competency questions on build/graph.nt (578,982 triples), run 2026-10-18
    (1 rows)
 
 == cq10.rq  CQ10. For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue?
-   papers  withDoi  withVenueIssn
-   5211    5057     4341         
-   (1 rows)
+   aspect   answer                   papers
+   1 title  same                     4882  
+   1 title  different                4     
+   1 title  not comparable           1     
+   2 year   same                     4697  
+   2 year   different                184   
+   2 year   not comparable           6     
+   3 day    same                     3024  
+   3 day    not comparable           1514  
+   3 day    different                349   
+   4 venue  same ISSN                3894  
+   4 venue  different                361   
+   4 venue  same name                281   
+   4 venue  only OpenAlex names one  139   
+   4 venue  neither names one        107   
+   4 venue  only Crossref names one  105   
+   (15 rows)
+
+== cq10_titles.rq  CQ10, the titles that differ. Which papers have another title in Crossref, compared as in cq10.rq?
+   paper        openalexTitle                                                 crossrefTitle                                               
+   W4205255002  Social Anxiety and Its Correlates Among Lebanese Adults: Rol  Social Anxiety and Its Correlates Among Lebanese Adults     
+   W4372288109  Newly recorded for the vascular flora of Lebanon: Ferula biv  Newly recorded for the vascular flora of Lebanon:&amp;nbsp;F
+   W4381572473  RULE OF POWER IN WILLIAM GOLDING’S "LORD OF THE FLIES"        THE  RULE OF POWER IN WILLIAM GOLDING’S "LORD OF THE FLIES" 
+   W4411455250  Association between cephalometric maxillary incisor’s inclin  Association between cephalometric maxillary incisorâ€™s incl
+   (4 rows)
+
+== cq10_venues.rq  CQ10, the venues by kind. How does Crossref's venue compare, for each kind of OpenAlex venue?
+   openalexVenueType  answer                   papers
+   (no venue)         neither names one        107   
+   (no venue)         only Crossref names one  105   
+   book series        same ISSN                140   
+   book series        same name                1     
+   conference         different                201   
+   conference         same ISSN                10    
+   conference         same name                1     
+   ebook platform     different                122   
+   ebook platform     only OpenAlex names one  3     
+   journal            same ISSN                3742  
+   journal            same name                279   
+   journal            different                37    
+   journal            only OpenAlex names one  2     
+   repository         only OpenAlex names one  134   
+   repository         same ISSN                2     
+   repository         different                1     
+   (16 rows)

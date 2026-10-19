@@ -1,6 +1,7 @@
 # CQ4. Where does LU publish (journals, conferences, repositories), and with which publishers?
 PREFIX pub: <https://ul.edu.lb/kr/pub#>
 SELECT ?kind (COUNT(DISTINCT ?venue) AS ?venues) (COUNT(DISTINCT ?paper) AS ?papers)
+FROM <https://ul.edu.lb/kr/graph/openalex>    # OpenAlex only: the default graph holds both sources (D14)
 WHERE {
   ?paper pub:publishedIn ?venue .
   ?venue pub:venueType ?kind .

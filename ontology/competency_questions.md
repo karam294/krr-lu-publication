@@ -14,9 +14,9 @@ Asked by LU's research office (R), a researcher or dean (D), or this project (P)
 | CQ5 | R | In which research fields and domains does LU publish, and how does that change by year? | Topic; hasTopic, subfield, field, domain, publicationYear |
 | CQ6 | D | Which LU papers cite other LU papers? | cites |
 | CQ7 | R | In which languages does LU publish? | language |
-| CQ8 | R | Which LU papers have been retracted? | isRetracted |
+| CQ8 | R | Which LU papers have been retracted? | isRetracted; updates and Retraction (Crossref's notices) |
 | CQ9 | P | Which authorships name a person OpenAlex could not identify, and which author records share an ORCID? | nameAsListed, author, orcid |
-| CQ10 | P | For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue? | doi, title, publicationDate, issnL |
+| CQ10 | P | For a paper with a DOI, does a second source (Crossref) agree on its title, date and venue? | doi, title, publicationYear, publicationDate, issnL, venueName, issn |
 
 CQ1 to CQ8 can be answered on the graph today. CQ9 and CQ10 are answered fully
 in Session 5, when the second source and entity resolution arrive.
@@ -33,4 +33,4 @@ in Session 5, when the second source and entity resolution arrive.
 | isOpenAccess | 1 | isCorresponding | 2 | publisher | 4 |
 | isRetracted | 8 | author | 2, 9 | subfield, field, domain | 5 |
 | publishedIn | 4 | affiliation | 2, 3 | cites | 6 |
-| name | 2, 3, 4 | | | | |
+| name | 2, 3, 4 | updates | 8 | venueName, issn | 10 |

@@ -1,7 +1,8 @@
 # shapes/
 
-The rules our graph must obey, checked with SHACL before anything reaches
-the endpoint (Session 4).
+The rules our graphs must obey, checked with SHACL before anything reaches
+the endpoint (Session 4). Each source's graph has its own shapes (D14): the
+OpenAlex graph `shapes.ttl`, the Crossref graph `crossref-shapes.ttl`.
 
 | File | What it is |
 |---|---|
@@ -11,12 +12,17 @@ the endpoint (Session 4).
 | `shapes-v0.ttl` | the first draft (0.1.0): every rule a Violation, kept as evidence |
 | `validation-report-v0.txt` | the first draft's report: 3,636 Violations |
 | `validation-report.txt` | the report after triage: 0 Violations, 2,585 Warnings, 1,070 Info |
+| `crossref-shapes.ttl` | the shapes of the Crossref graph (Session 5), version 1.0.0, each rule not a Violation with its TRIAGE comment |
+| `crossref-validation-report.txt` | its report: 0 Violations, 73 Warnings, 28,182 Info |
 
 Run it, from the repository root:
 
 ```sh
-python pipeline/run.py --no-load        # map, then the gate; writes build/shacl-report.txt
+python pipeline/run.py --no-load        # map both sources, then the gate on each graph;
+                                        # writes build/shacl-report.txt (both reports)
 python shapes/validate.py               # the gate alone, on build/graph.nt (2 to 4 minutes)
+python shapes/validate.py --shapes shapes/crossref-shapes.ttl --data build/crossref.nt --data ontology/ontology.ttl
+                                        # the gate alone, on the Crossref graph
 ```
 
 The gate fails (exit code 1) on any Violation, and on a shape with 0 focus
@@ -71,7 +77,12 @@ on the same graph.
 ## SPARQL only when no core keyword can say it
 
 pySHACL runs a SPARQL rule once per focus node: 4,160 and 5,211 small
-queries here. Timed alone on the whole graph: the self-citation rule 9 s, the
-last-author rule 118 s (330 s in the first draft, see its TRIAGE comment),
-all the core shapes together about 60 s. So everything core SHACL can state
-is core.
+queries on the OpenAlex graph. Timed alone on the whole graph: the
+self-citation rule 9 s, the last-author rule 118 s (330 s in the first draft,
+see its TRIAGE comment), all the core shapes together about 60 s. So
+everything core SHACL can state is core.
+
+The Crossref shapes have three SPARQL rules (a record citing itself, a notice
+updating itself, an ORCID on two authors of one record): 3,714, 61 and 4,450
+queries. The last one is asked per person, not per record, because a record
+can have 1,512 authors (triage.md, Session 5).

@@ -1,0 +1,13 @@
+# CQ10, the titles that differ. Which papers have another title in Crossref, compared as in cq10.rq?
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?paper ?openalexTitle ?crossrefTitle
+FROM NAMED <https://ul.edu.lb/kr/graph/openalex>
+FROM NAMED <https://ul.edu.lb/kr/graph/crossref>
+WHERE {
+  GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?paper pub:doi ?doi ; pub:title ?openalexTitle }
+  GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?record pub:doi ?doi ; pub:title ?crossrefTitle }
+  BIND (LCASE(REPLACE(REPLACE(REPLACE(?openalexTitle, "<[^>]*>|&(amp;)*lt;.*?&(amp;)*gt;", ""), "&(amp;)*#?[a-zA-Z0-9]+;", ""), "[^\\p{L}\\p{N}]", "")) AS ?k1)
+  BIND (LCASE(REPLACE(REPLACE(REPLACE(?crossrefTitle, "<[^>]*>|&(amp;)*lt;.*?&(amp;)*gt;", ""), "&(amp;)*#?[a-zA-Z0-9]+;", ""), "[^\\p{L}\\p{N}]", "")) AS ?k2)
+  FILTER (?k1 != ?k2)
+}
+ORDER BY ?paper

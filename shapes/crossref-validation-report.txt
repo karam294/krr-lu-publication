@@ -1,0 +1,40 @@
+data: 342,284 triples from crossref.nt, ontology.ttl
+shapes: crossref-shapes.ttl
+  focus nodes   4,886  Every Crossref DOI
+  focus nodes   4,450  Every Crossref ORCID
+  focus nodes  35,468  Every Crossref authorship
+  focus nodes      61  Every Crossref notice
+  focus nodes   4,886  Every Crossref record
+  focus nodes   3,714  Every citing Crossref record
+  focus nodes   4,450  Every person known by an ORCID
+  focus nodes   4,450  Every person with a Crossref authorship
+
+validated in 63 s. conforms (SHACL): False. 0 Violation, 73 Warning, 28,182 Info
+  Warning       38  Every Crossref record · MaxInclusive on publicationYear   e.g. work/crossref/10.1016%2Fb978-0-443-26608-9.00022-6, work/crossref/10.1016%2Fj.accpm.2025.101614, work/crossref/10.1016%2Fj.afres.2025.101648
+                    Crossref dates this record outside 2022-2025, the years OpenAlex selected it for: the two sources disagree on its year.
+  Warning       10  Every Crossref record · Pattern on cites   e.g. work/crossref/10.1109%2Fiicaiet67254.2025.11265705, work/crossref/10.7759%2Fcureus.23440, work/crossref/10.7759%2Fcureus.25154
+                    A reference of this record has a DOI that is not well formed: it is not 10.xxxx/...
+  Warning        7  Every Crossref notice · SPARQL   e.g. work/crossref/10.1016%2Fj.toxicon.2025.108642, work/crossref/10.1371%2Fjournal.pntd.0010206, work/crossref/10.1371%2Fjournal.pntd.0011314
+                    This record says it updates itself.
+  Warning        6  Every Crossref record · MinCount on publicationYear   e.g. work/crossref/10.30955%2Fgnc2021.00806, work/crossref/10.30955%2Fgnc2021.00819, work/crossref/10.31428%2F10317%2F10552
+                    Crossref gives no date for this record.
+  Warning        5  Every citing Crossref record · SPARQL   e.g. work/crossref/10.1007%2Fs00030-023-00871-x, work/crossref/10.1007%2Fs11042-023-17303-8, work/crossref/10.1386%2Fctl_00102_1
+                    This record cites itself (in Crossref).
+  Warning        4  Every Crossref record · Not on cites   e.g. work/crossref/10.1007%2F16833_2023_132, work/crossref/10.1101%2F2023.11.09.23298241, work/crossref/10.4018%2F978-1-6684-7015-2.ch012
+                    A reference of this record has a DOI with a space in it (written %20 in the IRI).
+  Warning        2  Every person with a Crossref authorship · SPARQL   e.g. author/orcid/0000-0002-1558-2731, author/orcid/0000-0002-7793-7083
+                    Two authors of https://ul.edu.lb/kr/id/work/crossref/10.5812%2Fans-129929 have this person's ORCID.
+  Warning        1  Every Crossref record · MinCount on title   e.g. work/crossref/10.32549%2Fopi-nsc-105
+                    Crossref gives no title for this record.
+  Info      26,821  Every Crossref authorship · MinCount on author   e.g. authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-1, authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-10, authorship/crossref/10.1001%2Fjamanetworkopen.2025.0522-11
+                    Crossref gives no ORCID for this author: we only have the name as listed.
+  Info       1,172  Every Crossref record · MinCount on cites   e.g. work/crossref/10.1002%2Fadmi.202470008, work/crossref/10.1002%2Fessoar.10512868.1, work/crossref/10.1002%2Fessoar.10512879.1
+                    Crossref has no reference with a DOI for this record.
+  Info          98  Every Crossref record · Not on title   e.g. work/crossref/10.1002%2Faesr.202400102, work/crossref/10.1002%2Fccr3.71389, work/crossref/10.1002%2Fccr3.9063
+                    Crossref's title carries markup (<i>, <sub>, <scp>...), as the publisher deposited it.
+  Info          75  Every Crossref record · MinCount on hasAuthorship   e.g. work/crossref/10.1007%2F978-3-031-16388-3, work/crossref/10.1016%2Fbs.pbr.2025.08.016, work/crossref/10.1016%2Fbs.pbr.2025.08.017
+                    Crossref lists no author for this record.
+  Info          16  Every Crossref record · MaxCount on hasAuthorship   e.g. work/crossref/10.1007%2Fs00406-023-01752-1, work/crossref/10.1016%2Fj.jaci.2023.07.019, work/crossref/10.1016%2Fj.jhep.2025.01.013
+                    Crossref lists more than 100 authors: OpenAlex's byline of this paper stops at 100 (Session 4), Crossref's goes on.
+
+GATE: PASS, no Violation, every shape checks something.

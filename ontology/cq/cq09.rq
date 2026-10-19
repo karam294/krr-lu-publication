@@ -1,6 +1,7 @@
 # CQ9. Which authorships name a person OpenAlex could not identify, and which author records share an ORCID?
 PREFIX pub: <https://ul.edu.lb/kr/pub#>
 SELECT ?authorshipsWithoutPerson ?orcidsOnSeveralRecords ?recordsSharingAnOrcid
+FROM <https://ul.edu.lb/kr/graph/openalex>    # OpenAlex only: the default graph holds both sources (D14)
 WHERE {
   { SELECT (COUNT(?a) AS ?authorshipsWithoutPerson)
     WHERE { ?a a pub:Authorship . FILTER NOT EXISTS { ?a pub:author ?person } } }

@@ -1,26 +1,33 @@
-# Where does a fact come from? (Session 4, provenance, D10)
-# For the title of paper W3023054831: the named graph that holds it, the file
-# that graph was made from (with its checksum), the OpenAlex download behind
-# that file, and the pipeline run that made the graph: when, with which programs.
+# Where does a fact come from? (Session 4, provenance, D10; Session 5, D14)
+# For the title of paper W3023054831 and the title of its Crossref record (the
+# same DOI, 10.1007/s00205-021-01737-1): the named graph that holds it, the file
+# that graph was made from (with its checksum), the download behind that file
+# (who made it, when), and the pipeline run that made the graph: when, with
+# which programs. One row per source.
 # Run it on the endpoint (Fuseki, dataset kr) after python pipeline/run.py.
 PREFIX pub:     <https://ul.edu.lb/kr/pub#>
 PREFIX prov:    <http://www.w3.org/ns/prov#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?graph ?file ?checksum ?downloaded ?run ?ended
+SELECT ?graph ?title ?file ?checksum ?source ?downloaded ?run ?ended
        (GROUP_CONCAT(?program; separator=", ") AS ?programs)
 WHERE {
-  GRAPH ?graph { <https://ul.edu.lb/kr/id/work/openalex/W3023054831> pub:title ?title }
+  VALUES ?paper { <https://ul.edu.lb/kr/id/work/openalex/W3023054831>
+                  <https://ul.edu.lb/kr/id/work/crossref/10.1007%2Fs00205-021-01737-1> }
+  GRAPH ?graph { ?paper pub:title ?title }
   GRAPH <https://ul.edu.lb/kr/graph/provenance> {
     ?graph prov:wasDerivedFrom ?f ;
            prov:wasGeneratedBy ?run .
     ?f dcterms:title ?file ;
        dcterms:identifier ?checksum ;
        prov:wasDerivedFrom ?download .
-    ?download dcterms:created ?downloaded .
+    ?download dcterms:created ?downloaded ;
+              prov:wasAttributedTo ?who .
+    ?who rdfs:label ?source .
     ?run prov:endedAtTime ?ended ;
          prov:wasAssociatedWith ?agent .
     ?agent rdfs:label ?program .
   }
 }
-GROUP BY ?graph ?file ?checksum ?downloaded ?run ?ended
+GROUP BY ?graph ?title ?file ?checksum ?source ?downloaded ?run ?ended
+ORDER BY ?graph

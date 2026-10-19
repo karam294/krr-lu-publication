@@ -2,8 +2,10 @@
 ## command line --tdb2 --loc=/data/kr --update /kr gave us before, plus one
 ## change (Session 4, D10): the default graph of a query is the UNION of the
 ## named graphs. The pipeline loads each part into its own named graph
-## (graph/openalex, graph/ontology, graph/provenance), and a query with no
-## GRAPH clause still sees all of them, as before.
+## (graph/openalex, graph/crossref, graph/ontology, graph/provenance), and a
+## query with no GRAPH clause still sees all of them, as before. Since Session
+## 5 that is two sources at once: a query about one source names it with FROM
+## (the competency questions do, D14).
 
 PREFIX fuseki: <http://jena.apache.org/fuseki#>
 PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

@@ -1,0 +1,28 @@
+# CQ8, both sources. Which LU papers have been retracted, according to OpenAlex and to Crossref?
+# Every LU paper that OpenAlex flags as retracted, or that a Crossref retraction
+# notice concerns (the paper it retracts, or the notice itself), side by side.
+# The two records of a paper are joined by their DOI.
+PREFIX pub: <https://ul.edu.lb/kr/pub#>
+SELECT ?paper ?openalex ?crossref
+FROM NAMED <https://ul.edu.lb/kr/graph/openalex>
+FROM NAMED <https://ul.edu.lb/kr/graph/crossref>
+WHERE {
+  {
+    SELECT DISTINCT ?paper ?doi WHERE {
+      { GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?paper pub:isRetracted true ; pub:doi ?doi } }
+      UNION
+      { GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?notice a pub:Retraction ; pub:updates/pub:doi ?doi } }
+      UNION
+      { GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?notice a pub:Retraction ; pub:doi ?doi } }
+      GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?paper pub:doi ?doi }
+    }
+  }
+  GRAPH <https://ul.edu.lb/kr/graph/openalex> { ?paper pub:isRetracted ?flag . OPTIONAL { ?paper a pub:Retraction . BIND (true AS ?oaNotice) } }
+  OPTIONAL { GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?record pub:doi ?doi } }
+  BIND (CONCAT(IF(BOUND(?oaNotice), "a retraction notice, ", ""), IF(?flag, "retracted", "not retracted")) AS ?openalex)
+  BIND (IF(!BOUND(?record), "no Crossref record",
+        IF(EXISTS { GRAPH <https://ul.edu.lb/kr/graph/crossref> { ?record a pub:Retraction } }, "a retraction notice",
+        IF(EXISTS { GRAPH <https://ul.edu.lb/kr/graph/crossref> { [] a pub:Retraction ; pub:updates ?record } }, "retracted by a notice",
+           "no retraction"))) AS ?crossref)
+}
+ORDER BY ?crossref ?paper

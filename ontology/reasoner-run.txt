@@ -1,5 +1,5 @@
-Reasoner run 2026-10-18, ROBOT version 1.9.10
-Input: ontology/ontology.ttl (versionIRI <https://ul.edu.lb/kr/pub/1.0.0>), imports from ontology/imports/
+Reasoner run 2026-10-19, ROBOT version 1.9.10
+Input: ontology/ontology.ttl (versionIRI <https://ul.edu.lb/kr/pub/1.1.0>), imports from ontology/imports/
 
 == ELK
 ELK: consistent, no unsatisfiable classes

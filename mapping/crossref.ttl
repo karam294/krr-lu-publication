@@ -1,0 +1,145 @@
+## crossref.ttl: the second source (data/crossref.sql, D11) to triples, in R2RML.
+## pipeline/run.py runs it with Morph-KGC into build/crossref.nt, checked against
+## shapes/crossref-shapes.ttl and loaded into the named graph
+## https://ul.edu.lb/kr/graph/crossref: what Crossref says (D14).
+##
+## The same pub: words as the OpenAlex mapping, and the same IRI scheme (D3), with
+## crossref as the source and the DOI as the key. The DOI has a slash, so in an IRI
+## it is written %2F: .../work/crossref/10.1007%2Fs00205-021-01737-1. A Crossref
+## record and the OpenAlex paper of the same DOI are two nodes; the link between
+## them comes in its own graph, made only after checking (D3).
+## Views (rr:sqlQuery) only on columns that are never empty, as in mapping.ttl:
+## an empty cell would give a key "None" (Session 2).
+##
+## Left out on purpose (D14): Crossref's types (journal-article, book-chapter...)
+## are coarser than OpenAlex's 20 (a review is a journal-article), so they get no
+## class; the counts (references, citations), the publisher and the language
+## answer no question that OpenAlex does not answer already.
+@prefix rr:  <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix pub: <https://ul.edu.lb/kr/pub#> .
+
+########################################################################
+## Records: one row of cr_works that Crossref found, one paper
+########################################################################
+
+<#CrossrefWorks>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi FROM cr_works WHERE found = 'True'""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ; rr:class pub:Work ] ;
+    rr:predicateObjectMap [ rr:predicate pub:doi ; rr:objectMap [ rr:column "doi" ] ] .
+
+<#CrossrefTitles>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, title FROM cr_works WHERE found = 'True' AND title IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:title ; rr:objectMap [ rr:column "title" ] ] .
+
+## The date: Crossref's earliest date (print or online) is YYYY, YYYY-MM or
+## YYYY-MM-DD. The year comes from all of them; a pub:publicationDate only from a
+## whole date, because an xsd:date must have a day.
+<#CrossrefYears>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, substr(published, 1, 4) AS year FROM cr_works
+        WHERE found = 'True' AND published IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:publicationYear ;
+        rr:objectMap [ rr:column "year" ; rr:datatype xsd:integer ] ] .
+
+<#CrossrefDates>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, published FROM cr_works
+        WHERE found = 'True' AND length(published) = 10""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:publicationDate ;
+        rr:objectMap [ rr:column "published" ; rr:datatype xsd:date ] ] .
+
+## The venue as the record states it: its name and its ISSNs, values of the record,
+## not a venue node (D14). cr_works.issn holds one to three ISSNs, each 9
+## characters, separated by a space: one view row per ISSN.
+<#CrossrefVenueNames>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, venue FROM cr_works WHERE found = 'True' AND venue IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:venueName ; rr:objectMap [ rr:column "venue" ] ] .
+
+<#CrossrefIssns>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, substr(issn, 1, 9) AS one_issn FROM cr_works WHERE issn IS NOT NULL
+        UNION SELECT doi, substr(issn, 11, 9) FROM cr_works WHERE length(issn) >= 19
+        UNION SELECT doi, substr(issn, 21, 9) FROM cr_works WHERE length(issn) >= 29""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:issn ; rr:objectMap [ rr:column "one_issn" ] ] .
+
+########################################################################
+## Authors: one row of cr_authors, one author on one Crossref record. Its key is
+## DOI + position in Crossref's list, as for OpenAlex authorships (D3).
+########################################################################
+
+## The name as listed: given and family joined; a group author ("CSA Study
+## Group") has only a name.
+<#CrossrefAuthorships>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, author_order,
+               trim(coalesce(given || ' ', '') || coalesce(family, name, '')) AS listed
+        FROM cr_authors""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/crossref/{doi}-{author_order}" ;
+                    rr:class pub:Authorship ] ;
+    rr:predicateObjectMap [ rr:predicate pub:authorOrder ;
+        rr:objectMap [ rr:column "author_order" ; rr:datatype xsd:integer ] ] ;
+    rr:predicateObjectMap [ rr:predicate pub:nameAsListed ; rr:objectMap [ rr:column "listed" ] ] .
+
+<#CrossrefPaperAuthorships>
+    rr:logicalTable [ rr:tableName "cr_authors" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:hasAuthorship ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/crossref/{doi}-{author_order}" ] ] .
+
+## The person, when Crossref gives an ORCID: the person named by the ORCID (D12).
+<#CrossrefAuthorOrcid>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT doi, author_order, orcid FROM cr_authors WHERE orcid IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/authorship/crossref/{doi}-{author_order}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:author ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/author/orcid/{orcid}" ] ] .
+
+<#OrcidPeople>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT DISTINCT orcid FROM cr_authors WHERE orcid IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/author/orcid/{orcid}" ; rr:class pub:Author ] ;
+    rr:predicateObjectMap [ rr:predicate pub:orcid ; rr:objectMap [ rr:column "orcid" ] ] .
+
+########################################################################
+## References and notices
+########################################################################
+
+## A reference with a DOI: a Crossref record cites the record of that DOI. A DOI
+## listed twice in one reference list gives one triple (a graph is a set).
+<#CrossrefCitations>
+    rr:logicalTable [ rr:tableName "cr_references" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:cites ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{ref_doi}" ] ] .
+
+## A notice (a retraction, a correction, a new version...) updates another record.
+<#CrossrefUpdates>
+    rr:logicalTable [ rr:tableName "cr_updates" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{notice_doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate pub:updates ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{updated_doi}" ] ] .
+
+## What kind of notice, in our classes: a retraction is a pub:Retraction (a notice,
+## not a retracted paper); a correction, erratum or corrigendum is a pub:Erratum.
+## A new version, a new edition or a removal gets no class.
+<#CrossrefNoticeTypes>
+    rr:logicalTable [ rr:sqlQuery """
+        SELECT DISTINCT notice_doi, class FROM (SELECT notice_doi, CASE update_type
+            WHEN 'retraction'  THEN 'Retraction'
+            WHEN 'correction'  THEN 'Erratum'
+            WHEN 'erratum'     THEN 'Erratum'
+            WHEN 'corrigendum' THEN 'Erratum'
+        END AS class FROM cr_updates) AS notices WHERE class IS NOT NULL""" ] ;
+    rr:subjectMap [ rr:template "https://ul.edu.lb/kr/id/work/crossref/{notice_doi}" ] ;
+    rr:predicateObjectMap [ rr:predicate rdf:type ;
+        rr:objectMap [ rr:template "https://ul.edu.lb/kr/pub#{class}" ] ] .

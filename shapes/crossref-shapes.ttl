@@ -1,0 +1,243 @@
+## crossref-shapes.ttl: the rules the Crossref graph must obey, in SHACL (Session 5).
+##
+## pipeline/run.py checks build/crossref.nt + ontology/ontology.ttl against this
+## file, and the OpenAlex graph against shapes.ttl: each graph against the rules of
+## its own source (D14). The OpenAlex rules do not fit Crossref (a record may have
+## no author, more than 100, a year outside 2022-2025, and has no open-access
+## flag); these do not fit OpenAlex. Same policy as shapes.ttl (D9): a Violation
+## stops the load; a Warning (a known problem of the source) and an Info (a
+## coverage figure) are reported and do not.
+##
+## Written with the counts of data/crossref.sql in hand; every rule that is not a
+## Violation says why, marked TRIAGE (shapes/triage.md, Session 5). The rules
+## that cannot fail as the mapping stands (one DOI, one record) are there to
+## catch a change of the mapping that breaks them.
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pub:   <https://ul.edu.lb/kr/pub#> .
+@prefix pubsh: <https://ul.edu.lb/kr/shapes#> .
+
+<https://ul.edu.lb/kr/shapes/crossref> a owl:Ontology ;
+    rdfs:label "Shapes for the Crossref graph" ;
+    owl:versionInfo "1.0.0" ;
+    sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] .
+
+########################################################################
+## Records. The target is every subject of pub:doi, not every pub:Work: a
+## notice outside our papers (a correction of one of ours) is typed pub:Erratum
+## by the mapping but is not a record we downloaded.
+########################################################################
+
+pubsh:CrossrefRecordShape a sh:NodeShape ;
+    rdfs:label "Every Crossref record" ;
+    sh:targetSubjectsOf pub:doi ;
+    sh:class pub:Work ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "^https://ul\\.edu\\.lb/kr/id/work/crossref/10\\.[0-9]{4,9}%2F" ;
+    sh:message "A Crossref record is a pub:Work named .../work/crossref/{its DOI}, the slash written %2F (D3)." ;
+    sh:property [
+        sh:path pub:doi ; sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^10\\.[0-9]{4,9}/\\S+$" ;
+        sh:message "A Crossref record has exactly one DOI, written 10.xxxx/..."
+    ] ;
+
+    sh:property [
+        sh:path pub:title ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "A Crossref record has at most one title (we keep the first), not empty."
+    ] ;
+    sh:property [
+        sh:path pub:title ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Crossref gives no title for this record." ;
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 1 of 4,886: 10.32549/opi-nsc-105, which Crossref types journal-issue: the DOI of a whole issue, not of one paper. A Warning; CQ10 cannot compare its title."
+    ] ;
+    sh:property [
+        sh:path pub:title ; sh:not [ sh:pattern "<[a-zA-Z/][^>]*>" ] ;
+        sh:severity sh:Info ;
+        sh:message "Crossref's title carries markup (<i>, <sub>, <scp>...), as the publisher deposited it." ;
+        rdfs:comment "TRIAGE: a fact about the source, not an error. OpenAlex removes the tags, Crossref keeps them, sometimes escaped (&lt;i&gt;), so the two titles of one paper differ by the tags: mapping/er/link_by_key.py and CQ10 compare titles with the tags removed. This rule sees only the tags written as tags. Info."
+    ] ;
+
+    sh:property [
+        sh:path pub:publicationYear ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+        sh:message "A Crossref record has at most one publication year, an integer."
+    ] ;
+    sh:property [
+        sh:path pub:publicationYear ; sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Crossref gives no date for this record." ;
+        rdfs:comment "TRIAGE: the data is incomplete at the source. 6 of 4,886: 4 proceedings papers and 2 dissertations. A Warning."
+    ] ;
+    sh:property [
+        sh:path pub:publicationYear ; sh:minInclusive 2022 ; sh:maxInclusive 2025 ;
+        sh:severity sh:Warning ;
+        sh:message "Crossref dates this record outside 2022-2025, the years OpenAlex selected it for: the two sources disagree on its year." ;
+        rdfs:comment "TRIAGE: the rule is OpenAlex's, not Crossref's. OpenAlex chose our papers by its year (2022-2025); Crossref's earliest date can fall in another year. 38 records, all in 2026. Not an error in either source on its own: a disagreement, which CQ10 counts. A Warning."
+    ] ;
+    sh:property [
+        sh:path pub:publicationDate ; sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:message "A Crossref record has at most one publication date, a valid xsd:date (only when Crossref gives the day)."
+    ] ;
+
+    sh:property [
+        sh:path pub:venueName ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "A Crossref record names at most one venue (we keep the first container-title), not empty."
+    ] ;
+    sh:property [
+        sh:path pub:issn ; sh:pattern "^[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "Each ISSN of a Crossref record is written 0000-000X."
+    ] ;
+
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:class pub:Authorship ;
+        sh:message "Each authorship of a Crossref record is a pub:Authorship."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:minCount 1 ;
+        sh:severity sh:Info ;
+        sh:message "Crossref lists no author for this record." ;
+        rdfs:comment "TRIAGE: coverage of the source. 75 of 4,886: 43 peer reviews (often anonymous), 25 journal articles, 4 book chapters, 3 more. OpenAlex lists authors for all of them. Info."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:maxCount 100 ;
+        sh:severity sh:Info ;
+        sh:message "Crossref lists more than 100 authors: OpenAlex's byline of this paper stops at 100 (Session 4), Crossref's goes on." ;
+        rdfs:comment "TRIAGE: not an error, the reason Crossref matters here. 16 records, up to 1,512 authors; OpenAlex lists exactly 100 for each of them. Crossref has no cap, so for these papers it has the authors OpenAlex cut off (shapes.ttl, the 100-author Info and the LU-author Warning). Info."
+    ] ;
+
+    # The cited records are IRIs of our scheme with a DOI.
+    sh:property [
+        sh:path pub:cites ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/work/crossref/10\\.[0-9]{4,9}%2F" ;
+        sh:severity sh:Warning ;
+        sh:message "A reference of this record has a DOI that is not well formed: it is not 10.xxxx/..." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source: the DOI as the publisher deposited it. 10 of 149,936 references, on 4 records (3 in Cureus, 10.7759): 7 already percent-encoded (10.1016%2fj...: the slash written %2f, which our IRI encodes again, as %252f), 2 cut after the prefix (10.1093, 10.1161), 1 mistyped (10.1016f/.eswa.2019.112986). We do not repair the source (D4). A Warning."
+    ] ;
+    sh:property [
+        sh:path pub:cites ; sh:not [ sh:pattern "%20" ] ;
+        sh:severity sh:Warning ;
+        sh:message "A reference of this record has a DOI with a space in it (written %20 in the IRI)." ;
+        rdfs:comment "TRIAGE: the data is wrong, at the source: 4 references, on 4 records, such as 10.1007/978-3-030-27809 0_10 for 10.1007/978-3-030-27809-0_10, or two DOIs in one (10.14694/edbk_100005 10.1200/edbk_100005). A DOI has no space. A Warning."
+    ] ;
+    sh:property [
+        sh:path pub:cites ; sh:minCount 1 ;
+        sh:severity sh:Info ;
+        sh:message "Crossref has no reference with a DOI for this record." ;
+        rdfs:comment "TRIAGE: coverage of the source: 1,172 of 4,886 records. Publishers deposit reference lists by choice, and a reference without a DOI is not kept (data/build_crossref.py). Info."
+    ] ;
+
+    sh:property [
+        sh:path pub:updates ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/work/crossref/10\\.[0-9]{4,9}%2F" ;
+        sh:message "A notice updates a record named .../work/crossref/{its DOI}."
+    ] .
+
+## A DOI names one record (D3). The focus nodes are the DOI values; the path goes
+## back (^doi) to the records that have it.
+pubsh:CrossrefDoiShape a sh:NodeShape ;
+    rdfs:label "Every Crossref DOI" ;
+    sh:targetObjectsOf pub:doi ;
+    sh:property [
+        sh:path [ sh:inversePath pub:doi ] ; sh:maxCount 1 ;
+        sh:message "Two Crossref records have this DOI: the mapping made two nodes for one record."
+    ] .
+
+## A record does not cite itself, and a notice updates another record. Core SHACL
+## cannot compare a value with the focus node itself: SPARQL rules, as in shapes.ttl.
+pubsh:CrossrefSelfCitationShape a sh:NodeShape ;
+    rdfs:label "Every citing Crossref record" ;
+    sh:targetSubjectsOf pub:cites ;
+    sh:sparql [
+        sh:message "This record cites itself (in Crossref)." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes/crossref> ;
+        sh:select """
+            SELECT $this WHERE { $this pub:cites $this }"""
+    ] ;
+    sh:severity sh:Warning ;
+    rdfs:comment "TRIAGE: the data is wrong, at the source: 5 records list their own DOI among their references. The rule is right. A Warning. (OpenAlex has 75 papers that cite themselves, shapes.ttl; whether Crossref confirms them is checked with the links between the two graphs.)" .
+
+pubsh:CrossrefSelfUpdateShape a sh:NodeShape ;
+    rdfs:label "Every Crossref notice" ;
+    sh:targetSubjectsOf pub:updates ;
+    sh:sparql [
+        sh:message "This record says it updates itself." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes/crossref> ;
+        sh:select """
+            SELECT $this WHERE { $this pub:updates $this }"""
+    ] ;
+    sh:severity sh:Warning ;
+    rdfs:comment "TRIAGE: the data is as the publisher deposited it, and the rule is right: a notice updates another record. 7 records point the update at their own DOI: 3 new versions and 3 new editions (the publisher deposited the update on the record itself), and 1 removal, 10.1016/j.toxicon.2025.108642, an article its publisher removed, which OpenAlex does not flag as retracted (W4415760726, isRetracted false). A Warning." .
+
+########################################################################
+## Authorships and people
+########################################################################
+
+pubsh:CrossrefAuthorshipShape a sh:NodeShape ;
+    rdfs:label "Every Crossref authorship" ;
+    sh:targetClass pub:Authorship ;
+    sh:pattern "^https://ul\\.edu\\.lb/kr/id/authorship/crossref/10\\.[0-9]{4,9}%2F.+-[0-9]+$" ;
+    sh:message "A Crossref authorship is named .../authorship/crossref/{DOI}-{position} (D3)." ;
+    sh:property [
+        sh:path [ sh:inversePath pub:hasAuthorship ] ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "An authorship belongs to exactly one record."
+    ] ;
+    sh:property [
+        sh:path pub:authorOrder ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ;
+        sh:message "An authorship has one place in Crossref's list, from 1 (no upper limit: Crossref has no cap)."
+    ] ;
+    sh:property [
+        sh:path pub:nameAsListed ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "An authorship has the name as Crossref lists it, exactly one, not empty."
+    ] ;
+    sh:property [
+        sh:path pub:author ; sh:maxCount 1 ; sh:class pub:Author ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/author/orcid/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "An authorship has at most one author, the person named by an ORCID (D12)."
+    ] ;
+    sh:property [
+        sh:path pub:author ; sh:minCount 1 ;
+        sh:severity sh:Info ;
+        sh:message "Crossref gives no ORCID for this author: we only have the name as listed." ;
+        rdfs:comment "TRIAGE: coverage of the source: 26,821 of 35,468 authors (76%) have no ORCID in Crossref. Who they are is the matcher's question (mapping/er/match_authorships.py). Info."
+    ] .
+
+## Two authors of one record with the same ORCID: one person listed twice, or an
+## ORCID put on the wrong author. It compares two authorships of one record:
+## SPARQL. The focus node is the person, who has a few authorships, not the
+## record, which can have 1,512: asked per record, this rule was by far the
+## slowest; per person it takes about a third of that time (triage.md).
+pubsh:CrossrefOrcidTwiceShape a sh:NodeShape ;
+    rdfs:label "Every person with a Crossref authorship" ;
+    sh:targetObjectsOf pub:author ;
+    sh:sparql [
+        sh:message "Two authors of {?record} have this person's ORCID." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes/crossref> ;
+        sh:select """
+            SELECT $this ?record WHERE {
+                ?a pub:author $this .
+                ?b pub:author $this .
+                FILTER (STR(?a) < STR(?b))
+                ?record pub:hasAuthorship ?a , ?b . }"""
+    ] ;
+    sh:severity sh:Warning ;
+    rdfs:comment "TRIAGE: the data is wrong, at the source: on 2 records (10.5534/wjmh.230034, 10.5812/ans-129929) two different authors carry the same ORCID. An ORCID names one person, so the mapping links both authorships to one person (D12), and one of the two links is wrong. A Warning." .
+
+pubsh:CrossrefPersonShape a sh:NodeShape ;
+    rdfs:label "Every person known by an ORCID" ;
+    sh:targetClass pub:Author ;
+    sh:pattern "^https://ul\\.edu\\.lb/kr/id/author/orcid/" ;
+    sh:message "In the Crossref graph a person is named .../author/orcid/{ORCID} (D12)." ;
+    sh:property [
+        sh:path pub:orcid ; sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "A person known by an ORCID has exactly one, written 0000-0000-0000-000X."
+    ] .
+
+pubsh:CrossrefOrcidShape a sh:NodeShape ;
+    rdfs:label "Every Crossref ORCID" ;
+    sh:targetObjectsOf pub:orcid ;
+    sh:property [
+        sh:path [ sh:inversePath pub:orcid ] ; sh:maxCount 1 ;
+        sh:message "Two persons have this ORCID: the mapping made two nodes for one person."
+    ] .

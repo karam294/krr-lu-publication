@@ -1,6 +1,7 @@
 # CQ6. Which LU papers cite other LU papers? (the LU papers cited most by other LU papers)
 PREFIX pub: <https://ul.edu.lb/kr/pub#>
 SELECT ?cited ?title (COUNT(?citing) AS ?citedByLU)
+FROM <https://ul.edu.lb/kr/graph/openalex>    # OpenAlex only: the default graph holds both sources (D14)
 WHERE {
   ?citing pub:cites ?cited .
   ?cited pub:title ?title .

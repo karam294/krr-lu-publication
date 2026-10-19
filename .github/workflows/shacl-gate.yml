@@ -1,10 +1,11 @@
 # The SHACL gate in continuous integration (Session 4): on every push and pull
-# request, map the source and validate the whole graph (D9). Any Violation, or
-# a shape that checks nothing, fails the run (red), and a red pull request is
-# not merged. The same steps as the stack's pipeline, without loading an
-# endpoint. Then check the mapping against the paper we wrote by hand
-# (Session 2): any difference also fails the run. The SHACL report is kept
-# with every run, green or red, under "Artifacts" on the run's page.
+# request, map both sources and validate each whole graph against its own
+# shapes (D9, D14). Any Violation, or a shape that checks nothing, fails the
+# run (red), and a red pull request is not merged. The same steps as the
+# stack's pipeline, without loading an endpoint. Then check the mapping
+# against the paper we wrote by hand (Session 2): any difference also fails
+# the run. The SHACL report (both graphs) is kept with every run, green or
+# red, under "Artifacts" on the run's page.
 
 name: SHACL gate
 

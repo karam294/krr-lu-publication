@@ -157,3 +157,69 @@ type, institution type and topic domain.
   this normal, so it is not a rule.
 - **Institutions with no country** (98): OpenAlex does not know it for every
   institution, and no question of ours needs it.
+
+# Session 5: the Crossref graph (shapes/crossref-shapes.ttl)
+
+The Crossref graph is checked against its own shapes, not against shapes.ttl
+(D14): the OpenAlex rules do not hold for Crossref, and are not meant to. A
+Crossref record may list no author, or 1,512; its year may fall outside
+2022-2025; it has no open-access flag and no type of ours. So the same
+question, **is the rule wrong, or the data?**, was asked rule by rule
+before the first run, with the counts of data/crossref.sql in hand, and the
+first run is the triaged one: 0 Violations, 73 Warnings, 28,182 Info. Each
+decision is in the rule's TRIAGE comment; the report is
+`shapes/crossref-validation-report.txt`.
+
+| Results | Rule | Rule or data? | Decision | Now |
+|---:|---|---|---|---|
+| 26,821 | Every Crossref author has an ORCID | coverage of the source (76% have none) | the matcher's job, not an error | Info |
+| 1,172 | Every record has references with a DOI | coverage: publishers deposit them by choice | accept | Info |
+| 98 | A title has no markup | a fact about Crossref (OpenAlex removes tags) | compare titles without markup | Info |
+| 75 | Every record lists an author | coverage: 43 are peer reviews | accept | Info |
+| 16 | At most 100 authors | **rule wrong** for Crossref: no cap | keep it as Info: these are the bylines OpenAlex cut | Info |
+| 38 | The year is 2022 to 2025 | **rule is OpenAlex's**, not Crossref's | a disagreement between the sources (CQ10) | Warning |
+| 10 | A reference has a well-formed DOI | data wrong at the source (publisher's deposit) | accept, we do not repair the source (D4) | Warning |
+| 7 | A notice updates another record | data as deposited: 6 versions or editions, 1 removal | accept | Warning |
+| 6 | Every record has a date | data incomplete at the source | accept | Warning |
+| 5 | A record does not cite itself | data wrong at the source | accept | Warning |
+| 4 | A reference's DOI has no space | data wrong at the source | accept | Warning |
+| 2 | Two authors of a record do not share an ORCID | data wrong at the source | accept; one of the two authorships is linked to the wrong person | Warning |
+| 1 | Every record has a title | data incomplete: the DOI of a whole journal issue | accept | Warning |
+
+Every other rule held on all the data (0 results) and is a Violation, so the
+gate stops the first row that breaks it: a record is a pub:Work named
+.../work/crossref/{DOI}, with exactly one DOI, at most one title, year, date
+and venue name, ISSNs written 0000-000X, authorships of our scheme; an
+authorship belongs to one record, with one position and one name; a person
+is named by a well-formed ORCID, and one ORCID is one person.
+
+Two things were learned on the way:
+
+- **Targeting.** The first idea, `sh:targetClass pub:Work`, would have
+  targeted the notices outside our papers too: a correction of one of our
+  papers is typed pub:Erratum by the mapping, but it is not a record we
+  downloaded, so it has no pub:doi and would have broken "exactly one DOI".
+  The target is `sh:targetSubjectsOf pub:doi`: the records.
+- **Cost.** pySHACL runs a SPARQL rule once per focus node. The ORCID rule
+  asked per record was by far the slowest rule: a record with 1,512 authors
+  makes over 2 million pairs of authorships. Asked per person (a few
+  authorships each), it takes about a third of that time, with the same 2
+  results. The time of the whole run is the report's "validated in" line.
+
+What the second source already says about Session 4's decisions (the
+competency questions, `ontology/cq_answers.txt`):
+
+- **The retraction notice flagged as retracted** (W4415060141, a Warning):
+  Crossref agrees it is a notice (cq08_sources). And it finds a second one
+  that no rule could see: OpenAlex types W4308586991 as an article and flags
+  it retracted; Crossref says it is the retraction notice of another paper,
+  10.3892/ijo.2014.2638, not one of ours.
+- **214 papers with no venue** (a Warning): Crossref names a venue for 105
+  of the 212 that have a Crossref record (cq10_venues).
+- **Bylines cut at 100** (an Info, and the 6 papers without an LU author): 16
+  Crossref records list more than 100 authors.
+
+The links between the two graphs come next; with them, the Session 4
+Warnings that wait for Session 5 (the self-citations, the duplicate DOIs and
+ORCIDs, the authorships without an author) are re-checked, and their TRIAGE
+comments in shapes.ttl say what the links changed.
