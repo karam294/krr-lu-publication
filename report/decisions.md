@@ -159,6 +159,36 @@ graph, the matcher and their numbers rebuild from a clean checkout without the n
 8,647 with an ORCID; 149,936 references with a DOI; 63 notices. The 169 not found are
 registered elsewhere, mostly with DataCite: 112 Zenodo, 26 arXiv, 7 figshare, 24 others.
 
-D13. Keep an author link from a score of 4 (2026-10-19)
+## D12. A person known only by an ORCID gets an IRI of its own (2026-10-19)
+**Decision.** An authorship that OpenAlex gave no author ID, but an ORCID, is linked
+to the person with that ORCID: the OpenAlex author record that carries it (158
+authorships), or else a person named by the ORCID itself,
+https://ul.edu.lb/kr/id/author/orcid/{ORCID} (153 authorships, 123 people). D5 said: a
+person only from an OpenAlex ID. This adds a second identifier, one that names one
+person.
+**Alternative.** Keep D5 as it was (2,101 authorships without a person); or also match
+the other 1,790 to people by name.
+**Why.** ORCID gives one identifier to one person, to name that person across systems:
+it is a key, so linking by it needs no guessing. The IRI follows D3: kind author,
+source orcid, key the ORCID. A name is not a key: two people can share one, and one
+person writes theirs in several ways (part 2 of mapping/er/README.md), so the 1,790
+keep their name as listed (D5) and no person.
+**Evidence.** mapping/er/link_by_key.txt.
 
-Decision. mapping/er/match_authorships.py keeps a link between an OpenAlex authorship and a Crossref author when its score is 4 or more: 30,848 links. Alternative. A threshold of 8 (30,697 links); or a rule that refuses every link whose first initials differ. Why. On the 3,681 Crossref authors of half B whose true match is known by ORCID, 4 and 8 have the same precision, 0.9997, and 4 finds more: recall 0.9995 against 0.9957. The 151 links between 4 and 8 are mostly a byline in another order in Crossref (W4399056955: initials, positions one or two places apart). A person checked 20 of them: 19 are the same person (the wrong one: Bilal Alhayani and Bilal Öztürk). The one miss left on half B is an author OpenAlex does not have: Crossref's author 121 of W4382465100, past the 100-author cap. The weakness we keep, with its size: when the family name and the position agree, a different first initial does not cancel the link (28 links, most with a score of 9.1), and 2 of the 4 checked are two people (Tatiana and Fadi Abou-Mrad; Y. Satou and H. Sato). Refusing all of them would also drop right ones (Filippos and Phil Aravanopoulos). Evidence. mapping/er/match_authorships.txt; mapping/er/hand_sample.csv.
+## D13. Keep an author link from a score of 4 (2026-10-19)
+**Decision.** mapping/er/match_authorships.py keeps a link between an OpenAlex
+authorship and a Crossref author when its score is 4 or more: 30,848 links.
+**Alternative.** A threshold of 8 (30,697 links); or a rule that refuses every link
+whose first initials differ.
+**Why.** On the 3,681 Crossref authors of half B whose true match is known by ORCID,
+4 and 8 have the same precision, 0.9997, and 4 finds more: recall 0.9995 against
+0.9957. The 151 links between 4 and 8 are mostly a byline in another order in Crossref
+(W4399056955: initials, positions one or two places apart). A person checked 20 of
+them: 19 are the same person (the wrong one: Bilal Alhayani and Bilal Öztürk). The one
+miss left on half B is an author OpenAlex does not have: Crossref's author 121 of
+W4382465100, past the 100-author cap. The weakness we keep, with its size: when the
+family name and the position agree, a different first initial does not cancel the
+link (28 links, most with a score of 9.1), and 2 of the 4 checked are two people (Tatiana and Fadi
+Abou-Mrad; Y. Satou and H. Sato). Refusing all of them would also drop right ones
+(Filippos and Phil Aravanopoulos).
+**Evidence.** mapping/er/match_authorships.txt; mapping/er/hand_sample.csv.
