@@ -1,0 +1,293 @@
+## shapes-v0.ttl: the FIRST DRAFT of our shapes, in SHACL (W3C, 2017).
+## Every rule of data/constraint_inventory.csv (Session 1) and the new ones we
+## found in Sessions 2 and 3, all as Violations (the default severity). Kept as
+## it was, with its report (validation-report-v0.txt), as the starting point of
+## the triage; shapes.ttl is the version after triage.
+##
+##   python shapes/validate.py --shapes shapes/shapes-v0.ttl
+##
+## The data is build/graph.nt + ontology/ontology.ttl: the ontology brings
+## rdfs:subClassOf, so sh:targetClass pub:Work also finds every pub:Article,
+## pub:Review, ...
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pub:   <https://ul.edu.lb/kr/pub#> .
+@prefix pubsh: <https://ul.edu.lb/kr/shapes#> .
+
+## The shapes file itself, and the prefix its SPARQL rules use (sh:declare,
+## the standard way, so any SHACL engine accepts it).
+<https://ul.edu.lb/kr/shapes> a owl:Ontology ;
+    rdfs:label "Shapes for the LU publications graph" ;
+    owl:versionInfo "0.1.0, first draft" ;
+    sh:declare [ sh:prefix "pub" ; sh:namespace "https://ul.edu.lb/kr/pub#"^^xsd:anyURI ] .
+
+########################################################################
+## Papers. Two targets: every pub:Work (with its 20 subclasses), and every
+## subject of pub:publicationYear, so a paper whose OpenAlex type got no
+## class (a new type, see <#WorkTypes> in the mapping) is still checked.
+########################################################################
+
+pubsh:PaperShape a sh:NodeShape ;
+    rdfs:label "Every paper" ;
+    sh:targetClass pub:Work ;
+    sh:targetSubjectsOf pub:publicationYear ;
+    sh:class pub:Work ;
+    sh:message "This paper has none of the 20 classes (D2): its OpenAlex type is new. Add it to <#WorkTypes> in the mapping and to the ontology." ;
+    sh:property [
+        sh:path rdf:type ; sh:maxCount 1 ;
+        sh:message "A paper has one class of the 20, not two."
+    ] ;
+    sh:property [
+        sh:path pub:title ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "A paper has exactly one title, not empty."
+    ] ;
+    sh:property [
+        sh:path pub:publicationYear ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+        sh:minInclusive 2022 ; sh:maxInclusive 2025 ;
+        sh:message "A paper has one publication year, from 2022 to 2025: the years our data set covers."
+    ] ;
+    sh:property [
+        sh:path pub:publicationDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:message "A paper has one publication date, a valid xsd:date (YYYY-MM-DD)."
+    ] ;
+    sh:property [
+        sh:path pub:isOpenAccess ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "A paper is open access or not: exactly one true/false."
+    ] ;
+    sh:property [
+        sh:path pub:isRetracted ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "A paper is retracted or not: exactly one true/false."
+    ] ;
+    sh:property [
+        sh:path pub:language ; sh:maxCount 1 ; sh:pattern "^[a-z]{2}$" ;
+        sh:message "A paper has at most one language, a two-letter ISO 639-1 code."
+    ] ;
+    # Inventory: "Every paper has a DOI". A DOI starts with 10., a registrant code, a slash.
+    sh:property [
+        sh:path pub:doi ; sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^10\\.[0-9]{4,9}/\\S+$" ;
+        sh:message "A paper has exactly one DOI (10.xxxx/...)."
+    ] ;
+    # Inventory: "Every paper has a journal or venue".
+    sh:property [
+        sh:path pub:publishedIn ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pub:Venue ;
+        sh:message "A paper appeared in exactly one venue, and it is a Venue from the sources table."
+    ] ;
+    # Inventory: "Every paper has a topic".
+    sh:property [
+        sh:path pub:hasTopic ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pub:Topic ;
+        sh:message "A paper has exactly one primary topic, a Topic from the topics table."
+    ] ;
+    # Inventory: "OpenAlex lists at most 100 authors per paper".
+    sh:property [
+        sh:path pub:hasAuthorship ; sh:minCount 1 ; sh:maxCount 100 ; sh:class pub:Authorship ;
+        sh:message "A paper has from 1 to 100 authorships (OpenAlex lists at most 100)."
+    ] ;
+    # Inventory: "Each paper has exactly one author labelled first, and it is the author at order 1".
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [ sh:path pub:authorPosition ; sh:hasValue "first" ] ;
+        sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ;
+        sh:message "A paper has exactly one authorship labelled first."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [
+            sh:property [ sh:path pub:authorPosition ; sh:hasValue "first" ] ;
+            sh:property [ sh:path pub:authorOrder ; sh:hasValue 1 ] ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "The authorship labelled first is the one at order 1."
+    ] ;
+    sh:property [
+        sh:path pub:hasAuthorship ;
+        sh:qualifiedValueShape [ sh:path pub:authorPosition ; sh:hasValue "last" ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "A paper has at most one authorship labelled last."
+    ] ;
+    # Inventory: "Every paper's reference list is recorded". The cited papers are
+    # IRIs of our scheme; a key "None" would mean an empty cell went through a view.
+    sh:property [
+        sh:path pub:cites ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/work/openalex/W[0-9]+$" ;
+        sh:message "A paper has a reference list (at least one cited paper), and each cited paper is a work IRI W..."
+    ] .
+
+## Inventory: "Every LU paper lists at least one author affiliated with LU".
+## A path of two steps: paper -> its authorships -> their institutions.
+pubsh:LUAuthorShape a sh:NodeShape ;
+    rdfs:label "Every paper has an LU author" ;
+    sh:targetClass pub:Work ;
+    sh:property [
+        sh:path ( pub:hasAuthorship pub:affiliation ) ;
+        sh:hasValue <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;
+        sh:message "No author of this paper is affiliated with the Lebanese University (I160368002)."
+    ] .
+
+## New (Session 3, CQ8): a retraction notice announces a retraction; it is not
+## itself retracted. The "if" (if it is a notice) is the target: still core.
+pubsh:RetractionNoticeShape a sh:NodeShape ;
+    rdfs:label "Every retraction notice" ;
+    sh:targetClass pub:Retraction ;
+    sh:property [
+        sh:path pub:isRetracted ; sh:hasValue false ;
+        sh:message "A retraction notice is not itself retracted: isRetracted should be false."
+    ] .
+
+## New: a paper does not cite itself. Core SHACL cannot compare a value with
+## the focus node itself, so this one is a SPARQL rule.
+pubsh:NoSelfCitationShape a sh:NodeShape ;
+    rdfs:label "Every citing paper" ;
+    sh:targetSubjectsOf pub:cites ;
+    sh:sparql [
+        sh:message "This paper cites itself." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes> ;
+        sh:select """
+            SELECT $this WHERE { $this pub:cites $this }"""
+    ] .
+
+## New: the authorship labelled last has the highest order on its paper. It
+## compares one authorship with the others of the same paper: other nodes, so SPARQL.
+pubsh:LastAuthorShape a sh:NodeShape ;
+    rdfs:label "Every paper with a last author" ;
+    sh:targetSubjectsOf pub:hasAuthorship ;
+    sh:sparql [
+        sh:message "The authorship labelled last (order {?last}) is not the highest order: there is one at {?after}." ;
+        sh:prefixes <https://ul.edu.lb/kr/shapes> ;
+        sh:select """
+            SELECT $this ?last ?after WHERE {
+                $this pub:hasAuthorship ?l , ?o .
+                ?l pub:authorPosition "last" ; pub:authorOrder ?last .
+                ?o pub:authorOrder ?after .
+                FILTER (?after > ?last) }"""
+    ] .
+
+## Inventory: "A DOI identifies exactly one paper". The focus nodes are the
+## DOI values themselves; the path goes back (^doi) to the papers that have it.
+pubsh:DoiShape a sh:NodeShape ;
+    rdfs:label "Every DOI" ;
+    sh:targetObjectsOf pub:doi ;
+    sh:property [
+        sh:path [ sh:inversePath pub:doi ] ; sh:maxCount 1 ;
+        sh:message "Two papers have this DOI: two records of the same paper."
+    ] .
+
+########################################################################
+## Authorships: one author on one paper (D5)
+########################################################################
+
+pubsh:AuthorshipShape a sh:NodeShape ;
+    rdfs:label "Every authorship" ;
+    sh:targetClass pub:Authorship ;
+    sh:property [
+        sh:path [ sh:inversePath pub:hasAuthorship ] ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "An authorship belongs to exactly one paper."
+    ] ;
+    sh:property [
+        sh:path pub:authorOrder ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+        sh:minInclusive 1 ; sh:maxInclusive 100 ;
+        sh:message "An authorship has one place in the byline, from 1 to 100."
+    ] ;
+    sh:property [
+        sh:path pub:authorPosition ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "first" "middle" "last" ) ;
+        sh:message "An authorship is first, middle or last."
+    ] ;
+    sh:property [
+        sh:path pub:isCorresponding ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ;
+        sh:message "An authorship is corresponding or not: exactly one true/false."
+    ] ;
+    sh:property [
+        sh:path pub:nameAsListed ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ;
+        sh:message "An authorship has the name as printed on the paper (D5), exactly one."
+    ] ;
+    # Inventory: "Every authorship has an OpenAlex author ID".
+    sh:property [
+        sh:path pub:author ; sh:minCount 1 ; sh:maxCount 1 ; sh:class pub:Author ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/author/openalex/A[0-9]+$" ;
+        sh:message "An authorship has exactly one author, an Author with an OpenAlex ID A..."
+    ] ;
+    sh:property [
+        sh:path pub:affiliation ; sh:class pub:Institution ;
+        sh:pattern "^https://ul\\.edu\\.lb/kr/id/institution/openalex/I[0-9]+$" ;
+        sh:message "Each affiliation is an Institution from the institutions table, with an OpenAlex ID I..."
+    ] .
+
+########################################################################
+## Authors, institutions, venues, topics
+########################################################################
+
+pubsh:AuthorShape a sh:NodeShape ;
+    rdfs:label "Every author" ;
+    sh:targetClass pub:Author ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "An author has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:orcid ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "An author has at most one ORCID, written 0000-0000-0000-000X."
+    ] .
+
+## Inventory: "An ORCID identifies exactly one author record".
+pubsh:OrcidShape a sh:NodeShape ;
+    rdfs:label "Every ORCID" ;
+    sh:targetObjectsOf pub:orcid ;
+    sh:property [
+        sh:path [ sh:inversePath pub:orcid ] ; sh:maxCount 1 ;
+        sh:message "Two author records share this ORCID: one person split in two."
+    ] .
+
+pubsh:InstitutionShape a sh:NodeShape ;
+    rdfs:label "Every institution" ;
+    sh:targetClass pub:Institution ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "An institution has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:countryCode ; sh:maxCount 1 ; sh:pattern "^[A-Z]{2}$" ;
+        sh:message "An institution has at most one country, a two-letter ISO 3166 code."
+    ] ;
+    sh:property [
+        sh:path pub:institutionType ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "education" "facility" "healthcare" "government" "nonprofit" "company" "other" "archive" "funder" ) ;
+        sh:message "An institution has one of OpenAlex's nine institution types."
+    ] .
+
+pubsh:VenueShape a sh:NodeShape ;
+    rdfs:label "Every venue" ;
+    sh:targetClass pub:Venue ;
+    sh:property [
+        sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A venue has exactly one name."
+    ] ;
+    sh:property [
+        sh:path pub:venueType ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "journal" "repository" "conference" "book series" "ebook platform" ) ;
+        sh:message "A venue is a journal, repository, conference, book series or ebook platform."
+    ] ;
+    sh:property [
+        sh:path pub:issnL ; sh:maxCount 1 ; sh:pattern "^[0-9]{4}-[0-9]{3}[0-9X]$" ;
+        sh:message "A venue has at most one linking ISSN, written 0000-000X."
+    ] ;
+    sh:property [
+        sh:path pub:publisher ; sh:maxCount 1 ;
+        sh:message "A venue has at most one publisher."
+    ] .
+
+pubsh:TopicShape a sh:NodeShape ;
+    rdfs:label "Every topic" ;
+    sh:targetClass pub:Topic ;
+    sh:property [ sh:path pub:name ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one name." ] ;
+    sh:property [ sh:path pub:subfield ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one subfield." ] ;
+    sh:property [ sh:path pub:field ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A topic has exactly one field." ] ;
+    sh:property [
+        sh:path pub:domain ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "Health Sciences" "Life Sciences" "Physical Sciences" "Social Sciences" ) ;
+        sh:message "A topic has one of OpenAlex's four domains."
+    ] .
