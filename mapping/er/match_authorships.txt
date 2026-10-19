@@ -1,0 +1,46 @@
+papers in both sources: 4,887; pairs compared (same paper only): 962,298
+labelled pairs (an ORCID on both sides): 238,449, of which same person 7,644
+weights counted on half A: 3,900 pairs of the same person, 147,377 of two people
+
+  outcome                   m        u  weight
+  family close         0.0032   0.0014    +1.1
+  family in name       0.1306   0.0018    +6.2
+  initial different    0.0019   0.8540    -8.8
+  initial same         0.9981   0.1460    +2.8
+  initial unknown      0.0001   0.0000    +0.0
+  name different       0.0027   0.9966    -8.5
+  name same            0.8638   0.0001   +12.7
+  name unknown         0.0001   0.0000    +0.0
+  position far         0.0040   0.9316    -7.9
+  position near        0.0104   0.0681    -2.7
+  position same        0.9858   0.0003   +11.7
+
+measured on half B (Crossref authors whose true match is known by ORCID):
+  threshold  0: 3,680 links, 3,679 right: precision 0.9997, recall 0.9995  (1 wrong, 1 missed of 3,681)
+  threshold  4: 3,680 links, 3,679 right: precision 0.9997, recall 0.9995  (1 wrong, 1 missed of 3,681)
+  threshold  8: 3,666 links, 3,665 right: precision 0.9997, recall 0.9957  (1 wrong, 15 missed of 3,681)
+  threshold 12: 3,661 links, 3,660 right: precision 0.9997, recall 0.9943  (1 wrong, 20 missed of 3,681)
+  threshold 16: 3,625 links, 3,624 right: precision 0.9997, recall 0.9845  (1 wrong, 56 missed of 3,681)
+
+each field alone or together, threshold 8, half B:
+  name and initial  precision 0.9997, recall 0.9932  (1 wrong, 24 missed)
+  position only     precision 0.9910, recall 0.9908  (33 wrong, 1 missed)
+  all three         precision 0.9997, recall 0.9957  (1 wrong, 15 missed)
+
+the mistakes at threshold 8, half B:
+  wrong  W4379160349: OpenAlex 1 'Heeba Anis' ORCID 0000-0003-4233-6445 <-> Crossref 1 'Heeba' 'Anis' ORCID 0000-0002-6650-6982 (score 27.1)
+  missed W4399056955: Crossref 10 'A.' 'Benmaziane' (best score 6.2)
+  missed W4399056955: Crossref 21 'C.' 'Frère' (best score 6.2)
+  missed W4399056955: Crossref 22 'Y.' 'Gaboreau' (best score 6.2)
+  missed W4399056955: Crossref 25 'O.' 'Hanon' (best score 6.2)
+  missed W4399056955: Crossref 26 'A.' 'Idbaih' (best score 6.2)
+  missed W4399056955: Crossref 27 'S.' 'Laporte' (best score 6.2)
+  missed W4399056955: Crossref 29 'D.' 'Mayeur' (best score 6.2)
+  missed W4399056955: Crossref 30 'P.' 'Mismetti' (best score 6.2)
+  missed W4399056955: Crossref 31 'F.' 'Moustafa' (best score 6.2)
+  missed W4399056955: Crossref 32 'G.' 'Pernod' (best score 6.2)
+  ... and 5 more missed
+
+links kept (score 8 or more, all papers): 30,697, of 31,565 OpenAlex authorships on papers in both sources; 1,649 of them are authorships OpenAlex gave no author ID
+best pairs with a score from 4 to 8, not kept: 151
+written: mapping/er/authorship_links.csv, 30,697 links

@@ -1,0 +1,13 @@
+1 OpenAlex paper <-> Crossref record, same DOI: 4,887 links (5,057 OpenAlex papers have a DOI)
+  titles: same 4,870, close (0.9 or more) 15, different (below 0.9) 1, no Crossref title 1
+  title differs (0.58): W4205255002 10.4088/pcc.20m02902
+      OpenAlex: Social Anxiety and Its Correlates Among Lebanese Adults: Role of Self-Esteem, Depression, 
+      Crossref: Social Anxiety and Its Correlates Among Lebanese Adults
+2 two OpenAlex records, one DOI: W4205255002 = W4206272747 (10.4088/pcc.20m02902; one Crossref record for both)
+2 two OpenAlex records, one DOI: W7118513034 = W7214706685 (10.48327/mtsi.v5i4.2025.728; not in Crossref)
+3 two OpenAlex author records, one ORCID: 20 ORCIDs, 40 records
+4 authorships with no OpenAlex author ID: 2,101; with an ORCID: 311
+  -> an OpenAlex author with this ORCID: 158
+  -> a person known only by the ORCID: 153 authorships, 123 people
+  still without a person: 1,790
+written: mapping/er/links_by_key.csv, 5,220 links
