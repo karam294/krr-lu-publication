@@ -10,3 +10,4 @@
 | DCMI Metadata Terms | | CC BY 4.0 | referenced (dcterms:title) |
 | SKOS (W3C) | | W3C licence | skos:closeMatch links |
 | OpenAlex data | downloaded 2026-10-16 | CC0 | data/lu.sql |
+| Crossref metadata | downloaded 2026-10-19 | almost none of it under copyright, except some abstracts (Crossref, REST API documentation); we keep no abstracts | data/crossref.sql |

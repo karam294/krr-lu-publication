@@ -141,3 +141,20 @@ Windows line endings as Unix ones, so a laptop and CI give the same value.
 **Evidence.** pipeline/where_from.rq: the title of W3023054831 is in graph/openalex,
 derived from data/lu.sql (its sha256), from the 2026-10-16 download, made by one run
 (its end time; pipeline/run.py, Morph-KGC 2.10.0, pySHACL 0.40.1).
+
+
+## D11. Crossref as the second source, frozen like OpenAlex (2026-10-19)
+**Decision.** The second source is Crossref: the record of each of our 5,055 distinct
+DOIs, downloaded once (data/fetch_crossref.py) and frozen as data/crossref.sql, 4 tables
+(data/build_crossref.py), as D4 did for OpenAlex. We keep only what we use, and no
+abstracts.
+**Alternative.** ORCID (people only); DataCite (only our 169 DOIs that are not in
+Crossref); Semantic Scholar (another aggregator, partly built from the same sources).
+**Why.** Crossref is where publishers register most DOIs, so it does not depend on
+OpenAlex's own processing, and the DOI is a key both sources share. Per paper it gives
+the authors in printed order, some with an ORCID, the references, the venue, and the
+notices (retractions, corrections): what the Session 4 Warnings need. Frozen, so the
+graph, the matcher and their numbers rebuild from a clean checkout without the network.
+**Evidence.** data/profile/build_crossref.txt: 4,886 of 5,055 DOIs found; 35,468 authors,
+8,647 with an ORCID; 149,936 references with a DOI; 63 notices. The 169 not found are
+registered elsewhere, mostly with DataCite: 112 Zenodo, 26 arXiv, 7 figshare, 24 others.
