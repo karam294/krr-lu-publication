@@ -101,6 +101,10 @@ What the comparison showed (compare-routes.txt):
 - **One change to the mapping.** Ontop refused a view of mapping.ttl, a
   subquery without a name (`FROM (SELECT ...) WHERE`): SQL requires one,
   SQLite does not. With `AS typed`, the same file serves both engines.
+- **One change to a question.** Fuseki refused CQ2: it used ?corresponding
+  both in its WHERE and as the name of a result (`AS ?corresponding`), which
+  SPARQL 1.1 forbids. pyoxigraph (ontology/run_cqs.py) had let it pass since
+  Session 3. Renamed in the WHERE (?isCorresponding): the same answers.
 - **The same answers, where Ontop answers.** 12 of the 16 queries give the
   same rows, in the same order. Ontop cannot answer 4: an EXISTS it does not
   support in that form (cq08_sources), and the title and venue comparisons of

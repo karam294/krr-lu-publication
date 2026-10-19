@@ -3,30 +3,30 @@ The two routes compared, 2026-10-20: Fuseki (http://127.0.0.1:3030/kr/sparql, th
 1 answers and 2 time: each query on both endpoints (median of 3 runs, after a warm-up run)
 
   query                 Fuseki     Ontop  answer
-  cq01.rq                0.26s     0.03s  the same (4 rows)
-  cq01_types.rq          0.16s     0.04s  the same (20 rows)
-  cq02.rq                    -     1.55s  Fuseki failed: Parse error: Variable used when already in-scope: ?corresponding in ((AGG ?.3 SUM(if(?corresponding, 1, 0))) AS ?corresponding)
-  cq03.rq                2.83s     0.60s  the same (10 rows)
-  cq04.rq                0.11s     0.03s  the same (5 rows)
+  cq01.rq                0.32s     0.02s  the same (4 rows)
+  cq01_types.rq          0.15s     0.04s  the same (20 rows)
+  cq02.rq                0.85s     1.10s  the same (10 rows)
+  cq03.rq                2.58s     0.57s  the same (10 rows)
+  cq04.rq                0.09s     0.01s  the same (5 rows)
   cq05.rq                0.19s     0.01s  the same (16 rows)
-  cq06.rq                3.05s     0.03s  the same (10 rows)
-  cq06_sources.rq        1.77s     0.14s  the same (8 rows)
-  cq07.rq                0.03s     0.01s  the same (14 rows)
-  cq08.rq                0.01s     0.01s  the same (6 rows)
-  cq08_sources.rq        0.03s         -  Ontop failed: The EXISTS operator is not supported when there are non-nullable common variables
-  cq09.rq                0.73s     0.64s  the same (6 rows)
-  cq10.rq                0.40s         -  Ontop failed: Only DBFunctionSymbols must be provided to a SQLTermSerializer
-  cq10_titles.rq         0.11s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
-  cq10_venues.rq         0.18s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
-  follow_links.rq        0.02s     0.09s  the same (3 rows)
+  cq06.rq                2.73s     0.02s  the same (10 rows)
+  cq06_sources.rq        1.72s     0.14s  the same (8 rows)
+  cq07.rq                0.01s     0.02s  the same (14 rows)
+  cq08.rq                0.03s     0.03s  the same (6 rows)
+  cq08_sources.rq        0.02s         -  Ontop failed: The EXISTS operator is not supported when there are non-nullable common variables
+  cq09.rq                0.57s     0.62s  the same (6 rows)
+  cq10.rq                0.39s         -  Ontop failed: Only DBFunctionSymbols must be provided to a SQLTermSerializer
+  cq10_titles.rq         0.10s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
+  cq10_venues.rq         0.16s         -  Ontop failed: ERROR: invalid regular expression: invalid escape \ sequence
+  follow_links.rq        0.01s     0.08s  the same (3 rows)
 
-  the same answer on both: 11 of 16 queries
+  the same answer on both: 12 of 16 queries
 
 3 freshness: the title of W3023054831, changed in PostgreSQL, then changed back
   Fuseki  does not see it: Stochastic Homogenization of Hamilton–Jacobi Equations on a Junction
   Ontop   sees the change: Stochastic Homogenization of Hamilton–Jacobi Equations on a Junction [changed in PostgreSQL]
   The materialized graph sees a change after the next pipeline run (map, SHACL gate, load):
-  the last one took 5 min 31 s (build/provenance.ttl). Ontop sees it at the next query, and nothing checks it first.
+  the last one took 5 min 8 s (build/provenance.ttl). Ontop sees it at the next query, and nothing checks it first.
 
 4 graph: Ontop's materialization of the same four mappings, against the pipeline's (Morph-KGC)
   Morph-KGC 961,049 triples, Ontop 961,049; only in Morph-KGC 707, only in Ontop 707
