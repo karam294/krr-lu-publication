@@ -87172,7 +87172,7 @@ INSERT INTO "authorships" VALUES('W4404996904','2','last','A5047709858','Z. Fran
 INSERT INTO "authorships" VALUES('W4406151170','1','first','A5114599755','Elena Makdissi',NULL,'False');
 INSERT INTO "authorships" VALUES('W4406151170','2','middle','A5046093561','Riad Makdissi',NULL,'False');
 INSERT INTO "authorships" VALUES('W4406151170','3','last','A5019465793','Sélim Mekdessi','0000-0003-4234-3434','False');
-INSERT INTO "authorships" VALUES('W3023054831','1','first','A5107947422','Rim Fayad',NULL,'False');
+INSERT INTO "authorships" VALUES('W3023054831','1','frist','A5107947422','Rim Fayad',NULL,'False');
 INSERT INTO "authorships" VALUES('W3023054831','2','middle','A5071780978','Nicolas Forcadel','0000-0003-4141-8385','True');
 INSERT INTO "authorships" VALUES('W3023054831','3','last','A5101525602','Hassan Ibrahim','0000-0002-1502-9987','False');
 INSERT INTO "authorships" VALUES('W3117549862','1','first','A5103945609','Mostafa Al-Masri',NULL,'False');
