@@ -8,7 +8,8 @@ an OWL ontology aligned with FaBiO and FOAF, SHACL shapes that gate every load,
 two models trained on earlier years and tested on a later one, and a page where
 a question in English becomes a checked SPARQL query, or a refusal.
 
-The technical report is [report/REPORT.md](report/REPORT.md); every decision,
+The technical report is [report/REPORT.md](report/REPORT.md) (a printed copy:
+`report/REPORT.pdf`); every decision,
 with its alternative and its evidence, is in
 [report/decisions.md](report/decisions.md) (D1 to D21).
 

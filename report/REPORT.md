@@ -239,8 +239,8 @@ that is exactly what the template's order shape did on my graph from Session 2
 to Session 4. The same steps, plus the mapping's test (section 5), run on GitHub
 Actions on every push and every pull request (`.github/workflows/shacl-gate.yml`).
 
-**A red run that the gate blocked.** In pull request #N (branch
-`demo/red-gate`) I changed one value in `data/lu.sql`, the year of paper
+**A red run that the gate blocked.** In pull request #1 (branch
+`demo/red-gate`, SHACL gate run #52) I changed one value in `data/lu.sql`, the year of paper
 W3023054831, from 2022 to 2030, the way a bad row from a new download would
 arrive. The gate found exactly 1 Violation ("Every paper · MaxInclusive on
 publicationYear: a paper has one publication year, from 2022 to 2025"), the run
