@@ -1,67 +1,85 @@
-# The test set: 12 questions the graph can answer and 3 it cannot.
-# The same layout as the TEXT2SPARQL questions files (dataset, questions,
-# question.en), so text2sparql-client can read it too; "gold" (the right
-# query) and "refuse" are this course's own fields, which it ignores.
+# The test set: 14 questions the graph can answer and 4 it cannot. The same
+# layout as the TEXT2SPARQL questions files (dataset, questions, question.en),
+# so text2sparql-client can read it too; "gold" (the right query) and "refuse"
+# are the course's own fields, which it ignores. None of these is an example
+# of examples.ttl. Every gold query is asked of graph/openalex and the ontology
+# only, as the layer asks (D19).
 
 dataset:
-  id: https://ul.edu.lb/kr/brunel/
-  prefix: "PREFIX ul: <https://ul.edu.lb/kr/scm#>"
+  id: https://ul.edu.lb/kr/lu/
+  prefix: "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
 
 questions:
   - id: 1
-    question: {en: "How many orders are there, late orders included?"}
+    question: {en: "How many papers did LU publish in 2023?"}
     gold: |
-      SELECT (COUNT(DISTINCT ?o) AS ?n) WHERE { { ?o a ul:Order } UNION { ?o a ul:LateOrder } }
+      SELECT (COUNT(?p) AS ?n) WHERE { ?p pub:publicationYear 2023 }
   - id: 2
-    question: {en: "How many late orders are there?"}
+    question: {en: "How many LU papers are open access?"}
     gold: |
-      SELECT (COUNT(?o) AS ?n) WHERE { ?o a ul:LateOrder }
+      SELECT (COUNT(?p) AS ?n) WHERE { ?p pub:isOpenAccess true }
   - id: 3
-    question: {en: "Which carriers carry orders?"}
+    question: {en: "How many conference papers are there?"}
     gold: |
-      SELECT DISTINCT ?c WHERE { ?o ul:carriedBy ?c }
+      SELECT (COUNT(?p) AS ?n) WHERE { ?p a pub:ConferencePaper }
   - id: 4
-    question: {en: "How many orders did carrier V44_3 carry?"}
+    question: {en: "In which languages are LU papers written?"}
     gold: |
-      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:carriedBy <https://ul.edu.lb/kr/id/carrier/brunel/V44_3> }
+      SELECT DISTINCT ?language WHERE { ?p pub:language ?language }
   - id: 5
-    question: {en: "How many products does plant PLANT03 make?"}
+    question: {en: "Which LU papers have been retracted?"}
     gold: |
-      SELECT (COUNT(?p) AS ?n) WHERE { <https://ul.edu.lb/kr/id/plant/brunel/PLANT03> ul:makes ?p }
+      SELECT ?p WHERE { ?p pub:isRetracted true }
   - id: 6
-    question: {en: "Which plants ship through port PORT04?"}
+    question: {en: "How many papers did LU publish each year?"}
     gold: |
-      SELECT ?plant WHERE { ?plant ul:servesPort <https://ul.edu.lb/kr/id/port/brunel/PORT04> }
+      SELECT ?year (COUNT(?p) AS ?n) WHERE { ?p pub:publicationYear ?year } GROUP BY ?year
   - id: 7
-    question: {en: "How many orders did customer V555_15 place?"}
+    question: {en: "What are the names of the 5 venues with the most LU papers?"}
     gold: |
-      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:orderedBy <https://ul.edu.lb/kr/id/customer/brunel/V555_15> }
+      SELECT ?name WHERE { ?p pub:publishedIn ?v . ?v pub:name ?name }
+      GROUP BY ?name ORDER BY DESC(COUNT(?p)) ?name LIMIT 5
   - id: 8
-    question: {en: "Which customers have at least one late order?"}
+    question: {en: "How many papers are in the field Medicine?"}
     gold: |
-      SELECT DISTINCT ?c WHERE { ?o a ul:LateOrder ; ul:orderedBy ?c }
+      SELECT (COUNT(DISTINCT ?p) AS ?n) WHERE { ?p pub:hasTopic ?t . ?t pub:field "Medicine" }
   - id: 9
-    question: {en: "Which service levels do orders use?"}
+    question: {en: "How many papers did Maha Hoteit write?"}
     gold: |
-      SELECT DISTINCT ?s WHERE { ?o ul:serviceLevel ?s }
+      SELECT (COUNT(DISTINCT ?p) AS ?n) WHERE {
+        ?p pub:hasAuthorship ?a . ?a pub:author ?x . ?x pub:name ?name FILTER(LCASE(?name) = "maha hoteit") }
   - id: 10
-    question: {en: "How many orders leave from port PORT09?"}
+    question: {en: "How many different institutions from France appear on LU papers?"}
     gold: |
-      SELECT (COUNT(?o) AS ?n) WHERE { ?o ul:shipsFrom <https://ul.edu.lb/kr/id/port/brunel/PORT09> }
+      SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?a pub:affiliation ?i . ?i pub:countryCode "FR" }
   - id: 11
-    question: {en: "Which plant makes the most products?"}
+    question: {en: "Which research domain has the most LU papers?"}
     gold: |
-      SELECT ?plant WHERE { ?plant ul:makes ?p } GROUP BY ?plant ORDER BY DESC(COUNT(?p)) LIMIT 1
+      SELECT ?domain WHERE { ?p pub:hasTopic ?t . ?t pub:domain ?domain }
+      GROUP BY ?domain ORDER BY DESC(COUNT(?p)) ?domain LIMIT 1
   - id: 12
-    question: {en: "How many rate bands does carrier V444_0 have?"}
+    question: {en: "How many authors have an ORCID?"}
     gold: |
-      SELECT (COUNT(?b) AS ?n) WHERE { ?b ul:bandCarrier <https://ul.edu.lb/kr/id/carrier/brunel/V444_0> }
+      SELECT (COUNT(DISTINCT ?x) AS ?n) WHERE { ?x pub:orcid ?orcid }
   - id: 13
-    question: {en: "Which customers are located in Beirut?"}
-    refuse: "the graph has no locations for customers"
+    question: {en: "What is the title of the paper with DOI 10.1007/s00205-021-01737-1?"}
+    gold: |
+      SELECT ?title WHERE { ?p pub:doi "10.1007/s00205-021-01737-1" ; pub:title ?title }
   - id: 14
-    question: {en: "What is the email address of customer V555_15?"}
-    refuse: "the graph has no contact details"
+    question: {en: "On how many papers is an LU author the first author?"}
+    gold: |
+      SELECT (COUNT(DISTINCT ?p) AS ?n) WHERE {
+        ?p pub:hasAuthorship ?a .
+        ?a pub:authorPosition "first" ; pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> }
   - id: 15
-    question: {en: "Which orders were cancelled?"}
-    refuse: "the graph has no order status"
+    question: {en: "What is the h-index of Pascale Salameh?"}
+    refuse: "the graph has no citation counts"
+  - id: 16
+    question: {en: "Which LU papers were funded by the European Union?"}
+    refuse: "the graph has no funding"
+  - id: 17
+    question: {en: "What is the email address of Maha Hoteit?"}
+    refuse: "the graph has no contact details"
+  - id: 18
+    question: {en: "How many students study at Lebanese University?"}
+    refuse: "the graph has no students"

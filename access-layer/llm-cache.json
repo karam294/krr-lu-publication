@@ -1,0 +1,274 @@
+{
+ "03a4da5876add83f": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?title WHERE {\n  ?paper pub:doi \"10.1007/s00205-021-01737-1\" ;\n         pub:title ?title .\n}"
+ },
+ "04302bfb0e1a336b": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:author ?person .\n  ?person pub:name ?name .\n  FILTER(LCASE(?name) = \"maha hoteit\")\n}"
+ },
+ "0b6eb31ad7c2b66b": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?title WHERE {\n  ?paper pub:doi \"10.1007/s00205-021-01737-1\" ; pub:title ?title .\n}"
+ },
+ "0c8aa27e8d327f84": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?year (COUNT(?paper) AS ?count)\nWHERE {\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\nGROUP BY ?year\nORDER BY ?year"
+ },
+ "0ffd6828f6b36933": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:publicationYear 2023 .\n}"
+ },
+ "151052ffb14fb28d": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: student enrollment statistics"
+ },
+ "1710050320a1e843": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear 2023 .\n}"
+ },
+ "2170cf40e2ebedab": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: email address of authors"
+ },
+ "2bf6e897f6d849f7": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;\n     pub:authorPosition \"first\" .\n}"
+ },
+ "2eb63b5c8c14d1b6": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: funding"
+ },
+ "37b72e5ea1850b0a": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:isOpenAccess true .\n  FILTER(?year >= 2022 && ?year <= 2025)\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n}"
+ },
+ "38c7c701fb3d8b75": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(?paper) AS ?papers) WHERE {\n  ?paper a pub:ConferencePaper .\n}"
+ },
+ "3945e0a58a69c63a": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?domain (COUNT(DISTINCT ?paper) AS ?paperCount)\nWHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:domain ?domain .\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\nGROUP BY ?domain\nORDER BY DESC(?paperCount)\nLIMIT 1"
+ },
+ "399f8c0256b3486d": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?person pub:name ?name .\n  FILTER(LCASE(?name) = \"maha hoteit\")\n  \n  ?paper pub:hasAuthorship ?authorship .\n  ?authorship pub:author ?person .\n}"
+ },
+ "3dfb38eab90cc01e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(?paper) AS ?papers) WHERE {\n  ?paper pub:isOpenAccess true .\n}"
+ },
+ "3f857fb288ad900a": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?language\nWHERE {\n  ?paper a/rdfs:subClassOf* pub:Work ;\n         pub:language ?language .\n}\nORDER BY ?language"
+ },
+ "3f8816412c06f1ab": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(?paper) AS ?papers) WHERE {\n  ?paper a pub:ConferencePaper .\n}"
+ },
+ "41c99578ffe17b8e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?institution) AS ?count)\nWHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation ?institution .\n  ?institution pub:countryCode \"FR\" .\n  { ?paper pub:publicationYear ?year }\n  FILTER(?year >= 2022 && ?year <= 2025)\n}"
+ },
+ "4292d1c0243804ea": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n  ?paper pub:isOpenAccess true .\n}"
+ },
+ "468eb30355742a6e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?hIndex WHERE {\n  {\n    SELECT (COUNT(?cites) AS ?h) WHERE {\n      ?author pub:name ?authorName .\n      FILTER(LCASE(?authorName) = \"pascale salameh\")\n      \n      ?authorship pub:author ?author ;\n                  pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n      ?paper pub:hasAuthorship ?authorship ;\n             pub:publicationYear ?year .\n      FILTER(?year >= 2022 && ?year <= 2025)\n      \n      {\n        SELECT ?paper (COUNT(DISTINCT ?citingPaper) AS ?citations) WHERE {\n          ?author2 pub:name ?authorName2 .\n          FILTER(LCASE(?authorName2) = \"pascale salameh\")\n          ?authorship2 pub:author ?author2 ;\n                       pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n          ?paper pub:hasAuthorship ?authorship2 ;\n                 pub:publicationYear ?year2 .\n          FILTER(?year2 >= 2022 && ?year2 <= 2025)\n          \n          OPTIONAL {\n            ?citingPaper pub:cites ?paper ;\n                         pub:publicationYear ?yearCiting .\n            FILTER(?yearCiting >= 2022 && ?yearCiting <= 2025)\n          }\n        } GROUP BY ?paper\n      }\n      \n      ?citingPaper2 pub:cites ?paper ;\n                    pub:publicationYear ?yearCiting2 .\n      FILTER(?yearCiting2 >= 2022 && ?yearCiting2 <= 2025)\n      \n      # We need to rank the papers by citation count to compute the h-index.\n      # Since pure SPARQL 1.1 doesn't easily do ranking without window functions, \n      # we can compute h as the maximum number h such that at least h papers have >= h citations.\n    }\n  }\n}\n```"
+ },
+ "483c1ab7a2a50c78": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear 2023 ;\n         pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n}"
+ },
+ "48a11bd7841460cf": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper a pub:ConferencePaper .\n}"
+ },
+ "59a17269700ad2ab": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: email address"
+ },
+ "5c3adaa4ac0d0ebd": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:isOpenAccess true .\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\n```"
+ },
+ "5dfd6417d31f23e3": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?name (COUNT(?paper) AS ?papers) WHERE {\n  ?paper pub:publishedIn ?venue .\n  ?venue pub:name ?name .\n} GROUP BY ?name ORDER BY DESC(?papers) ?name LIMIT 5"
+ },
+ "62ccae86fa75548a": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?institution) AS ?count)\nWHERE {\n  ?paper pub:hasAuthorship ?authorship .\n  ?authorship pub:affiliation ?institution .\n  ?institution pub:countryCode \"FR\" .\n}\n```"
+ },
+ "68c84806ebf65205": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?paper ?title\nWHERE {\n  ?paper pub:isRetracted true ;\n         pub:title ?title .\n}\n```"
+ },
+ "6b614fd9bc6968b4": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:hasAuthorship ?authorship .\n  ?authorship pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;\n              pub:authorPosition \"first\" .\n}"
+ },
+ "6e9d065687e37827": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: funding"
+ },
+ "7573446b8438da91": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?venueName (COUNT(?paper) AS ?paperCount)\nWHERE {\n  ?paper pub:publishedIn ?venue .\n  ?venue pub:name ?venueName .\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\nGROUP BY ?venueName\nORDER BY DESC(?paperCount)\nLIMIT 5\n```"
+ },
+ "75dc89e9d76dc28e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:field ?field .\n  FILTER(LCASE(?field) = \"medicine\")\n}\n```"
+ },
+ "801f949cf9754427": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT DISTINCT ?language WHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:language ?language .\n} ORDER BY ?language"
+ },
+ "816c02827b8bbf82": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: citation counts"
+ },
+ "8a2b9cb68dfcf127": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?domain (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:domain ?domain .\n} GROUP BY ?domain ORDER BY DESC(?papers) ?domain LIMIT 1"
+ },
+ "8b2727f7fab4a172": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:authorPosition \"first\" .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n}"
+ },
+ "91e7b4812180dfc2": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?venueName (COUNT(DISTINCT ?paper) AS ?paperCount)\nWHERE {\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n  \n  ?paper pub:publishedIn ?venue .\n  ?venue pub:name ?venueName .\n}\nGROUP BY ?venueName\nORDER BY DESC(?paperCount)\nLIMIT 5"
+ },
+ "9711fa08bb8c0c4e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: citation counts"
+ },
+ "9784652f07c8893b": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?author) AS ?authors) WHERE {\n  ?author pub:orcid ?orcid .\n  FILTER(BOUND(?orcid))\n}"
+ },
+ "9a356d22e58086c1": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?year (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear ?year .\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n} GROUP BY ?year ORDER BY ?year"
+ },
+ "9aa735722d175ef7": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: student count"
+ },
+ "9f21e41d0a847d91": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper a/rdfs:subClassOf* pub:Work ;\n         pub:isOpenAccess true .\n}"
+ },
+ "a262b3de23713ea5": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:publicationYear 2023 .\n}"
+ },
+ "a2b20b792cf8e065": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT DISTINCT ?language\nWHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:language ?language .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\nORDER BY ?language"
+ },
+ "a425d11cbe09a51d": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: citation counts"
+ },
+ "aa585b62a592e637": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?name (COUNT(?paper) AS ?papers) WHERE {\n  ?paper pub:publishedIn ?venue .\n  ?venue pub:name ?name .\n} GROUP BY ?name ORDER BY DESC(?papers) ?name LIMIT 5"
+ },
+ "aaf3e7683a4a3c13": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?title WHERE {\n  ?paper pub:doi \"10.1007/s00205-021-01737-1\" ;\n         pub:title ?title .\n}\n```"
+ },
+ "af41e76de11b9984": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: email address"
+ },
+ "bca8ca9db8949b92": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: student count"
+ },
+ "bd126ddfc827e156": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: funding information"
+ },
+ "bfdd333d1baa7dbc": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?paperCount)\nWHERE {\n  ?paper pub:hasAuthorship ?authorship .\n  ?authorship pub:author ?author .\n  ?author pub:name ?name .\n  FILTER(LCASE(?name) = \"maha hoteit\")\n}"
+ },
+ "c14bfc9f613d89ae": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?author) AS ?count)\nWHERE {\n  ?author a pub:Author ;\n          pub:orcid ?orcid .\n  FILTER(BOUND(?orcid) && ?orcid != \"\")\n}\n```"
+ },
+ "c77614cea63deb66": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?domain (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:domain ?domain .\n} GROUP BY ?domain ORDER BY DESC(?papers) ?domain LIMIT 1"
+ },
+ "d0adb296c38d307f": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?year (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear ?year .\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> .\n} GROUP BY ?year ORDER BY ?year"
+ },
+ "d14fb1cf73521e1e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(?paper) AS ?papers) WHERE {\n  ?paper pub:publicationYear ?year .\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:field ?field .\n  FILTER(LCASE(?field) = \"medicine\")\n}"
+ },
+ "d30debc094308219": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?paper ?title ?doi ?year\nWHERE {\n  ?paper pub:isRetracted true ;\n         pub:publicationYear ?year .\n  OPTIONAL { ?paper pub:title ?title }\n  OPTIONAL { ?paper pub:doi ?doi }\n}\nORDER BY DESC(?year)"
+ },
+ "d5c936ea5401b4c3": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?institution) AS ?institutions) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation ?institution .\n  ?institution pub:countryCode \"FR\" .\n}"
+ },
+ "d6a9f7beae2962ca": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?domain (COUNT(DISTINCT ?paper) AS ?paperCount)\nWHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:hasTopic ?topic .\n  FILTER(?year >= 2022 && ?year <= 2025)\n  ?topic pub:domain ?domain .\n}\nGROUP BY ?domain\nORDER BY DESC(?paperCount)\nLIMIT 1"
+ },
+ "d82afc636fd96937": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:author ?person .\n  ?person pub:name ?name .\n  FILTER(LCASE(?name) = \"maha hoteit\")\n}"
+ },
+ "d977013cc4626924": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:field ?field .\n  FILTER(LCASE(?field) = \"medicine\")\n}"
+ },
+ "dc65f9df23861091": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper a pub:ConferencePaper .\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\n```"
+ },
+ "e0e83fd621a07df3": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT ?year (COUNT(?paper) AS ?count)\nWHERE {\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\nGROUP BY ?year\nORDER BY ?year\n```"
+ },
+ "e48da2b03834c564": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: h-index"
+ },
+ "e968c4e39da7e44e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?institution) AS ?institutions) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation ?institution .\n  ?institution pub:countryCode \"FR\" .\n}"
+ },
+ "ea833391190e21d1": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?paper ?title WHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:isRetracted true ;\n         pub:title ?title .\n}"
+ },
+ "edaa52e259bd314f": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:field ?field .\n  FILTER(LCASE(?field) = \"medicine\")\n}"
+ },
+ "f120bcb4d3722164": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT DISTINCT ?language WHERE {\n  ?paper pub:publicationYear ?year ;\n         pub:language ?language .\n} ORDER BY ?language"
+ },
+ "f499d298c7dbcde1": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n\nSELECT (COUNT(DISTINCT ?author) AS ?count)\nWHERE {\n  ?author a pub:Author ;\n          pub:orcid ?orcid .\n  FILTER(BOUND(?orcid) && ?orcid != \"\")\n}"
+ },
+ "fb1f2fc09dcddb3e": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: citation counts"
+ }
+}

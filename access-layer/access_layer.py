@@ -1,9 +1,10 @@
-"""Your team's access layer (from the course's Session 7 lab): a question in
-English becomes a SPARQL query over your own graph.
+"""The access layer (the course's Session 7 lab, on our graph): a question in
+English becomes a SPARQL query over LU's publications, as OpenAlex records them.
 
-YOUR TEAM changes three things: NS and PFX below (your ontology's namespace
-and prefix), prompt_rules.txt (how things are named in your data), and the
-examples and test questions (examples.ttl, questions.yaml).
+What we changed from the template: NS and PFX (our pub: words); every query is
+asked of graph/openalex and the ontology only (scoped(), D19); the schema
+groups the 20 kinds of paper under pub:Work; prompt_rules.txt, examples.ttl
+and questions.yaml are about our data.
 
 Five small parts, each a function you can read on its own:
 
@@ -35,15 +36,19 @@ from rdflib.plugins.sparql import prepareQuery
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 load_dotenv(ROOT / ".env")
-# ---- YOUR TEAM: your ontology's namespace and the prefix the model should use
-NS = "https://ul.edu.lb/kr/scm#"
-PFX = "ul"
-# ----
+# Our ontology's namespace, and the prefix the model writes
+NS = "https://ul.edu.lb/kr/pub#"
+PFX = "pub"
+WORK = NS + "Work"
+# The graphs every query is asked of (D19): the OpenAlex record of LU's papers,
+# and the ontology (for rdfs:subClassOf). Not graph/crossref: in Fuseki's
+# default graph, the union of all graphs, a paper would count twice.
+GRAPHS = ["https://ul.edu.lb/kr/graph/openalex", "https://ul.edu.lb/kr/graph/ontology"]
 GRAPH = ROOT / "build" / "graph.nt"
 VOID_FILE = Path(os.environ.get("VOID_FILE", ROOT / "build" / "void.ttl"))
 EXAMPLES = HERE / "examples.ttl"
 CACHE = HERE / "llm-cache.json"
-DATASET = URIRef("urn:kr-team:void")
+DATASET = URIRef("https://ul.edu.lb/kr/lu/void")
 UL = NS
 VOID = Namespace("http://rdfs.org/ns/void#")
 VEXT = Namespace("http://ldf.fi/void-ext#")
@@ -57,15 +62,16 @@ PREFIXES = f"PREFIX {PFX}: <{NS}>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-s
 def open_store(path=GRAPH):
     """The graph to ask. With SPARQL_ENDPOINT set (in the stack:
     http://fuseki:3030/kr/sparql), that address; otherwise the pipeline's
-    build/graph.nt loaded in memory: the same data."""
+    build/graph.nt loaded in memory, in the same named graphs as on Fuseki:
+    the same data, the same answers."""
     endpoint = os.environ.get("SPARQL_ENDPOINT")
     if endpoint:
         return endpoint
     store = ox.Store()
-    store.bulk_load(path=str(path), format=ox.RdfFormat.N_TRIPLES if str(path).endswith(".nt") else ox.RdfFormat.TURTLE)
-    ontology = ROOT / "ontology" / "ontology.ttl"  # as in the endpoint: the data and the ontology
+    store.bulk_load(path=str(path), format=ox.RdfFormat.N_TRIPLES, to_graph=ox.NamedNode(GRAPHS[0]))
+    ontology = ROOT / "ontology" / "ontology.ttl"
     if ontology.exists():
-        store.bulk_load(path=str(ontology), format=ox.RdfFormat.TURTLE)
+        store.bulk_load(path=str(ontology), format=ox.RdfFormat.TURTLE, to_graph=ox.NamedNode(GRAPHS[1]))
     return store
 
 
@@ -73,17 +79,30 @@ def with_prefixes(query):
     return query if f"PREFIX {PFX}:" in query else PREFIXES + query
 
 
+def scoped(query):
+    """The query asked of GRAPHS only (D19): a FROM line for each, before its
+    first WHERE, unless it already names its graphs. So the query the layer
+    returns gives the same answer on any endpoint, with or without a union
+    default graph."""
+    if re.search(r"\bFROM\s+(NAMED\s+)?<", query, re.I):
+        return query
+    froms = "".join(f"FROM <{g}>\n" for g in GRAPHS)
+    m = re.search(r"(?<![?$\w])WHERE\b", query, re.I) or re.search(r"\{", query)   # the first is the outer one
+    return query[:m.start()] + froms + query[m.start():] if m else query
+
+
 def run(store, query):
     """Run a SELECT or ASK query; returns a list of rows (dicts of strings) or True/False."""
+    query = scoped(with_prefixes(query))
     if isinstance(store, str):  # a SPARQL endpoint over HTTP
-        r = requests.post(store, data={"query": with_prefixes(query)}, timeout=60,
+        r = requests.post(store, data={"query": query}, timeout=60,
                           headers={"Accept": "application/sparql-results+json"})
         r.raise_for_status()
         res = r.json()
         if "boolean" in res:
             return res["boolean"]
         return [{k: v["value"] for k, v in b.items()} for b in res["results"]["bindings"]]
-    res = store.query(with_prefixes(query))
+    res = store.query(query)
     if isinstance(res, bool):
         return res
     names = [v.value for v in res.variables]
@@ -92,17 +111,20 @@ def run(store, query):
 
 # ---------------------------------------------------------------- schema, from VoID
 def load_void(path=VOID_FILE):
-    """{class: number of things}, and {property: {class: [target classes or datatypes]}}."""
+    """{class: number of things}, {property: {class: [target classes or datatypes]}},
+    and {class: [its superclasses in our namespace]} (from the ontology, written
+    into the VoID by make_void.py)."""
     g = Graph().parse(path)
-    classes, props = {}, {}
+    classes, props, supers = {}, {}, {}
     for part in g.objects(DATASET, VOID.classPartition):
         c = str(g.value(part, VOID["class"]))
         classes[c] = int(g.value(part, VOID.entities))
+        supers[c] = [str(s) for s in g.objects(URIRef(c), RDFS.subClassOf)]
         for pp in g.objects(part, VOID.propertyPartition):
             targets = [str(g.value(o, VOID["class"])) for o in g.objects(pp, VOID.classPartition)]
             targets += [str(g.value(o, VEXT.datatype)) for o in g.objects(pp, VEXT.datatypePartition)]
             props.setdefault(str(g.value(pp, VOID.property)), {})[c] = targets
-    return classes, props
+    return classes, props, supers
 
 
 def short(iri):
@@ -110,12 +132,25 @@ def short(iri):
 
 
 def schema_text(path=VOID_FILE):
-    """The schema in a few lines of plain text, for the prompt."""
-    classes, props = load_void(path)
-    lines = [f"{short(c)} ({n:,} things)" for c, n in sorted(classes.items(), key=lambda x: (-x[1], x[0]))]
-    for p, by_class in sorted(props.items()):
-        for c, targets in sorted(by_class.items()):
-            lines.append(f"{short(c)} {short(p)} {' or '.join(short(t) for t in targets)}")
+    """The schema in a few lines of plain text, for the prompt. Our 20 kinds of
+    paper (pub:Article, pub:Review, ...) have the same properties, so they are
+    listed once, as pub:Work: 30 lines instead of 257."""
+    classes, props, supers = load_void(path)
+    kinds = {c for c in classes if WORK in supers[c]}
+    name = lambda t: short(WORK) if t in kinds else short(t)
+    lines = []
+    if kinds:
+        lines.append(f"{short(WORK)} ({sum(classes[c] for c in kinds):,} things), each typed by one of its kinds "
+                     "only: " + ", ".join(f"{short(c)} {classes[c]:,}"
+                                         for c in sorted(kinds, key=lambda c: (-classes[c], c))))
+    lines += [f"{short(c)} ({n:,} things)" for c, n in sorted(classes.items(), key=lambda x: (-x[1], x[0]))
+              if c not in kinds]
+    rows = {}
+    for p, by_class in props.items():
+        for c, targets in by_class.items():
+            rows.setdefault((name(c), short(p)), set()).update(name(t) for t in targets)
+    for (c, p), targets in sorted(rows.items()):
+        lines.append(f"{c} {p} {' or '.join(sorted(targets)) or 'an IRI'}")
     return "\n".join(lines)
 
 
@@ -170,25 +205,31 @@ def prompt_key(prompt):
 
 
 def ask_model(prompt, mode=None):
-    """One call. LLM_MODE live (default): ask the model. record: ask and save the answer.
-    replay: return the saved answer for exactly this prompt and model."""
+    """One call. LLM_MODE live (default): ask the model. record: ask and save the
+    answer; an answer already saved for exactly this prompt and model is used
+    again, so a run cut short can be started again where it stopped. replay:
+    return the saved answer for exactly this prompt and model."""
     mode = mode or os.environ.get("LLM_MODE", "live")
-    cache = json.loads(CACHE.read_text()) if CACHE.exists() else {}
+    cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
     key = prompt_key(prompt)
     if mode == "replay":
         if key not in cache:
             raise SystemExit(f"No recorded answer for this prompt (key {key}). Replay works only for the "
-                             "lab's own questions and files, unchanged; run live for anything else.")
+                             "recorded questions and files, unchanged; run live for anything else.")
+        return cache[key]["reply"]
+    if mode == "record" and key in cache:
         return cache[key]["reply"]
     base = GEMINI
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
-        raise SystemExit("No key: put GOOGLE_API_KEY in demos/.env (see demos/.env.example), "
+        raise SystemExit("No key: put GOOGLE_API_KEY in .env (see .env.example), "
                          "or run with LLM_MODE=replay.")
     # A free tier limits requests per minute, tokens per minute and requests per
-    # day, per project. Wait between calls (4 s keeps under 15 a minute), and
-    # on "too many requests" (429) wait longer and try again.
+    # day, per project. Wait between calls (4 s keeps under 15 a minute). On "too
+    # many requests" (429), on a busy server (500, 502, 503, 504) and on no
+    # answer within 90 s, wait longer and try again, four times in all.
     time.sleep(float(os.environ.get("LLM_DELAY", "4")))
+    r, why = None, ""
     for attempt in range(4):
         try:
             r = requests.post(f"{base}/chat/completions", timeout=90,
@@ -197,27 +238,32 @@ def ask_model(prompt, mode=None):
                                     "messages": [{"role": "user", "content": prompt}]})
         except requests.ConnectionError:
             raise SystemExit(f"Cannot reach the model at {base}. Check the connection, or run with LLM_MODE=replay.")
-        if r.status_code != 429:
-            break
-        if "PerDay" in r.text or "per day" in r.text.lower():
-            raise SystemExit("The free tier's daily limit is used up for this project (it resets at midnight "
-                             "Pacific time, 10:00 in Beirut). Run with LLM_MODE=replay, or use another "
-                             "Gemini model (LLM_MODEL).")
-        wait = 20 * (attempt + 1)
-        print(f"  (too many requests a minute: waiting {wait} s, then trying again)", flush=True)
-        time.sleep(wait)
-    if r.status_code == 429:
-        raise SystemExit("Still too many requests after four tries. Wait a minute, set LLM_DELAY=8, "
-                         "or run with LLM_MODE=replay.")
+        except requests.Timeout:
+            r, why = None, "no answer within 90 s"
+        else:
+            if r.status_code == 429 and ("PerDay" in r.text or "per day" in r.text.lower()):
+                raise SystemExit("The free tier's daily limit is used up for this project (it resets at midnight "
+                                 "Pacific time, 10:00 in Beirut). Run with LLM_MODE=replay, or use another "
+                                 "Gemini model (LLM_MODEL).")
+            if r.status_code not in (429, 500, 502, 503, 504):
+                break
+            why = "too many requests a minute" if r.status_code == 429 else f"the model is busy ({r.status_code})"
+        if attempt < 3:
+            wait = 20 * (attempt + 1)
+            print(f"  ({why}: waiting {wait} s, then trying again)", flush=True)
+            time.sleep(wait)
+    if r is None or r.status_code in (429, 500, 502, 503, 504):
+        raise SystemExit(f"Still failing after four tries ({why}). Wait a few minutes and run again: in record "
+                         "mode the answers already saved are not asked again. Or set LLM_DELAY=8.")
     if r.status_code in (400, 401, 403):
         raise SystemExit(f"The model refused the key or the request ({r.status_code}): {r.text[:200]}\n"
-                         "Check GOOGLE_API_KEY in demos/.env, or run with LLM_MODE=replay.")
+                         "Check GOOGLE_API_KEY in .env, or run with LLM_MODE=replay.")
     r.raise_for_status()
     reply = r.json()["choices"][0]["message"]["content"]
     if mode == "record":
         cache[key] = {"model": model_name(), "reply": reply}
         CACHE.parent.mkdir(exist_ok=True)
-        CACHE.write_text(json.dumps(cache, indent=1, sort_keys=True))
+        CACHE.write_text(json.dumps(cache, indent=1, sort_keys=True), encoding="utf-8")
     return reply
 
 
@@ -258,7 +304,8 @@ def check_query(query, void_path=VOID_FILE, checks=None):
         prepareQuery(with_prefixes(query))
     except Exception as e:
         return [f"not valid SPARQL: {str(e).splitlines()[0][:150]}"]
-    classes, props = load_void(void_path)
+    classes, props, supers = load_void(void_path)
+    classes = {**classes, **{s: 0 for ss in supers.values() for s in ss}}   # pub:Work is a real class too
     return [p for check in (checks or CHECKS) for p in check(query, classes, props)]
 
 
@@ -279,12 +326,13 @@ def answer(question, store, examples, use_examples=True, repair=True, checks=Non
             try:
                 rows = run(store, query)
                 attempts.append({"query": query, "problems": []})
-                return {"query": with_prefixes(query), "rows": rows, "refused": None, "attempts": attempts}
+                return {"query": scoped(with_prefixes(query)), "rows": rows, "refused": None, "attempts": attempts}
             except Exception as e:
                 problems = [f"the endpoint rejected it: {str(e).splitlines()[0][:150]}"]
         attempts.append({"query": query, "problems": problems})
         hints = problems
     if not repair:  # no check and no repair: the broken query is the answer, and it answers nothing
-        return {"query": with_prefixes(attempts[-1]["query"]), "rows": None, "refused": None, "attempts": attempts}
+        return {"query": scoped(with_prefixes(attempts[-1]["query"])), "rows": None, "refused": None,
+                "attempts": attempts}
     return {"query": None, "rows": None, "attempts": attempts,
             "refused": f"REFUSE: no valid query after {len(attempts)} tries"}

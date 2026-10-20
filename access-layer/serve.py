@@ -2,7 +2,7 @@
 the query the access layer wrote for it.
 
     python serve.py                                   serves on http://127.0.0.1:8000
-    GET /?question=How many late orders are there?&dataset=https://ul.edu.lb/kr/brunel/
+    GET /?question=How many papers did LU publish in 2024?&dataset=https://ul.edu.lb/kr/lu/
     ->  {"dataset": "...", "question": "...", "query": "SELECT ..."}
 
 A refusal comes back as a query that returns nothing, with the reason in a
@@ -15,7 +15,7 @@ from urllib.parse import parse_qs, urlparse
 
 from access_layer import answer, load_examples, open_store
 
-DATASET = os.environ.get("DATASET_ID", "https://ul.edu.lb/kr/brunel/")  # YOUR TEAM: your dataset id
+DATASET = os.environ.get("DATASET_ID", "https://ul.edu.lb/kr/lu/")  # as in questions.yaml
 STORE, EXAMPLES = open_store(), load_examples()
 
 

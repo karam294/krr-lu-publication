@@ -1,6 +1,6 @@
 """Ask the graph one question in English.
 
-    python ask.py "How many orders did carrier V44_3 carry?"
+    python ask.py "How many papers did LU publish in 2024?"
     python ask.py --no-repair "..."        one try only, no repair
 
 Prints each query the model wrote, the problems the check found in it, and
@@ -33,7 +33,7 @@ def show(question, result):
 def main():
     args = sys.argv[1:]
     repair = "--no-repair" not in args
-    question = " ".join(a for a in args if a != "--no-repair") or "How many orders did carrier V44_3 carry?"
+    question = " ".join(a for a in args if a != "--no-repair") or "How many papers did LU publish in 2024?"
     print(f"model: {model_name()}")
     show(question, answer(question, open_store(), load_examples(), repair=repair))
 
