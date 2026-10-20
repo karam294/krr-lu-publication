@@ -331,3 +331,42 @@ of the new pairs that share no earlier co-author, the two counts are blind (MRR 
 and popularity does best (0.017), not the embedding (0.006 to 0.007). On 2024 the
 embedding led only on Hits@100 (0.469 to 0.480 against 0.448).
 **Evidence.** model/results/coauthors-settings.txt, coauthors.txt; model/README.md.
+
+## D19. The access layer asks graph/openalex and the ontology only, and says so in each query (2026-10-20)
+**Decision.** Every query the access layer runs, its own and the test set's right ones,
+is asked of graph/openalex and graph/ontology only: access_layer.scoped() writes
+`FROM <.../graph/openalex>` and `FROM <.../graph/ontology>` before the query's WHERE,
+unless the query names its graphs. On build/graph.nt, without Fuseki, the layer loads
+the same two named graphs. The prompt's schema is the VoID of graph/openalex.
+**Alternative.** Let the model ask the default graph, the union of the six; or tell it in
+the rules to write FROM; or send default-graph-uri with each request.
+**Why.** A question in English is about LU's papers, and OpenAlex is our record of them
+(D4). In the union, a paper is also its Crossref record: through the layer 2024 has
+1,288 papers, asked of the union 2,543 (the check of 2026-10-20 in access-layer/README.md;
+the same doubling as D14). A rule can be forgotten by the model; a FROM written by the
+layer cannot. And the query it returns (serve.py, the TEXT2SPARQL contract) gives the
+same answer on any endpoint, union default graph or not, where a request parameter would
+be lost. Questions across the two sources stay with the competency questions.
+**Evidence.** access-layer/results/score-after.txt, run on Fuseki; the same score replayed
+on build/graph.nt gives the same lines.
+
+## D20. One improvement, measured: the refusal rule names what the graph holds (2026-10-20)
+**Decision.** prompt_rules.txt (version 67d7c6d8) replaces one rule of the first rules
+(e6f4871f, kept as prompt_rules-before.txt): instead of examples of what the graph lacks,
+it lists the facts it holds, and says a question asking for one of them is answered.
+Measured on the test set, model gemini-3.5-flash-lite, recorded in llm-cache.json. Before
+the improvement, a bug of the template was fixed (with_prefixes added both of our prefixes
+or none), and its score replayed from the same answers (score-fixed.txt), so the two
+scores differ only by the rule.
+**Alternative.** More examples; a check that rejects a refusal when the question uses a
+word of the schema; tuning several rules at once.
+**Why.** The first score showed the largest loss: with examples, Gemini refused three
+answerable questions with the reason the rule had given as an example ("citation counts").
+One change, so its effect can be read. Result, in the setting the stack runs (repair): mean
+F1 0.702 -> 0.750, wrong refusals 3 -> 0, the 4 questions to refuse still refused. Its cost:
+in the schema setting the h-index question is now answered (3 of 4 refused), and with
+examples two counts gained a filter "has an LU author" (the 6 papers whose byline OpenAlex
+cuts at 100 have none). One run of 14 questions, where one question moves the mean by about
+0.07: kept, because the deployed setting is better and refuses nothing it should answer.
+**Evidence.** access-layer/results/score-before.txt, score-fixed.txt, score-after.txt;
+access-layer/README.md.

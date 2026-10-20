@@ -7,6 +7,7 @@
 #   access-layer  questions in English (Session 7), on http://127.0.0.1:8000
 #   postgres, ontop  on demand only: the virtualized route, compared with the
 #                 deployed one (Session 5, D16); see mapping/README.md
+#   model         on demand only: the learning layer (Session 6); see model/README.md
 #
 # Every port listens on this computer only (127.0.0.1). Secrets (the Gemini
 # key, a database password) live in .env, which is never committed.
