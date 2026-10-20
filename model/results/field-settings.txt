@@ -1,0 +1,20 @@
+python model/field.py   (torch 2.8.0, torch-geometric 2.8.0.post1, scikit-learn 1.7.2, 2026-10-20; CPU)
+5,199 papers with a field, 26 fields.
+settings of GraphSAGE, validation round only (train 2022-2023, test 2024), seeds 0 and 1, mean:
+  hidden 32, 100 epochs, dropout 0.0   accuracy 0.476  macro-F1 0.322
+  hidden 32, 100 epochs, dropout 0.5   accuracy 0.515  macro-F1 0.346
+  hidden 32, 200 epochs, dropout 0.0   accuracy 0.469  macro-F1 0.304
+  hidden 32, 200 epochs, dropout 0.5   accuracy 0.530  macro-F1 0.360
+  hidden 32, 400 epochs, dropout 0.0   accuracy 0.487  macro-F1 0.328
+  hidden 32, 400 epochs, dropout 0.5   accuracy 0.535  macro-F1 0.375
+  hidden 32, 800 epochs, dropout 0.0   accuracy 0.479  macro-F1 0.309
+  hidden 32, 800 epochs, dropout 0.5   accuracy 0.531  macro-F1 0.382
+  hidden 64, 100 epochs, dropout 0.0   accuracy 0.476  macro-F1 0.313
+  hidden 64, 100 epochs, dropout 0.5   accuracy 0.506  macro-F1 0.353
+  hidden 64, 200 epochs, dropout 0.0   accuracy 0.483  macro-F1 0.318
+  hidden 64, 200 epochs, dropout 0.5   accuracy 0.524  macro-F1 0.367
+  hidden 64, 400 epochs, dropout 0.0   accuracy 0.488  macro-F1 0.307
+  hidden 64, 400 epochs, dropout 0.5   accuracy 0.518  macro-F1 0.375
+  hidden 64, 800 epochs, dropout 0.0   accuracy 0.499  macro-F1 0.352
+  hidden 64, 800 epochs, dropout 0.5   accuracy 0.517  macro-F1 0.375
+chosen: hidden 32, epochs 400, dropout 0.5

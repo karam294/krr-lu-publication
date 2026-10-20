@@ -277,3 +277,57 @@ the same graph from the same mappings except 707 triples, all of them a referenc
 DOI with a character that is not ASCII (now a Warning in crossref-shapes.ttl 1.0.1),
 and mapping.ttl needed one change to run on both, a name for a subquery.
 **Evidence.** mapping/ontop/compare-routes.txt; shapes/crossref-validation-report.txt.
+
+## D17. Predict a paper's field, split by time, with the topic taken out (2026-10-20)
+**Decision.** Node classification predicts the research field of a paper (26 OpenAlex
+fields: the field of its topic) from the graph of model/build_graph.py, which keeps
+no topic node and no hasTopic edge. Every model trains on earlier years and is tested
+on one later year: a validation round (train 2022-2023, test 2024), where GraphSAGE's
+settings are chosen (field.py --settings writes the best of 16 into
+results/field-settings.txt), and a test round (train 2022-2024, test 2025), run with
+those settings and reported. Next to GraphSAGE: always the largest field, a logistic
+regression on the paper's own row (type, language, open access, authors, venue), and a
+count of its authors' earlier fields. GraphSAGE runs five seeds; the report gives the
+mean and the range.
+**Alternative.** Predict open access (77% of the 2025 papers are open, CQ1, and the
+venue decides most of the rest: little left for a graph), or the 4 domains (easier, says
+less). A random split of the papers, as most tutorials do. Settings written in the code.
+**Why.** The field is a question the research office has (CQ5 counts fields by year; 12
+papers have no topic), and one where the graph can matter: 81% of the 2025 papers share
+an author with an earlier paper, and authors stay in their field. The split is by time
+because our papers have years: a model must predict papers that did not exist when it
+was trained, and a random split would let papers of the same year, by the same authors,
+teach it the answer. The topic is taken out because its field is the label: the leak
+line of field.py is right on every paper whose topic it has seen. The settings are
+chosen by the run and read from its file because two computers ranked them
+differently: written in the code, they would disagree with the evidence. The result is
+reported as it came: the count beats GraphSAGE (0.549 against 0.517 on 2025), which
+sees its neighbours' features but never their labels (Huang et al., ICLR 2021).
+**Evidence.** model/results/build-graph.txt, field-settings.txt, field.txt; model/README.md.
+
+## D18. Predict new co-authorships, split by time, ranked against counts (2026-10-20)
+**Decision.** Link prediction ranks, for each pair of authors who first write together
+in the test year, the partner among all authors who had a co-author before that year,
+both ways, filtered (known and other new partners do not count against the model), ties
+sharing the middle of their places. A co-authorship is two authors on a paper of at most
+25 authors. Rounds as in D17: validation 2024, where coauthors.py --settings chooses the
+embedding (TransE, DistMult or RotatE, dimension 64 or 128: DistMult-128 had the best
+MRR), and test 2025. Against random, popularity, common neighbours and Adamic-Adar: the
+embedding (PyKEEN, three seeds), trained on the knowledge graph of the years before:
+co-authors, institutions, venues and topics.
+**Alternative.** Hide a random 10% of the links, as the course lab does with "plant
+makes product": here that would train on 2025 to predict 2025. Predict author to topic
+or author to venue (popularity is very strong there). TransE alone, the lab's embedding.
+**Why.** "Who might work together next?" is a question the graph can answer and a
+research office can use, and time gives an honest test: the pairs of 2025 did not exist
+before it. The cap keeps a byline of 100 (4,950 pairs at once) from drowning the small
+teams. Ties matter: with a count, thousands of candidates score 0, and the rank of the
+right one among them must not depend on the order of a list. Three embeddings, because
+co-authorship is symmetric: DistMult's score is, RotatE can learn it (a half turn),
+TransE cannot (h + r = t and t + r = h leave r = 0); on 2024 TransE had the lowest MRR.
+The result is reported as it came:
+Adamic-Adar beats DistMult on every score of 2025 (MRR 0.072 against 0.046). On the half
+of the new pairs that share no earlier co-author, the two counts are blind (MRR 0.000)
+and popularity does best (0.017), not the embedding (0.006 to 0.007). On 2024 the
+embedding led only on Hits@100 (0.469 to 0.480 against 0.448).
+**Evidence.** model/results/coauthors-settings.txt, coauthors.txt; model/README.md.

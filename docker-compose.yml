@@ -96,6 +96,19 @@ services:
     depends_on:
       - postgres
 
+  # Session 6: the learning layer (model/README.md). Not part of the stack:
+  # `docker compose up` does not start it. After the pipeline has written
+  # build/graph.nt, run the graph and the two models; the results land in
+  # model/results/:
+  #   docker compose --profile learning run --rm model
+  model:
+    build:
+      context: .
+      dockerfile: model/Dockerfile
+    profiles: ["learning"]
+    volumes:
+      - ./:/work
+
 volumes:
   fuseki-data:
   postgres-data:

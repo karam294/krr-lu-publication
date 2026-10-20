@@ -1,0 +1,11 @@
+python model/build_graph.py   (pyoxigraph 0.5.11, torch 2.8.0, torch-geometric 2.8.0.post1, 2026-10-20)
+read build/graph.nt: 578,982 triples (graph/openalex)
+nodes: paper 5,211, author 14,090, venue 2,216, institution 3,656
+edges: writes 30,904, publishedIn 4,997, cites 2,116, withInstitution 25,398
+  writes: one per author and paper; 30,983 authorships name an author, 79 of them an author already on that paper
+paper features (26): Article, Book, BookChapter, BookReview, ConferenceAbstract, ConferencePaper, DataPaper, Dataset, Dissertation, Editorial, Erratum, Letter, OtherWork, Paratext, PeerReview, Preprint, Report, Retraction, Review, SoftwarePaper, en, fr, ar, other language, open access, log(1 + authors)
+label: the field of the paper's topic, 26 fields; 5,199 papers have one, 12 have no topic (not used)
+  taken out of what the model sees: pub:hasTopic and the topics (the topic's field is the label)
+  largest: Medicine 1,548, Engineering 479, Agricultural and Biological Sciences 422
+papers with a label, by year: 2022 1,267, 2023 1,216, 2024 1,286, 2025 1,430
+written: build/model/lu-graph.pt

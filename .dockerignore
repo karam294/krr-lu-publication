@@ -1,0 +1,11 @@
+# What `docker compose build` does not send to Docker. The images copy only their
+# requirements (and access-layer/); the repository itself is mounted at run time.
+# Without this file every build sends the .venv (over 1 GB with PyTorch), build/
+# and .git, and the secrets in .env.
+.env
+.venv/
+.git/
+build/
+data/raw/
+data/tables/
+**/__pycache__/

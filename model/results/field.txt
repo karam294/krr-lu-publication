@@ -1,0 +1,29 @@
+python model/field.py   (torch 2.8.0, torch-geometric 2.8.0.post1, scikit-learn 1.7.2, 2026-10-20; CPU)
+5,199 papers with a field, 26 fields.
+GraphSAGE: hidden 32, 400 epochs, dropout 0.5 (chosen on 2024: results/field-settings.txt), seeds 0-4.
+
+validation: train 2022-2023 (2,483 papers), test 2024 (1,286 papers; 85% have an author from the training years)
+  guess: always Medicine                     accuracy 0.292  macro-F1 0.017
+  0 · the topic kept (the leak)              accuracy 0.769  macro-F1 0.786   on the 69% whose topic is in training: accuracy 1.000
+  1 · the paper's row (logistic regression)  accuracy 0.383  macro-F1 0.113
+  2 · count: its authors' earlier fields     accuracy 0.551  macro-F1 0.411
+  3 · GraphSAGE, seed 0                      accuracy 0.533  macro-F1 0.378
+  3 · GraphSAGE, seed 1                      accuracy 0.537  macro-F1 0.372
+  3 · GraphSAGE, seed 2                      accuracy 0.532  macro-F1 0.369
+  3 · GraphSAGE, seed 3                      accuracy 0.535  macro-F1 0.384
+  3 · GraphSAGE, seed 4                      accuracy 0.519  macro-F1 0.355
+  3 · GraphSAGE, the 5 seeds                 accuracy 0.531 (0.519 to 0.537)  macro-F1 0.372 (0.355 to 0.384)
+  (669,800 parameters)
+
+test: train 2022-2024 (3,769 papers), test 2025 (1,430 papers; 81% have an author from the training years)
+  guess: always Medicine                     accuracy 0.327  macro-F1 0.020
+  0 · the topic kept (the leak)              accuracy 0.848  macro-F1 0.884   on the 78% whose topic is in training: accuracy 1.000
+  1 · the paper's row (logistic regression)  accuracy 0.395  macro-F1 0.139
+  2 · count: its authors' earlier fields     accuracy 0.549  macro-F1 0.350
+  3 · GraphSAGE, seed 0                      accuracy 0.501  macro-F1 0.349
+  3 · GraphSAGE, seed 1                      accuracy 0.521  macro-F1 0.343
+  3 · GraphSAGE, seed 2                      accuracy 0.523  macro-F1 0.347
+  3 · GraphSAGE, seed 3                      accuracy 0.510  macro-F1 0.306
+  3 · GraphSAGE, seed 4                      accuracy 0.528  macro-F1 0.360
+  3 · GraphSAGE, the 5 seeds                 accuracy 0.517 (0.501 to 0.528)  macro-F1 0.341 (0.306 to 0.360)
+  (669,800 parameters)

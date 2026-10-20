@@ -1,0 +1,25 @@
+python model/coauthors.py   (pykeen 1.11.1, torch 2.8.0, pyoxigraph 0.5.11, 2026-10-20; CPU)
+co-authorships: 58,985 pairs of authors on papers of at most 25 authors. Embeddings: 100 epochs, batch 1024, learning rate 0.005.
+DistMult: dimension 128 (chosen on 2024: results/coauthors-settings.txt), seeds 0-2.
+
+validation: facts before 2024; 6,821 candidate authors; 1,179 new pairs in 2024, ranked both ways: 2,358 queries, 1,182 with a co-author in common
+  random                   MRR 0.000  Hits@10 0.000  Hits@100 0.000   shared co-author: MRR 0.000  none: MRR 0.000
+  popularity               MRR 0.021  Hits@10 0.031  Hits@100 0.108   shared co-author: MRR 0.026  none: MRR 0.016
+  common neighbours        MRR 0.092  Hits@10 0.201  Hits@100 0.445   shared co-author: MRR 0.184  none: MRR 0.000
+  Adamic-Adar              MRR 0.098  Hits@10 0.211  Hits@100 0.448   shared co-author: MRR 0.196  none: MRR 0.000
+  DistMult, seed 0         MRR 0.091  Hits@10 0.185  Hits@100 0.480   shared co-author: MRR 0.173  none: MRR 0.008
+  DistMult, seed 1         MRR 0.079  Hits@10 0.179  Hits@100 0.469   shared co-author: MRR 0.150  none: MRR 0.008
+  DistMult, seed 2         MRR 0.083  Hits@10 0.182  Hits@100 0.474   shared co-author: MRR 0.157  none: MRR 0.008
+  DistMult, the 3 seeds    MRR 0.084 (0.079 to 0.091)  Hits@10 0.182 (0.179 to 0.185)
+  (DistMult learned from 103,743 triples; about 6,792 candidates per query)
+
+test: facts before 2025; 9,150 candidate authors; 1,623 new pairs in 2025, ranked both ways: 3,246 queries, 1,588 with a co-author in common
+  random                   MRR 0.000  Hits@10 0.000  Hits@100 0.000   shared co-author: MRR 0.000  none: MRR 0.000
+  popularity               MRR 0.025  Hits@10 0.029  Hits@100 0.144   shared co-author: MRR 0.032  none: MRR 0.017
+  common neighbours        MRR 0.069  Hits@10 0.164  Hits@100 0.374   shared co-author: MRR 0.140  none: MRR 0.000
+  Adamic-Adar              MRR 0.072  Hits@10 0.169  Hits@100 0.382   shared co-author: MRR 0.146  none: MRR 0.000
+  DistMult, seed 0         MRR 0.046  Hits@10 0.101  Hits@100 0.357   shared co-author: MRR 0.087  none: MRR 0.007
+  DistMult, seed 1         MRR 0.046  Hits@10 0.100  Hits@100 0.356   shared co-author: MRR 0.089  none: MRR 0.006
+  DistMult, seed 2         MRR 0.046  Hits@10 0.103  Hits@100 0.354   shared co-author: MRR 0.089  none: MRR 0.006
+  DistMult, the 3 seeds    MRR 0.046 (0.046 to 0.046)  Hits@10 0.101 (0.100 to 0.103)
+  (DistMult learned from 145,174 triples; about 9,104 candidates per query)

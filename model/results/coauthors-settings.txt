@@ -1,0 +1,11 @@
+python model/coauthors.py   (pykeen 1.11.1, torch 2.8.0, pyoxigraph 0.5.11, 2026-10-20; CPU)
+co-authorships: 58,985 pairs of authors on papers of at most 25 authors. Embeddings: 100 epochs, batch 1024, learning rate 0.005.
+validation: facts before 2024; 6,821 candidate authors; 1,179 new pairs in 2024, ranked both ways: 2,358 queries, 1,182 with a co-author in common
+the embeddings, validation round only, seed 0:
+  TransE, dimension 64     MRR 0.068  Hits@10 0.136  Hits@100 0.349   shared co-author: MRR 0.131  none: MRR 0.005
+  TransE, dimension 128    MRR 0.060  Hits@10 0.118  Hits@100 0.345   shared co-author: MRR 0.112  none: MRR 0.006
+  DistMult, dimension 64   MRR 0.081  Hits@10 0.182  Hits@100 0.457   shared co-author: MRR 0.154  none: MRR 0.009
+  DistMult, dimension 128  MRR 0.091  Hits@10 0.185  Hits@100 0.480   shared co-author: MRR 0.173  none: MRR 0.008
+  RotatE, dimension 64     MRR 0.077  Hits@10 0.176  Hits@100 0.435   shared co-author: MRR 0.144  none: MRR 0.010
+  RotatE, dimension 128    MRR 0.089  Hits@10 0.182  Hits@100 0.439   shared co-author: MRR 0.170  none: MRR 0.008
+chosen: DistMult, dimension 128
