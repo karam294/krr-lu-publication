@@ -1,0 +1,80 @@
+python evaluate.py   (2026-10-20; model gemini-3.5-flash-lite; rules e6f4871f (prompt_rules-before.txt); LLM_MODE replay; graph: http://127.0.0.1:3030/kr/sparql)
+18 questions; 8 examples; checks: unknown_properties, unknown_classes
+
+schema:
+   1  F1 1.00  tries 1           How many papers did LU publish in 2023?
+   2  F1 1.00  tries 1           How many LU papers are open access?
+   3  F1 1.00  tries 1           How many conference papers are there?
+   4  F1 1.00  tries 1           In which languages are LU papers written?
+   5  F1 0.67  tries 1           Which LU papers have been retracted?
+        SELECT ?paper ?title WHERE { ?paper pub:isRetracted true ; pub:title ?title . }
+   6  F1 1.00  tries 1           How many papers did LU publish each year?
+   7  F1 0.67  tries 1           What are the names of the 5 venues with the most LU papers?
+        SELECT ?venueName (COUNT(DISTINCT ?paper) AS ?paperCount) WHERE { ?paper pub:publicationYear ?year . FILTER(?year >= 2022 && ?year <= 2025) ?paper pub:publishedIn ?venue . ?venue pub:name ?venueName . } GROUP BY ?venueName ORDER BY DESC(?paperCount) LIMIT 5
+   8  F1 1.00  tries 1           How many papers are in the field Medicine?
+   9  F1 1.00  tries 1           How many papers did Maha Hoteit write?
+  10  F1 1.00  tries 1           How many different institutions from France appear on LU papers?
+  11  F1 0.67  tries 1           Which research domain has the most LU papers?
+        SELECT ?domain (COUNT(DISTINCT ?paper) AS ?paperCount) WHERE { ?paper pub:hasTopic ?topic . ?topic pub:domain ?domain . ?paper pub:publicationYear ?year . FILTER(?year >= 2022 && ?year <= 2025) } GROUP BY ?domain ORDER BY DESC(?paperCount) LIMIT 1
+  12  F1 1.00  tries 1           How many authors have an ORCID?
+  13  F1 1.00  tries 1           What is the title of the paper with DOI 10.1007/s00205-021-01737-1?
+  14  F1 1.00  tries 1           On how many papers is an LU author the first author?
+  15  refused, right           What is the h-index of Pascale Salameh?
+  16  refused, right           Which LU papers were funded by the European Union?
+  17  refused, right           What is the email address of Maha Hoteit?
+  18  refused, right           How many students study at Lebanese University?
+schema    mean F1 0.929 on 14 answerable questions; refused 4 of 4 it should; refused 0 it should not; 0 answered after a repair
+
+examples:
+   1  F1 1.00  tries 1           How many papers did LU publish in 2023?
+   2  F1 1.00  tries 1           How many LU papers are open access?
+   3  F1 1.00  tries 1           How many conference papers are there?
+   4  F1 1.00  tries 1           In which languages are LU papers written?
+   5  F1 0.00  tries 0  refused  Which LU papers have been retracted?
+        REFUSE: citation counts
+   6  F1 0.50  tries 1           How many papers did LU publish each year?
+        SELECT ?year (COUNT(DISTINCT ?paper) AS ?papers) WHERE { ?paper pub:publicationYear ?year . ?paper pub:hasAuthorship ?a . ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> . } GROUP BY ?year ORDER BY ?year
+   7  F1 0.67  tries 1           What are the names of the 5 venues with the most LU papers?
+        SELECT ?name (COUNT(?paper) AS ?papers) WHERE { ?paper pub:publishedIn ?venue . ?venue pub:name ?name . } GROUP BY ?name ORDER BY DESC(?papers) ?name LIMIT 5
+   8  F1 1.00  tries 1           How many papers are in the field Medicine?
+   9  F1 1.00  tries 1           How many papers did Maha Hoteit write?
+  10  F1 1.00  tries 1           How many different institutions from France appear on LU papers?
+  11  F1 0.67  tries 1           Which research domain has the most LU papers?
+        SELECT ?domain (COUNT(DISTINCT ?paper) AS ?papers) WHERE { ?paper pub:hasTopic ?topic . ?topic pub:domain ?domain . } GROUP BY ?domain ORDER BY DESC(?papers) ?domain LIMIT 1
+  12  F1 0.00  tries 0  refused  How many authors have an ORCID?
+        REFUSE: citation counts
+  13  F1 0.00  tries 0  refused  What is the title of the paper with DOI 10.1007/s00205-021-01737-1?
+        REFUSE: citation counts
+  14  F1 1.00  tries 1           On how many papers is an LU author the first author?
+  15  refused, right           What is the h-index of Pascale Salameh?
+  16  refused, right           Which LU papers were funded by the European Union?
+  17  refused, right           What is the email address of Maha Hoteit?
+  18  refused, right           How many students study at Lebanese University?
+examples  mean F1 0.702 on 14 answerable questions; refused 4 of 4 it should; refused 3 it should not; 0 answered after a repair
+
+repair:
+   1  F1 1.00  tries 1           How many papers did LU publish in 2023?
+   2  F1 1.00  tries 1           How many LU papers are open access?
+   3  F1 1.00  tries 1           How many conference papers are there?
+   4  F1 1.00  tries 1           In which languages are LU papers written?
+   5  F1 0.00  tries 0  refused  Which LU papers have been retracted?
+        REFUSE: citation counts
+   6  F1 0.50  tries 1           How many papers did LU publish each year?
+        SELECT ?year (COUNT(DISTINCT ?paper) AS ?papers) WHERE { ?paper pub:publicationYear ?year . ?paper pub:hasAuthorship ?a . ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> . } GROUP BY ?year ORDER BY ?year
+   7  F1 0.67  tries 1           What are the names of the 5 venues with the most LU papers?
+        SELECT ?name (COUNT(?paper) AS ?papers) WHERE { ?paper pub:publishedIn ?venue . ?venue pub:name ?name . } GROUP BY ?name ORDER BY DESC(?papers) ?name LIMIT 5
+   8  F1 1.00  tries 1           How many papers are in the field Medicine?
+   9  F1 1.00  tries 1           How many papers did Maha Hoteit write?
+  10  F1 1.00  tries 1           How many different institutions from France appear on LU papers?
+  11  F1 0.67  tries 1           Which research domain has the most LU papers?
+        SELECT ?domain (COUNT(DISTINCT ?paper) AS ?papers) WHERE { ?paper pub:hasTopic ?topic . ?topic pub:domain ?domain . } GROUP BY ?domain ORDER BY DESC(?papers) ?domain LIMIT 1
+  12  F1 0.00  tries 0  refused  How many authors have an ORCID?
+        REFUSE: citation counts
+  13  F1 0.00  tries 0  refused  What is the title of the paper with DOI 10.1007/s00205-021-01737-1?
+        REFUSE: citation counts
+  14  F1 1.00  tries 1           On how many papers is an LU author the first author?
+  15  refused, right           What is the h-index of Pascale Salameh?
+  16  refused, right           Which LU papers were funded by the European Union?
+  17  refused, right           What is the email address of Maha Hoteit?
+  18  refused, right           How many students study at Lebanese University?
+repair    mean F1 0.702 on 14 answerable questions; refused 4 of 4 it should; refused 3 it should not; 0 answered after a repair

@@ -21,7 +21,7 @@ import re
 import statistics
 from pathlib import Path
 
-from access_layer import CHECKS, RULES_ID, answer, load_examples, model_name, open_store, run
+from access_layer import CHECKS, RULES_FILE, RULES_ID, answer, load_examples, model_name, open_store, run
 from questions_utils import load_questions
 from score_utils import answer_set, set_f1
 
@@ -89,7 +89,8 @@ def main():
         questions += load_questions(extra)
     store, examples = open_store(), load_examples()
     where = store if isinstance(store, str) else "build/graph.nt, in memory"
-    OUT.append(f"python evaluate.py   ({datetime.date.today()}; model {model_name()}; rules {RULES_ID}; "
+    OUT.append(f"python evaluate.py   ({datetime.date.today()}; model {model_name()}; rules {RULES_ID} "
+               f"({RULES_FILE.name}); "
                f"LLM_MODE {os.environ.get('LLM_MODE', 'live')}; graph: {where})")
     OUT.append(f"{len(questions)} questions; {len(examples)} examples; checks: {', '.join(c.__name__ for c in checks)}")
     for s in ([a.setting] if a.setting else list(SETTINGS)):

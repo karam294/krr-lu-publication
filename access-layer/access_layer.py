@@ -55,7 +55,7 @@ VEXT = Namespace("http://ldf.fi/void-ext#")
 SH = Namespace("http://www.w3.org/ns/shacl#")
 RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai"  # Gemini's OpenAI style address
-PREFIXES = f"PREFIX {PFX}: <{NS}>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+PREFIXES = {PFX: NS, "rdfs": "http://www.w3.org/2000/01/rdf-schema#"}
 
 
 # ---------------------------------------------------------------- the graph
@@ -76,7 +76,12 @@ def open_store(path=GRAPH):
 
 
 def with_prefixes(query):
-    return query if f"PREFIX {PFX}:" in query else PREFIXES + query
+    """Declare each of our prefixes the query uses but does not declare. (The
+    template added both or none: a query that declared pub: and used rdfs:
+    without declaring it was rejected; found by the first score, Q2.)"""
+    missing = [f"PREFIX {p}: <{iri}>\n" for p, iri in PREFIXES.items()
+               if re.search(rf"(?<![\w-]){p}:", query) and not re.search(rf"PREFIX\s+{p}:", query, re.I)]
+    return "".join(missing) + query
 
 
 def scoped(query):
@@ -179,7 +184,10 @@ def pick_examples(question, examples, k=3):
 
 
 # ---------------------------------------------------------------- the prompt and the model
-RULES = (HERE / "prompt_rules.txt").read_text().strip()
+# RULES_FILE picks another version of the rules (prompt_rules-before.txt is the
+# first one): so the score of each version can be replayed from llm-cache.json.
+RULES_FILE = HERE / os.environ.get("RULES_FILE", "prompt_rules.txt")
+RULES = RULES_FILE.read_text(encoding="utf-8").strip()
 RULES_ID = hashlib.sha256(RULES.encode()).hexdigest()[:8]  # recorded outputs name the rules they were made with
 
 

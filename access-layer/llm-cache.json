@@ -31,6 +31,10 @@
   "model": "gemini-3.5-flash-lite",
   "reply": "REFUSE: email address of authors"
  },
+ "2a6eaac3e68b60fa": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: h-index"
+ },
  "2bf6e897f6d849f7": {
   "model": "gemini-3.5-flash-lite",
   "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;\n     pub:authorPosition \"first\" .\n}"
@@ -87,6 +91,14 @@
   "model": "gemini-3.5-flash-lite",
   "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper a pub:ConferencePaper .\n}"
  },
+ "4f5bff8db68e039b": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: funding information or sponsors of papers"
+ },
+ "51af1f37c76ae4ca": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: email address"
+ },
  "59a17269700ad2ab": {
   "model": "gemini-3.5-flash-lite",
   "reply": "REFUSE: email address"
@@ -134,6 +146,10 @@
  "8a2b9cb68dfcf127": {
   "model": "gemini-3.5-flash-lite",
   "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT ?domain (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasTopic ?topic .\n  ?topic pub:domain ?domain .\n} GROUP BY ?domain ORDER BY DESC(?papers) ?domain LIMIT 1"
+ },
+ "8ad5b00612cb617d": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "REFUSE: student enrollment information"
  },
  "8b2727f7fab4a172": {
   "model": "gemini-3.5-flash-lite",
@@ -238,6 +254,10 @@
  "dc65f9df23861091": {
   "model": "gemini-3.5-flash-lite",
   "reply": "```sparql\nPREFIX pub: <https://ul.edu.lb/kr/pub#>\n\nSELECT (COUNT(DISTINCT ?paper) AS ?count)\nWHERE {\n  ?paper a pub:ConferencePaper .\n  ?paper pub:publicationYear ?year .\n  FILTER(?year >= 2022 && ?year <= 2025)\n}\n```"
+ },
+ "dc697c72cb9e485a": {
+  "model": "gemini-3.5-flash-lite",
+  "reply": "PREFIX pub: <https://ul.edu.lb/kr/pub#>\nSELECT (COUNT(DISTINCT ?paper) AS ?papers) WHERE {\n  ?paper pub:hasAuthorship ?a .\n  ?a pub:affiliation <https://ul.edu.lb/kr/id/institution/openalex/I160368002> ;\n     pub:authorPosition \"first\" .\n}"
  },
  "e0e83fd621a07df3": {
   "model": "gemini-3.5-flash-lite",
