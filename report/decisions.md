@@ -133,8 +133,9 @@ and end of the run.
 graph per table (the course lab).
 **Why.** Provenance is recorded per graph: 51 triples describe 578,982. In the
 default graph nothing says which source a triple came from. Session 5 adds Crossref
-as a second graph and Session 6 predicted links as a third; a triple's graph then
-says who said it. Our questions cross tables (a paper, its authors, their
+as a second graph, and the links between the sources as two more (D15); a triple's
+graph then says who said it. (Written first: Session 6's predicted links as a third
+graph. They stay out of the graph: D21.) Our questions cross tables (a paper, its authors, their
 institutions), and what we must trace is the source, not the table. DROP ALL first,
 so no graph from an older run or a manual upload stays behind. Checksums read
 Windows line endings as Unix ones, so a laptop and CI give the same value.
@@ -370,3 +371,22 @@ cuts at 100 have none). One run of 14 questions, where one question moves the me
 0.07: kept, because the deployed setting is better and refuses nothing it should answer.
 **Evidence.** access-layer/results/score-before.txt, score-fixed.txt, score-after.txt;
 access-layer/README.md.
+
+## D21. The models' predictions stay out of the knowledge graph (2026-10-20)
+**Decision.** The learning layer writes its scores to model/results/ and loads nothing
+into Fuseki. The named graph of predicted links that D10 planned for Session 6 is not
+built.
+**Alternative.** A named graph graph/predictions: for each author, the partners the model
+ranks highest for 2026, each link with its score and the model's provenance, loaded by the
+pipeline next to the six graphs.
+**Why.** A predicted co-authorship is a guess about a year that has not happened, so no
+shape can check it: SHACL checks what the data must contain, and a prediction has no data
+to agree with yet. In Fuseki's default graph, the union of the named graphs, every query
+that does not name its graphs would count a guess as a fact; the access layer is safe (D19),
+a SPARQL user is not. And the guess would not be worth storing: on 2025, Adamic-Adar, a
+count over co-authors that needs no training, ranks new partners better than the embedding
+on every score (D18). The model also runs on demand, after the pipeline, for about half an
+hour (model/README.md): loading its output would make the stack wait for it.
+**Evidence.** model/results/coauthors.txt (2025: Adamic-Adar MRR 0.072, DistMult 0.046);
+fuseki/config.ttl (tdb2:unionDefaultGraph true); docker-compose.yml (the model service,
+profile learning).

@@ -1,0 +1,38 @@
+// The deployed system (report sections 1 and 8). Nodes are placed by hand (pos, in points).
+// Render, from the repository root:
+//   neato -n2 -Tpng -Gdpi=200 report/figures/architecture.dot -o report/figures/architecture.png
+digraph lu {
+  splines=true; outputorder=edgesfirst;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, color="#5f6670", fillcolor="#ffffff", penwidth=1, width=2.2, height=0.5, fixedsize=false];
+  edge [fontname="Helvetica", fontsize=9, color="#5f6670", arrowsize=0.7];
+
+  oa     [pos="95,470",  label="data/lu.sql\nOpenAlex: 5,211 papers, CC0", fillcolor="#eef3f9"];
+  cr     [pos="290,470", label="data/crossref.sql\nCrossref: the records of 5,055 DOIs", fillcolor="#eef3f9"];
+  er     [pos="490,470", label="mapping/er/*.csv\nthe links: by key, and the matcher's", fillcolor="#eef3f9"];
+  srclab [pos="290,505", shape=plaintext, style="", label="the sources, frozen in the repository (D4, D11)", fontcolor="#52514e"];
+
+  map    [pos="290,390", label="1-2  map: R2RML, Morph-KGC\nfour mappings, four graphs", fillcolor="#e9f5f3"];
+  gate   [pos="290,310", label="3  the SHACL gate (pySHACL)\neach graph against its own shapes,\nwith the ontology (D9)", fillcolor="#fdf3e1", color="#b7791f"];
+  prov   [pos="290,230", label="4  provenance (PROV-O)\n5  VoID of graph/openalex", fillcolor="#e9f5f3"];
+  pipelab[pos="500,390", shape=plaintext, style="", label="pipeline/run.py: steps 1 to 6,\nonce, on docker compose up", fontcolor="#52514e"];
+  stop   [pos="505,310", label="any Violation, or a shape\nwith 0 focus nodes:\nstop, nothing is loaded", fillcolor="#fdecec", color="#b42318"];
+  ci     [pos="95,390",  label="GitHub Actions: the same\nmap and gate on every push", fillcolor="#fdf3e1", color="#b7791f"];
+
+  fuseki [pos="290,150", label="6  Fuseki, dataset kr, 127.0.0.1:3030\nsix named graphs: openalex, crossref,\nlinks, matches, ontology, provenance", fillcolor="#ecf7ee", color="#2f7d3b", penwidth=1.6];
+  al     [pos="290,65",  label="access layer, 127.0.0.1:8000\nGemini writes the query; the layer checks,\nrepairs or refuses, and adds FROM (D19)", fillcolor="#f3eefa"];
+  user   [pos="510,65",  label="a question in English,\nthe answer and its query", fillcolor="#f3f4f6"];
+
+  odlab  [pos="95,272", shape=plaintext, style="", label="on demand, by profile", fontcolor="#52514e"];
+  reas   [pos="95,230", label="tools: ROBOT, ELK and\nHermiT on the ontology (D8)"];
+  model  [pos="95,165", label="learning: GraphSAGE, DistMult\nand baselines, on build/graph.nt"];
+  ontop  [pos="95,100", label="virtual: PostgreSQL + Ontop,\nthe same mappings (D16)"];
+
+  oa -> map; cr -> map; er -> map;
+  map -> gate [label="  4 graphs"];
+  gate -> prov [label="  pass"];
+  gate -> stop [xlabel="fail", color="#b42318", fontcolor="#b42318"];
+  prov -> fuseki [label="  load"];
+  fuseki -> al [dir=both, label="  SPARQL, rows"];
+  al -> user [dir=both];
+  ci -> gate [style=dashed];
+}
