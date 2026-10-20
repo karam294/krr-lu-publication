@@ -17,7 +17,8 @@ after one improvement (D20).
 | `questions.yaml` | the test set: 14 questions with their right query, 4 to refuse; none is an example |
 | `evaluate.py` | the score, in three settings, the way TEXT2SPARQL scores |
 | `ask.py` | one question: each query tried, its problems, the rows |
-| `serve.py` | the TEXT2SPARQL contract on port 8000: a question in, the query out |
+| `serve.py` | on port 8000: the page (`ui.html`), what it asks (`/ask`), and the TEXT2SPARQL contract |
+| `ui.html` | the page: type a question, see the answer, the query that computed it, each try and its problems |
 | `llm-cache.json` | every answer Gemini gave in the recorded runs: the scores replay without a key |
 | `results/` | the scores: `score-before.txt`, `score-fixed.txt`, `score-after.txt` |
 
@@ -71,16 +72,24 @@ only from the cache. `LLM_DELAY` (default 4 s) is the pause between calls; on
 "too many requests", "busy" (503) or no answer within 90 s the layer waits and
 tries again, four times in all.
 
-In the stack (`docker compose up --build`), the layer serves on port 8000:
+In the stack (`docker compose up --build`), or with `python serve.py` from this
+folder, the layer serves on port 8000:
 
-```
-http://127.0.0.1:8000/?question=How%20many%20papers%20did%20LU%20publish%20in%202024%3F&dataset=https://ul.edu.lb/kr/lu/
--> {"dataset": "https://ul.edu.lb/kr/lu/", "question": "...", "query": "PREFIX pub: ... FROM <.../graph/openalex> ..."}
-```
+- **http://127.0.0.1:8000/**, the page: type a question (or click one of the
+  five examples) and see the answer: one value in large type, or a table; under
+  it, the query that computed it (with the FROM lines the layer added), and each
+  try with the problems the check found. A refusal says what the graph lacks;
+  if Gemini cannot be reached, the page says why and the server keeps serving.
+  Values that are OpenAlex things link to their page on openalex.org.
+- **/ask?question=...**, what the page asks: the whole result as JSON (the
+  rows, the query, the tries, the model, the rules, the seconds).
+- **/?question=...&dataset=https://ul.edu.lb/kr/lu/**, the TEXT2SPARQL
+  contract, unchanged: `{"dataset": "...", "question": "...", "query": "PREFIX pub: ... FROM <.../graph/openalex> ..."}`.
+  A refusal comes back as a query that returns nothing, the reason in a comment
+  (`# REFUSE: ...`).
 
-A refusal comes back as a query that returns nothing, the reason in a comment
-(`# REFUSE: ...`). The answer with its rows, inside the container:
-`docker compose exec access-layer python ask.py "How many conference papers are there?"`.
+With `LLM_MODE=replay`, the page answers the 18 recorded questions of the test
+set without a key (the five examples on the page are among them).
 
 ## The score (results/)
 

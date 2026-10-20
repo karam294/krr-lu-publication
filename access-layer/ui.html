@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask LU's publications</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --ink: #1f2328; --muted: #5f6670; --rule: #d9dcdf;
+    --accent: #96122b; --accent-ink: #ffffff; --code: #f3f4f6;
+    --warn-bg: #fff6e0; --warn-edge: #b7791f; --bad-bg: #fdecec; --bad-edge: #b42318;
+    --good-bg: #ecf7ee; --good-edge: #2f7d3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15171a; --card: #1e2125; --ink: #e8eaed; --muted: #a0a7b0; --rule: #33383e;
+      --accent: #e0566f; --accent-ink: #15171a; --code: #262a2f;
+      --warn-bg: #352a14; --warn-edge: #d9a441; --bad-bg: #3a1d1d; --bad-edge: #f0857a;
+      --good-bg: #1c3021; --good-edge: #6cc27a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  form { display: flex; gap: 8px; }
+  input[type=text] { flex: 1; min-width: 0; padding: 12px 14px; font-size: 1rem; color: var(--ink);
+                     background: var(--card); border: 1px solid var(--rule); border-radius: 8px; }
+  input[type=text]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button { padding: 12px 20px; font-size: 1rem; font-weight: 600; border: 0; border-radius: 8px;
+           background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+  button:disabled { opacity: .55; cursor: wait; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+  .chip { font-size: .85rem; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 999px;
+          background: var(--card); color: var(--ink); cursor: pointer; font-weight: 400; }
+  .status { color: var(--muted); margin: 18px 0 0; min-height: 1.5em; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 18px;
+          margin-top: 18px; }
+  .card h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+             margin: 0 0 8px; }
+  .big { font-size: 2.2rem; font-weight: 700; word-break: break-word; }
+  .box { border-left: 4px solid; padding: 10px 14px; border-radius: 6px; }
+  .refused { background: var(--warn-bg); border-color: var(--warn-edge); }
+  .error { background: var(--bad-bg); border-color: var(--bad-edge); }
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  pre { background: var(--code); padding: 12px; border-radius: 8px; overflow-x: auto; margin: 0;
+        font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+  .try { margin-top: 12px; }
+  .problems { color: var(--bad-edge); font-size: .9rem; margin: 6px 0 0; }
+  .ok { color: var(--good-edge); font-size: .9rem; margin: 6px 0 0; }
+  .meta { color: var(--muted); font-size: .85rem; margin-top: 12px; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 32px; }
+  @media (max-width: 520px) { form { flex-direction: column; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ask LU's publications</h1>
+  <p class="sub">A question in English about Lebanese University's papers, 2022 to 2025, as OpenAlex records them.
+    Gemini writes a SPARQL query; the layer checks it, repairs it if needed, runs it on the graph, and shows
+    the answer with the query that computed it. When the graph holds no such fact, it says so.</p>
+
+  <form id="form">
+    <input id="q" type="text" autocomplete="off" autofocus
+           placeholder="How many conference papers are there?" aria-label="Your question">
+    <button id="go" type="submit">Ask</button>
+  </form>
+  <div class="chips" id="chips"></div>
+  <div class="status" id="status" aria-live="polite"></div>
+  <div id="out"></div>
+
+  <footer>Each question is sent to Google's Gemini with the graph's description and a few example queries,
+    never the data itself; on the free tier Google may use what it receives. The answer comes from the graph
+    (graph/openalex), through the query shown under it.</footer>
+</main>
+
+<script>
+const EXAMPLES = [
+  "How many conference papers are there?",
+  "How many papers did Maha Hoteit write?",
+  "Which research domain has the most LU papers?",
+  "In which languages are LU papers written?",
+  "What is the email address of Maha Hoteit?",
+];
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;   // always text, never HTML: values come from the data and the model
+  return e;
+};
+
+for (const q of EXAMPLES) {
+  const b = el("button", "chip", q);
+  b.type = "button";
+  b.onclick = () => { $("q").value = q; ask(); };
+  $("chips").append(b);
+}
+$("form").onsubmit = (ev) => { ev.preventDefault(); ask(); };
+
+// An IRI of our graph, shown short; an OpenAlex thing links to its page on openalex.org.
+function cell(value) {
+  const td = el("td");
+  const m = /^https:\/\/ul\.edu\.lb\/kr\/id\/(.+)$/.exec(value);
+  if (!m) { td.textContent = value; return td; }
+  const short = decodeURIComponent(m[1]);
+  const oa = /^(?:work|author|institution|venue|topic)\/openalex\/([A-Z]\d+)$/.exec(m[1]);
+  if (oa) {
+    const a = el("a", null, short);
+    a.href = "https://openalex.org/" + oa[1];
+    a.target = "_blank"; a.rel = "noopener";
+    a.title = value;
+    td.append(a);
+  } else {
+    td.textContent = short; td.title = value;
+  }
+  return td;
+}
+
+function answerCard(r) {
+  const card = el("div", "card");
+  card.append(el("h2", null, "Answer"));
+  if (r.error) {
+    card.append(el("div", "box error", "The layer could not answer: " + r.error));
+    return card;
+  }
+  if (r.refused) {
+    const box = el("div", "box refused"), reason = r.refused.replace(/^REFUSE:\s*/i, "");
+    box.append(el("strong", null, "The graph cannot answer this. "));
+    box.append(document.createTextNode(/^no valid query/i.test(reason)
+      ? "The layer found no valid query after its tries (" + reason + "), so it refuses rather than guess."
+      : "What it lacks: " + reason + "."));
+    card.append(box);
+    return card;
+  }
+  if (r.total === 1 && r.columns.length === 1) {          // one value: say it big
+    const td = cell(r.rows[0][r.columns[0]]);
+    const big = el("div", "big"); big.append(...td.childNodes);
+    card.append(big, el("div", "meta", r.columns[0]));
+    return card;
+  }
+  if (r.total === 0) { card.append(el("div", null, "No rows: the query found nothing.")); return card; }
+  const wrap = el("div", "tablewrap"), table = el("table"), head = el("tr");
+  for (const c of r.columns) head.append(el("th", null, c));
+  table.append(head);
+  for (const row of r.rows) {
+    const tr = el("tr");
+    for (const c of r.columns) tr.append(c in row ? cell(row[c]) : el("td"));
+    table.append(tr);
+  }
+  wrap.append(table);
+  card.append(wrap);
+  card.append(el("div", "meta", r.total > r.rows.length
+    ? `${r.total} rows, the first ${r.rows.length} shown` : `${r.total} row${r.total === 1 ? "" : "s"}`));
+  return card;
+}
+
+function howCard(r) {
+  const card = el("div", "card");
+  card.append(el("h2", null, "How it was computed"));
+  if (r.query) card.append(el("pre", null, r.query));
+  const tries = r.attempts || [];
+  if (r.refused && !tries.length)
+    card.append(el("div", null, "Gemini replied with a refusal instead of a query, so nothing was run on the graph."));
+  if (tries.length > 1 || (tries.length && tries[0].problems.length)) {
+    tries.forEach((t, i) => {
+      const d = el("div", "try");
+      d.append(el("div", "meta", `Try ${i + 1}`), el("pre", null, t.query));
+      d.append(t.problems.length ? el("div", "problems", "Problems found: " + t.problems.join("; "))
+                                 : el("div", "ok", "No problem found: this query was run."));
+      card.append(d);
+    });
+  }
+  const n = tries.length ? ` · ${tries.length} ${tries.length === 1 ? "try" : "tries"}` : "";
+  card.append(el("div", "meta", `Model ${r.model} · rules ${r.rules}${n} · ${r.seconds} s`));
+  return card;
+}
+
+let timer = null;
+async function ask() {
+  const q = $("q").value.trim();
+  if (!q) { $("q").focus(); return; }
+  $("go").disabled = true;
+  $("out").replaceChildren();
+  const started = Date.now();
+  const tick = () => {
+    const s = Math.round((Date.now() - started) / 1000);
+    $("status").textContent = `Asking Gemini, then the graph… ${s} s` +
+      (s > 15 ? " (Google may be busy: the layer waits and tries again)" : "");
+  };
+  tick(); timer = setInterval(tick, 1000);
+  try {
+    const res = await fetch("/ask?question=" + encodeURIComponent(q));
+    const r = await res.json();
+    $("status").textContent = "";
+    $("out").append(answerCard(r));
+    if (!r.error) $("out").append(howCard(r));
+  } catch (e) {
+    $("status").textContent = "";
+    const card = el("div", "card"); card.append(el("div", "box error", "No answer from the server: " + e));
+    $("out").append(card);
+  } finally {
+    clearInterval(timer);
+    $("go").disabled = false;
+  }
+}
+</script>
+</body>
+</html>
